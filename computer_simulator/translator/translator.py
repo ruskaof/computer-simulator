@@ -1,50 +1,140 @@
 from __future__ import annotations
 
-import dataclasses
+import enum
 import sys
+from dataclasses import dataclass
 from enum import Enum, auto
 from pathlib import Path
 from typing import cast
 
-from computer_simulator.translator import ProgramChar, Token, NoValueToken, ValueToken, TranslatorException
+from computer_simulator.translator import ProgramChar, Token, NoValueToken, ValueToken, TranslatorException, \
+    MemoryAddress
 from computer_simulator.translator.tokenizer import tokenize
 
 
 class Opcode(Enum):
-    pass
+    # M - memory address or direct value
+    # AC - accumulator
+    LD: int = auto()  # M -> AC
 
 
-@dataclasses.dataclass
+class Heap:
+    _memory: list[int] = {}
+    _variables: dict[str, MemoryAddress] = {}
+
+    def allocate_string(self, value: str) -> MemoryAddress:
+        self._memory.append(len(value) + 1)
+        for char in value:
+            self._memory.append(ord(char))
+
+        return MemoryAddress(len(self._memory) - 1)
+
+    def init_variable(self, name: str) -> MemoryAddress:
+        self._variables[name] = MemoryAddress(len(self._memory))
+        self._memory.append(0)
+        return self._variables[name]
+
+    def get_variable(self, name: str) -> MemoryAddress:
+        return self._variables[name]
+
+
+class Program:
+    heap: Heap = Heap()
+    operations: list[Operation] = []
+
+
+@dataclass
 class Operation:
-    def __init__(self, opcode: Opcode, args: list):
-        self.opcode: Opcode = opcode
-        self.args: list = args
+    opcode: Opcode
+    args: list[IntValue | StringValue]
 
 
-def parse_expression(tokens: list[Token], idx: int) -> int:
-    pass
+@dataclass
+class IntValue:
+    value: int
 
 
-def handle_no_value_token(token: NoValueToken, tokens: list[Token], idx: int) -> int:
+@dataclass
+class StringValue:
+    memory_address: MemoryAddress
 
 
-def handle_value_token(token: ValueToken, tokens: list[Token], idx: int) -> int:
-    pass
+def handle_if(tokens: list[Token], idx: int, result: Program) -> int:
+    idx += 1
+    if idx >= len(tokens):
+        raise RuntimeError("Unexpected end of program")
+
+    parse_s_expression(tokens, idx, result)
+
+
+def parse_expression_inner(tokens: list[Token], idx: int, result: Program) -> int:
+    if idx >= len(tokens):
+        return idx
+
+    if isinstance(tokens[idx], NoValueToken):
+        token = cast(NoValueToken, tokens[idx])
+        if token.token_type == NoValueToken.Type.IF:
+            return handle_if(tokens, idx, result)
+        elif token.token_type == NoValueToken.Type.OPEN_BRACKET:
+            return parse_expression_inner(tokens, idx + 1, result)
+        elif token.token_type == NoValueToken.Type.CLOSE_BRACKET:
+            return parse_expression(tokens, idx, result)
+        else:
+            raise RuntimeError("Unknown no value token type")
+    else:
+        return handle_atom(tokens, idx, result)
+
+def parse_expression(tokens: list[Token], idx: int, result: Program) -> int:
+    if idx >= len(tokens):
+        return idx
+
+    if isinstance(tokens[idx], NoValueToken):
+        token = cast(NoValueToken, tokens[idx])
+        if token.token_type == NoValueToken.Type.OPEN_BRACKET:
+            return parse_expression_inner(tokens, idx + 1, result)
+
+
+
+def handle_atom(tokens: list[Token], idx: int, result: Program) -> int:
+    if idx >= len(tokens):
+        return idx
+
+    if isinstance(tokens[idx], ValueToken):
+        token = cast(ValueToken, tokens[idx])
+        if token.token_type == ValueToken.Type.INT:
+            result.operations.append(Operation(Opcode.LD, [IntValue(int(token.value))]))
+            return idx + 1
+        elif token.token_type == ValueToken.Type.STRING:
+            result.operations.append(Operation(Opcode.LD, [StringValue(result.heap.allocate_string(token.value))]))
+            return idx + 1
+        elif token.token_type == ValueToken.Type.IDENTIFIER:
+            result.operations.append(Operation(Opcode.LD, [StringValue(result.heap.get_variable(token.value))]))
+            return idx + 1
+        else:
+            raise RuntimeError("Unknown value token type")
+    else:
+        raise RuntimeError("Unknown token type")
+
+
+
+def parse_s_expression(tokens: list[Token], idx: int, result: Program) -> int:
+    if idx >= len(tokens):
+        return idx
+
+    if isinstance(tokens[idx],
+                  NoValueToken and cast(NoValueToken, tokens[idx]).token_type == NoValueToken.Type.OPEN_BRACKET):
+        return parse_expression(tokens, idx, result)
+    else:
+        return handle_atom(tokens, idx, result)
 
 
 def run_translator(tokens: list[Token]) -> str:
     idx: int = 0
+    result: Program = Program()
 
     while idx < len(tokens):
         token: Token = tokens[idx]
-        if isinstance(token, NoValueToken) and cast(NoValueToken, token).token_type == NoValueToken.Type.OPEN_BRACKET:
-            idx = parse_expression(tokens, idx + 1)
-            if (idx >= len(tokens) or not isinstance(tokens[idx], NoValueToken) or
-                    cast(NoValueToken, tokens[idx]).token_type != NoValueToken.Type.CLOSE_BRACKET):
-                raise TranslatorException(tokens[idx].starting_char, ")")
-            idx += 1
-        else:
-            raise TranslatorException(tokens[idx].starting_char, "expression")
+        parse_s_expression(tokens, idx, result)
 
 
 def read_program(source: str) -> list[ProgramChar]:
