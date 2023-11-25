@@ -1,138 +1,113 @@
-from computer_simulator.translator import ProgramChar, Token, NoValueToken, ValueToken, TranslatorException
+from computer_simulator.translator import Token
 
 
-def process_whitespace(idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_whitespace(idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    while idx < len(program_chars) and program_char.char in (" ", "\n", "\t"):
-        idx += 1
-        if idx < len(program_chars):
-            program_char = program_chars[idx]
-    return idx
-
-
-def process_brackets(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
-        return idx
-    program_char: ProgramChar = program_chars[idx]
-    if program_char.char == "(":
-        tokens.append(NoValueToken(NoValueToken.Type.OPEN_BRACKET, program_char))
-        idx += 1
-    elif program_char.char == ")":
-        tokens.append(NoValueToken(NoValueToken.Type.CLOSE_BRACKET, program_char))
+    while idx < len(chars) and chars[idx] in (" ", "\n", "\t"):
         idx += 1
     return idx
 
 
-def process_binpos(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_brackets(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    if program_char.char == "+":
-        tokens.append(NoValueToken(NoValueToken.Type.BINOP_PLUS, program_char))
+    if chars[idx] == "(":
+        tokens.append(Token(Token.Type.OPEN_BRACKET, chars[idx]))
         idx += 1
-    elif program_char.char == "-":
-        tokens.append(NoValueToken(NoValueToken.Type.BINOP_MINUS, program_char))
-        idx += 1
-    elif program_char.char == "=":
-        tokens.append(NoValueToken(NoValueToken.Type.BINOP_EQUAL, program_char))
+    elif chars[idx] == ")":
+        tokens.append(Token(Token.Type.CLOSE_BRACKET, chars[idx]))
         idx += 1
     return idx
 
 
-def process_number_literal(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_binpos(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    starting_char: ProgramChar = program_char
-    if program_char.char.isdigit():
+    if chars[idx] in ("+", "-", "*", "/", "="):
+        tokens.append(Token(Token.Type.BINOP, chars[idx]))
+        idx += 1
+    return idx
+
+
+def process_number_literal(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
+        return idx
+    if chars[idx].isdigit():
         value = ""
-        while idx < len(program_chars) and program_char.char.isdigit():
-            value += program_char.char
+        while idx < len(chars) and chars[idx].isdigit():
+            value += chars[idx]
             idx += 1
-            if idx < len(program_chars):
-                program_char = program_chars[idx]
-        tokens.append(ValueToken(ValueToken.Type.INT, value, starting_char))
+        tokens.append(Token(Token.Type.INT, value))
     return idx
 
 
-def process_identifier(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_identifier(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    starting_char: ProgramChar = program_char
-    if program_char.char.isalpha():
+    if chars[idx].isalpha():
         value = ""
-        while idx < len(program_chars) and program_char.char.isalpha():
-            value += program_char.char
+        while idx < len(chars) and chars[idx].isalpha():
+            value += chars[idx]
             idx += 1
-            if idx < len(program_chars):
-                program_char = program_chars[idx]
-        tokens.append(ValueToken(ValueToken.Type.IDENTIFIER, value, starting_char))
+        tokens.append(Token(Token.Type.IDENTIFIER, value))
     return idx
 
 
-def process_string_literal(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_string_literal(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    starting_char: ProgramChar = program_char
-    if program_char.char == '"':
+    if chars[idx] == '"':
         value = ""
         idx += 1
-        if idx < len(program_chars):
-            program_char = program_chars[idx]
-        while idx < len(program_chars) and program_char.char != '"':
-            value += program_char.char
+        while idx < len(chars) and chars[idx] != '"':
+            value += chars[idx]
             idx += 1
-            if idx < len(program_chars):
-                program_char = program_chars[idx]
 
-        if idx >= len(program_chars):
-            raise TranslatorException(program_chars[idx - 1], '"')
+        if idx >= len(chars):
+            raise RuntimeError("Expected closing quote")
 
-        tokens.append(ValueToken(ValueToken.Type.STRING, value, starting_char))
+        tokens.append(Token(Token.Type.STRING, value))
         idx += 1
     return idx
 
 
-def process_booleans(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_booleans(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    if program_char.char == "T":
-        tokens.append(NoValueToken(NoValueToken.Type.TRUE, program_char))
-        idx += 1
-    elif program_char.char == "F":
-        tokens.append(NoValueToken(NoValueToken.Type.FALSE, program_char))
+    if chars[idx] in ("T", "F"):
+        tokens.append(Token(Token.Type.BOOLEAN, chars[idx]))
         idx += 1
     return idx
 
 
-def process_if_statement(tokens: list, idx: int, program_chars: list[ProgramChar]) -> int:
-    if idx >= len(program_chars):
+def process_if_statement(tokens: list, idx: int, chars: str) -> int:
+    if idx >= len(chars):
         return idx
-    program_char: ProgramChar = program_chars[idx]
-    next_char = program_chars[idx + 1] if idx + 1 < len(program_chars) else ""
-    if program_char.char == "i" and next_char.char == "f":
-        tokens.append(NoValueToken(NoValueToken.Type.IF, program_char))
+    if chars[idx] == "i" and idx + 1 < len(chars) and chars[idx + 1] == "f":
+        tokens.append(Token(Token.Type.IF, "if"))
         idx += 2
     return idx
 
 
-def tokenize(program_chars: list[ProgramChar]) -> list[Token]:
+def tokenize(program_chars: str) -> list[Token]:
     tokens: list[Token] = []
     idx: int = 0
 
     while idx < len(program_chars):
-        idx = process_whitespace(idx, program_chars)
-        idx = process_booleans(tokens, idx, program_chars)
-        idx = process_brackets(tokens, idx, program_chars)
-        idx = process_binpos(tokens, idx, program_chars)
-        idx = process_if_statement(tokens, idx, program_chars)
-        idx = process_number_literal(tokens, idx, program_chars)
-        idx = process_string_literal(tokens, idx, program_chars)
-        idx = process_identifier(tokens, idx, program_chars)
+        prev_idx = idx
+
+        prev_idx = process_whitespace(prev_idx, program_chars)
+        prev_idx = process_booleans(tokens, prev_idx, program_chars)
+        prev_idx = process_brackets(tokens, prev_idx, program_chars)
+        prev_idx = process_binpos(tokens, prev_idx, program_chars)
+        prev_idx = process_if_statement(tokens, prev_idx, program_chars)
+        prev_idx = process_number_literal(tokens, prev_idx, program_chars)
+        prev_idx = process_string_literal(tokens, prev_idx, program_chars)
+        prev_idx = process_identifier(tokens, prev_idx, program_chars)
+
+        if prev_idx == idx:
+            raise RuntimeError("Unknown token")
+        idx = prev_idx
 
     return tokens

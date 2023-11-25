@@ -78,7 +78,7 @@ select = [
     "RUF",
 ]
 ignore = [
-    "COM812", # The following rules may cause conflicts when used with the formatter: `COM812`.
+    "COM812", # The following rules may cause jconflicts when used with the formatter: `COM812`.
     "E501", # allow lines longer than 80 symbols (up to 120)
     "T201", # `print` found
     "RUF002", # Docstring contains ambiguous `В` (CYRILLIC CAPITAL LETTER VE). Did you mean `B` (LATIN CAPITAL LETTER B)
