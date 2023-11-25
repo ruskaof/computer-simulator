@@ -81,12 +81,18 @@ def process_booleans(tokens: list, idx: int, chars: str) -> int:
     return idx
 
 
-def process_if_statement(tokens: list, idx: int, chars: str) -> int:
+def process_identifier_like_statement(tokens: list, idx: int, chars: str, token_type: Token.Type, keyword: str) -> int:
     if idx >= len(chars):
         return idx
-    if chars[idx] == "i" and idx + 1 < len(chars) and chars[idx + 1] == "f":
-        tokens.append(Token(Token.Type.IF, "if"))
-        idx += 2
+    value = ""
+    end_idx = idx
+    while end_idx < len(chars) and chars[end_idx].isalpha():
+        value += chars[end_idx]
+        end_idx += 1
+    if value == keyword:
+        tokens.append(Token(token_type, keyword))
+        return end_idx
+
     return idx
 
 
@@ -101,7 +107,8 @@ def tokenize(program_chars: str) -> list[Token]:
         prev_idx = process_booleans(tokens, prev_idx, program_chars)
         prev_idx = process_brackets(tokens, prev_idx, program_chars)
         prev_idx = process_binpos(tokens, prev_idx, program_chars)
-        prev_idx = process_if_statement(tokens, prev_idx, program_chars)
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.IF, "if")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
         prev_idx = process_number_literal(tokens, prev_idx, program_chars)
         prev_idx = process_string_literal(tokens, prev_idx, program_chars)
         prev_idx = process_identifier(tokens, prev_idx, program_chars)

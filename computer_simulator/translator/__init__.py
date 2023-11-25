@@ -3,8 +3,6 @@ from enum import Enum, auto
 from abc import ABC
 from typing import NewType, Optional
 
-MemoryAddress = NewType("MemoryAddress", int)
-
 
 @dataclass
 class Token(ABC):
@@ -16,6 +14,7 @@ class Token(ABC):
         BOOLEAN: int = auto()
         INT: int = auto()
         STRING: int = auto()
+        SETQ: int = auto()
         IDENTIFIER: int = auto()
 
     token_type: Type
