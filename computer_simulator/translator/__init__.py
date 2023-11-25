@@ -16,6 +16,7 @@ class Token(ABC):
         STRING: int = auto()
         SETQ: int = auto()
         IDENTIFIER: int = auto()
+        DEFUN: int = auto()
 
     token_type: Type
     value: str

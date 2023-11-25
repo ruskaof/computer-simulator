@@ -19,6 +19,10 @@ class Opcode(Enum):
     EQ: int = auto()  # AC == M -> AC
     JE: int = auto()  # if AC == 0 then PC = M
     JMP: int = auto()
+    POP: int = auto()
+    PUSH: int = auto()
+    CALL: int = auto()
+    RET: int = auto()
 
 
 class Value:
@@ -37,8 +41,13 @@ class StringValue(Value):
 
 @dataclass
 class Operation:
+    class AddrType(Enum):
+        DATA: int = auto()
+        PROGRAM: int = auto()
+
     opcode: Opcode
     arg: Optional[Value | int]
+    addr_type: Optional[AddrType]
 
 
 class MemoryValue(ABC):
@@ -63,13 +72,15 @@ class StringCharMemoryValue(MemoryValue):
 class Program:
     _runtime_memory: list[MemoryValue | None] = []
     _max_memory_len: int = 0
+    stack_variables: list[str] = []
     operations: list[Operation] = []
     runtime_acc_value: Value | int = 0
     runtime_variables: dict[str, int] = {}
+    functions: dict[str, int] = {}
 
     def load_int(self, value: int) -> None:
         self.runtime_acc_value = IntValue(value)
-        self.operations.append(Operation(Opcode.LD, self.runtime_acc_value))
+        self.operations.append(Operation(Opcode.LD, self.runtime_acc_value, None))
 
     def get_last_operation_address(self) -> int:
         return int(len(self.operations) - 1)
@@ -83,52 +94,31 @@ class Program:
         self._runtime_memory.pop()
 
     def to_machine_code(self) -> str:
-        memory = []
-        ops = []
-        for op in self.operations:
-            res: dict = {"opcode": op.opcode.name}
-            if op.arg is not None:
-                if isinstance(op.arg, IntValue):
-                    res["value_arg"] = op.arg.value
-                elif isinstance(op.arg, StringValue):
-                    res["value_arg"] = op.arg.memory_address
-                elif isinstance(op.arg, int):
-                    res["memory_arg"] = op.arg
-                else:
-                    raise RuntimeError("Unknown arg type")
-            ops.append(res)
-
-        return json.dumps({"memory": memory, "operations": ops}, indent=4)
+        ops = [
+            {
+                "opcode": op.opcode.name,
+                "value_arg": op.arg.value if isinstance(op.arg, IntValue) else op.arg.memory_address if isinstance(
+                    op.arg, StringValue) else op.arg,
+            }
+            for op in self.operations if op.arg is not None
+        ]
+        return json.dumps({"memory": [], "operations": ops}, indent=4)
 
 
 def exec_binop(op: str, second_expr_result_addr: int, program: Program) -> None:
     if op == "+":
-        program.operations.append(Operation(Opcode.ADD, second_expr_result_addr))
+        program.operations.append(Operation(Opcode.ADD, second_expr_result_addr, Operation.AddrType.DATA))
     elif op == "-":
-        program.operations.append(Operation(Opcode.SUB, second_expr_result_addr))
+        program.operations.append(Operation(Opcode.SUB, second_expr_result_addr, Operation.AddrType.DATA))
     elif op == "*":
-        program.operations.append(Operation(Opcode.MUL, second_expr_result_addr))
+        program.operations.append(Operation(Opcode.MUL, second_expr_result_addr, Operation.AddrType.DATA))
     elif op == "/":
-        program.operations.append(Operation(Opcode.DIV, second_expr_result_addr))
+        program.operations.append(Operation(Opcode.DIV, second_expr_result_addr, Operation.AddrType.DATA))
     elif op == "=":
-        program.operations.append(Operation(Opcode.EQ, second_expr_result_addr))
+        program.operations.append(Operation(Opcode.EQ, second_expr_result_addr, Operation.AddrType.DATA))
     else:
         raise RuntimeError("Unknown binop")
 
-
-def skip_expression(tokens: list[Token], idx: int) -> int:
-    if idx >= len(tokens):
-        return idx
-    open_brackets_count: int = 0
-    while idx < len(tokens):
-        if tokens[idx].token_type == Token.Type.OPEN_BRACKET:
-            open_brackets_count += 1
-        elif tokens[idx].token_type == Token.Type.CLOSE_BRACKET:
-            open_brackets_count -= 1
-        if open_brackets_count == 0:
-            return idx + 1
-        idx += 1
-    return idx
 
 def _is_expression_start(tokens: list[Token], idx: int) -> bool:
     return tokens[idx].token_type in (
@@ -140,6 +130,7 @@ def _is_expression_start(tokens: list[Token], idx: int) -> bool:
         Token.Type.IDENTIFIER,
     )
 
+
 def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: bool) -> int:
     if tokens[idx].token_type == Token.Type.CLOSE_BRACKET and started_with_open_bracket:
         return idx + 1
@@ -147,6 +138,7 @@ def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: b
         return idx
     else:
         raise RuntimeError("Expected close bracket")
+
 
 def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
     if idx >= len(tokens):
@@ -165,17 +157,17 @@ def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
     elif tokens[idx].token_type == Token.Type.BINOP:
         first_expr_end_idx: int = execute_expression(tokens, idx + 1, result)
         first_exp_res_addr = result.append_empty_memory()
-        result.operations.append(Operation(Opcode.ST, first_exp_res_addr))
+        result.operations.append(Operation(Opcode.ST, first_exp_res_addr, Operation.AddrType.DATA))
         second_expr_end_idx: int = execute_expression(tokens, first_expr_end_idx, result)
         exec_binop(tokens[idx].value, first_exp_res_addr, result)
         result.pop_memory()
         return get_expr_end_idx(tokens, second_expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IF:
         condition_end_idx: int = execute_expression(tokens, idx + 1, result)
-        result.operations.append(Operation(Opcode.JE, None))
+        result.operations.append(Operation(Opcode.JE, None, Operation.AddrType.PROGRAM))
         je_addr: int = result.get_last_operation_address()
         true_branch_end_idx: int = execute_expression(tokens, condition_end_idx, result)
-        result.operations.append(Operation(Opcode.JMP, None))
+        result.operations.append(Operation(Opcode.JMP, None, Operation.AddrType.PROGRAM))
         jmp_addr: int = result.get_last_operation_address()
         false_branch_memory_addr: int = result.get_last_operation_address() + 1
         false_branch_end_idx: int = execute_expression(tokens, true_branch_end_idx, result)
@@ -186,10 +178,34 @@ def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
             raise RuntimeError("Expected identifier")
         expr_end_idx: int = execute_expression(tokens, idx + 2, result)
-        result.operations.append(Operation(Opcode.ST, result.runtime_variables[tokens[idx + 1].value]))
+        result.operations.append(Operation(Opcode.ST, result.runtime_variables[tokens[idx + 1].value], Operation.AddrType.DATA))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
-        result.operations.append(Operation(Opcode.LD, result.runtime_variables[tokens[idx].value]))
+        result.operations.append(Operation(Opcode.LD, result.runtime_variables[tokens[idx].value], Operation.AddrType.DATA))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.DEFUN:
+        if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
+            raise RuntimeError("Expected identifier")
+        function_name: str = tokens[idx + 1].value
+        if tokens[idx + 2].token_type != Token.Type.OPEN_BRACKET:
+            raise RuntimeError("Expected open bracket")
+        function_args: list[str] = []
+        function_args_end_idx: int = idx + 3
+        result.functions[function_name] = result.get_last_operation_address() + 1
+        while tokens[function_args_end_idx].token_type != Token.Type.CLOSE_BRACKET:
+            if tokens[function_args_end_idx].token_type != Token.Type.IDENTIFIER:
+                raise RuntimeError("Expected identifier")
+            function_args.append(tokens[function_args_end_idx].value)
+            function_args_end_idx += 1
+
+        result.stack_variables += function_args
+        function_body_end_idx: int = execute_expression(tokens, function_args_end_idx + 1, result)
+        for _ in function_args:
+            result.stack_variables.pop()
+            result.operations.append(Operation(Opcode.POP, None, None))
+
+        result.operations.append(Operation(Opcode.RET, None, None))
+        return get_expr_end_idx(tokens, function_body_end_idx, started_with_open_bracket)
+
 
 

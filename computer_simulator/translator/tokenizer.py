@@ -33,24 +33,22 @@ def process_binpos(tokens: list, idx: int, chars: str) -> int:
 def process_number_literal(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
-    if chars[idx].isdigit():
-        value = ""
-        while idx < len(chars) and chars[idx].isdigit():
-            value += chars[idx]
-            idx += 1
-        tokens.append(Token(Token.Type.INT, value))
+    start_idx = idx
+    while idx < len(chars) and chars[idx].isdigit():
+        idx += 1
+    if idx > start_idx:
+        tokens.append(Token(Token.Type.INT, chars[start_idx:idx]))
     return idx
 
 
 def process_identifier(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
-    if chars[idx].isalpha():
-        value = ""
-        while idx < len(chars) and chars[idx].isalpha():
-            value += chars[idx]
-            idx += 1
-        tokens.append(Token(Token.Type.IDENTIFIER, value))
+    start_idx = idx
+    while idx < len(chars) and chars[idx].isalpha():
+        idx += 1
+    if idx > start_idx:
+        tokens.append(Token(Token.Type.IDENTIFIER, chars[start_idx:idx]))
     return idx
 
 
@@ -109,6 +107,7 @@ def tokenize(program_chars: str) -> list[Token]:
         prev_idx = process_binpos(tokens, prev_idx, program_chars)
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.IF, "if")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.DEFUN, "defun")
         prev_idx = process_number_literal(tokens, prev_idx, program_chars)
         prev_idx = process_string_literal(tokens, prev_idx, program_chars)
         prev_idx = process_identifier(tokens, prev_idx, program_chars)
