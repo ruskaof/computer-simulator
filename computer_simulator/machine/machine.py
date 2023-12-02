@@ -3,6 +3,7 @@ from enum import Enum
 from pathlib import Path
 from dataclasses import dataclass
 import json
+from typing import Optional
 
 from computer_simulator.isa import Operation
 
@@ -54,9 +55,12 @@ class AcSelSignal(Enum):
     MEM = 1
     DR = 2
 
+class DrSelSignal(Enum):
+    INSTRUCTION_DECODER = 0
+    MEMORY = 1
+
 class DataPath:
-    memory: list[int]
-    operations: list[Operation]
+    memory: list[Operation | int]
     ports: dict[int, list[int]]
     ip: int = 0 # instruction pointer
     dr: int = 0 # data register
@@ -64,9 +68,8 @@ class DataPath:
     ar: int = 0 # address register
     ac: int = 0 # accumulator
 
-    def __init__(self, data: list[int], operations: list[Operation], ports: dict[int, list[int]]):
-        self.memory = data
-        self.operations = operations
+    def __init__(self, memory: list[Operation | int], ports: dict[int, list[int]]):
+        self.memory = memory
         self.ports = ports
 
     def latch_ip(self, signal: IpSelSignal) -> None:
@@ -85,7 +88,7 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_ar(self, signal: ArSelSignal):
+    def latch_ar(self, signal: ArSelSignal) -> None:
         if signal == ArSelSignal.DR:
             self.ar = self.dr
         elif signal == ArSelSignal.SP:
@@ -95,7 +98,7 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_ac(self, signal):
+    def latch_ac(self, signal: AcSelSignal) -> None:
         if signal == AcSelSignal.IN:
             self.ac = self.memory[self.ar]
         elif signal == AcSelSignal.MEM:
@@ -105,21 +108,25 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
+    def latch_dr(self, signal: DrSelSignal):
+        if signal == DrSelSignal.INSTRUCTION_DECODER:
+            self.dr = self.memory[self.ip].arg
+        elif signal == DrSelSignal.MEMORY:
+            self.dr = self.memory[self.ar]
+        else:
+            self._rase_for_unknown_signal(signal)
+
     def wr(self):
         self.memory[self.ar] = self.ac
-
-    def oe(self):
-
 
     def _rase_for_unknown_signal(self, unknown_signal: any) -> None:
         raise RuntimeError(f"Unknown signal: {unknown_signal}")
 
 
 class Stage(Enum):
-    FETCH = 0
-    DECODE = 1
+    INSTRUCTION_FETCH = 0
+    OPERAND_FETCH = 1
     EXECUTE = 2
-    WRITE_BACK = 3
 
     def next(self) -> 'Stage':
         return Stage((self.value + 1) % Stage.__len__())
@@ -128,11 +135,34 @@ class Stage(Enum):
 class ControlUnit:
     data_path: DataPath
     start_idx: int
-    tick_n = 0
+    tick_n: int = 0
+    stage: Stage = Stage.INSTRUCTION_FETCH
+    decoded_instruction: Optional[Operation] = None
 
     def __init__(self, data_path: DataPath, start_idx: int):
         self.data_path = data_path
         self.start_idx = start_idx
+
+    def tick(self) -> None:
+        if self.stage == Stage.INSTRUCTION_FETCH:
+            self.data_path.latch_ar(ArSelSignal.IP)
+            self.decoded_instruction = self.data_path.oe()
+            self.stage = self.stage.next()
+            self.tick_n += 1
+        elif self.stage == Stage.OPERAND_FETCH:
+            if self.decoded_instruction is None:
+                raise RuntimeError("Instruction is not decoded")
+            if self.decoded_instruction.arg_type == Operation.ArgType.ADDRESS:
+                self.data_path.latch_ar(ArSelSignal.DR)
+                self.data_path.latch_dr(DrSelSignal.INSTRUCTION_DECODER)
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            else:
+                self.stage = self.stage.next()
+                self.tick()
+        elif self.stage == Stage.DECODE:
+
+
 
 
 def simulation(program: BinaryProgram, limit: int):
