@@ -3,26 +3,12 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional
+from jsonpickle import encode
 
 from computer_simulator.translator import Token
 
 
-class Opcode(Enum):
-    # M - memory address or direct value
-    # AC - accumulator
-    LD: int = auto()  # M -> AC
-    ST: int = auto()  # AC -> M
-    ADD: int = auto()  # AC + M -> AC
-    SUB: int = auto()  # AC - M -> AC
-    MUL: int = auto()  # AC * M -> AC
-    DIV: int = auto()  # AC / M -> AC
-    EQ: int = auto()  # AC == M -> AC
-    JE: int = auto()  # if AC == 0 then PC = M
-    JMP: int = auto()
-    POP: int = auto()
-    PUSH: int = auto()
-    CALL: int = auto()
-    RET: int = auto()
+
 
 
 class Value:
