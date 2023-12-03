@@ -4,13 +4,13 @@ import sys
 from pathlib import Path
 
 from computer_simulator.translator import Token
-from computer_simulator.translator.expression_executor import translate_expression, Program
+from computer_simulator.translator.expression_executor import translate_expression, Program, translate_program
 from computer_simulator.translator.tokenizer import tokenize
 
 
 def run_translator(tokens: list[Token]) -> str:
     program: Program = Program()
-    translate_expression(tokens, 0, program)
+    translate_program(tokens, program)
     return program.to_machine_code()
 
 

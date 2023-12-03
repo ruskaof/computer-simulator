@@ -60,7 +60,7 @@ class Program:
 
     def load_string(self, addr: int) -> None:
         self.accum_value_type = AccumValueType.STRING
-        self.operations.append(Operation(Opcode.LD, Arg(addr, ArgType.DATA_ADDRESS)))
+        self.operations.append(Operation(Opcode.LD, Arg(addr, ArgType.DIRECT)))
 
     def get_last_operation_index(self) -> int:
         return int(len(self.operations) - 1)
@@ -69,7 +69,7 @@ class Program:
         self.data_memory.append(PascalStringHeader(len(value)))
         for char in value:
             self.data_memory.append(StringCharacter(char))
-        return len(self.data_memory) - 1
+        return len(self.data_memory) - len(value) - 1
 
     def alloc_variable(self, name: Optional[str] = None) -> int:
         for i in range(len(self.data_memory)):
@@ -225,18 +225,22 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         if result.accum_value_type == AccumValueType.INT:
             result.operations.append(Operation(Opcode.OUT, None))
         else:
+            str_len_addr_idx = result.alloc_variable()
+            result.operations.append(Operation(Opcode.ST, Arg(str_len_addr_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.LD, Arg(str_len_addr_idx, ArgType.INDIRECT_DATA_ADDRESS)))
+
             str_len_idx = result.alloc_variable()
             result.operations.append(Operation(Opcode.ST, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
             current_char_n_idx = result.alloc_variable()
             result.operations.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT)))
             result.operations.append(Operation(Opcode.ST, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+
             cycle_start_idx = len(result.operations)
-            result.operations.append(Operation(Opcode.LD, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
-            result.operations.append(Operation(Opcode.EQ, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.LD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.EQ, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
             je_idx = len(result.operations)
             result.operations.append(Operation(Opcode.JE, None))
-            result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
-            result.operations.append(Operation(Opcode.ADD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.ADD, Arg(str_len_addr_idx, ArgType.DATA_ADDRESS)))
             next_char_addr_idx = result.alloc_variable()
             result.operations.append(Operation(Opcode.ST, Arg(next_char_addr_idx, ArgType.DATA_ADDRESS)))
             result.operations.append(Operation(Opcode.LD, Arg(next_char_addr_idx, ArgType.INDIRECT_DATA_ADDRESS)))
@@ -246,7 +250,13 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
             result.operations.append(Operation(Opcode.ST, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
             result.operations.append(Operation(Opcode.JMP, Arg(cycle_start_idx, ArgType.PROGRAM_ADDRESS)))
             result.operations[je_idx].arg = Arg(len(result.operations), ArgType.PROGRAM_ADDRESS)
+
             result.remove_intermediate_variable(str_len_idx)
             result.remove_intermediate_variable(current_char_n_idx)
             result.remove_intermediate_variable(next_char_addr_idx)
+            result.remove_intermediate_variable(str_len_addr_idx)
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
+
+def translate_program(tokens: list[Token], result: Program) -> None:
+    translate_expression(tokens, 0, result)
+    result.operations.append(Operation(Opcode.HLT, None))

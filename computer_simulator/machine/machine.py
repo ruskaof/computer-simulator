@@ -94,7 +94,7 @@ class Alu:
         if op == AluOp.ADD:
             self.value = (left + right) % WORD_MAX_VALUE
         elif op == AluOp.EQ:
-            self.value = 1 if left == right else 0
+            self.value = 0 if left == right else 1
         else:
             raise RuntimeError(f"Unknown ALU operation: {op}")
         self.set_flags()
@@ -186,6 +186,8 @@ class Stage(Enum):
     def next(self) -> 'Stage':
         return Stage((self.value + 1) % Stage.__len__())
 
+NO_FETCH_OPERAND = [Opcode.JMP, Opcode.JE, Opcode.ST]
+
 
 class ControlUnit:
     data_path: DataPath
@@ -206,9 +208,10 @@ class ControlUnit:
         elif self.stage == Stage.ADDRESS_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            if self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDRESS:
+            if (self.decoded_instruction.arg is not None
+                    and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDRESS):
                 self.data_path.latch_ar(ArSelSignal.DR)
-                self.data_path.latch_dr(DrSelSignal.INSTRUCTION_DECODER)
+                self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.decoded_instruction.arg.type = ArgType.ADDRESS
                 self.decoded_instruction.arg.value = self.data_path.dr
                 self.tick_n += 1
@@ -219,15 +222,18 @@ class ControlUnit:
         elif self.stage == Stage.OPERAND_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            if self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.ADDRESS:
+            if (self.decoded_instruction.arg is not None
+                    and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
+                    and self.decoded_instruction.arg.type == ArgType.ADDRESS):
                 self.data_path.latch_ar(ArSelSignal.DR)
-                self.data_path.latch_dr(DrSelSignal.INSTRUCTION_DECODER)
+                self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
                 self.stage = self.stage.next()
                 self.tick()
         elif self.stage == Stage.EXECUTE:
+            should_inc_ip = True
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
             if self.decoded_instruction.opcode == Opcode.LD:
@@ -235,6 +241,7 @@ class ControlUnit:
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.ST:
+                self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.wr()
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -250,12 +257,14 @@ class ControlUnit:
                 if self.data_path.alu.flag_z:
                     self.data_path.latch_ip(IpSelSignal.DR)
                     self.tick_n += 1
+                    should_inc_ip = False
                 else:
                     self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.JMP:
                 self.data_path.latch_ip(IpSelSignal.DR)
                 self.tick_n += 1
+                should_inc_ip = False
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.POP:
                 self.data_path.latch_sp(SpSelSignal.DEC)
@@ -284,7 +293,8 @@ class ControlUnit:
                 self.stage = self.stage.next()
             else:
                 raise RuntimeError(f"Unknown opcode: {self.decoded_instruction.opcode}")
-            self.data_path.latch_ip(IpSelSignal.INC)
+            if should_inc_ip:
+                self.data_path.latch_ip(IpSelSignal.INC)
 
     def __repr__(self):
         return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, SP: {self.data_path.sp}, "
