@@ -93,11 +93,11 @@ class Alu:
     def perform(self, op: AluOp, left: int, right: int) -> None:
         if op == AluOp.ADD:
             self.value = (left + right) % WORD_MAX_VALUE
+            self.set_flags()
         elif op == AluOp.EQ:
-            self.value = 0 if left == right else 1
+            self.flag_z = left == right
         else:
             raise RuntimeError(f"Unknown ALU operation: {op}")
-        self.set_flags()
 
     def set_flags(self) -> None:
         self.flag_z = self.value == 0
@@ -186,6 +186,7 @@ class Stage(Enum):
     def next(self) -> 'Stage':
         return Stage((self.value + 1) % Stage.__len__())
 
+
 NO_FETCH_OPERAND = [Opcode.JMP, Opcode.JE, Opcode.ST]
 
 
@@ -212,8 +213,6 @@ class ControlUnit:
                     and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDRESS):
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
-                self.decoded_instruction.arg.type = ArgType.ADDRESS
-                self.decoded_instruction.arg.value = self.data_path.dr
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
@@ -224,7 +223,7 @@ class ControlUnit:
                 raise RuntimeError("Instruction is not decoded")
             if (self.decoded_instruction.arg is not None
                     and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                    and self.decoded_instruction.arg.type == ArgType.ADDRESS):
+                    and self.decoded_instruction.arg.type in (ArgType.ADDRESS, ArgType.INDIRECT_ADDRESS)):
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1

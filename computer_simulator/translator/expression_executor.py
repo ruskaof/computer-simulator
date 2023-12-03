@@ -240,6 +240,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
             result.operations.append(Operation(Opcode.EQ, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
             je_idx = len(result.operations)
             result.operations.append(Operation(Opcode.JE, None))
+            result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
             result.operations.append(Operation(Opcode.ADD, Arg(str_len_addr_idx, ArgType.DATA_ADDRESS)))
             next_char_addr_idx = result.alloc_variable()
             result.operations.append(Operation(Opcode.ST, Arg(next_char_addr_idx, ArgType.DATA_ADDRESS)))
