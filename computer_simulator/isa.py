@@ -1,29 +1,36 @@
 from dataclasses import dataclass
 from enum import Enum, auto
+from typing import Optional
 
 
 class Opcode(Enum):
-    LD: int = auto()
-    ST: int = auto()
-    ADD: int = auto()
-    SUB: int = auto()
-    MUL: int = auto()
-    DIV: int = auto()
-    EQ: int = auto()
-    JE: int = auto()
-    JMP: int = auto()
-    POP: int = auto()
-    PUSH: int = auto()
-    CALL: int = auto()
-    RET: int = auto()
+    LD: str = "LD"
+    ST: str = "ST"
+    ADD: str = "ADD"
+    EQ: str = "EQ"
+    JE: str = "JE"
+    JMP: str = "JMP"
+    POP: str = "POP"
+    PUSH: str = "PUSH"
+    CALL: str = "CALL"
+    RET: str = "RET"
+    IN: str = "IN"
+    OUT: str = "OUT"
+    HLT: str = "HLT"
+
+
+class ArgType(Enum):
+    DIRECT: str = "DIRECT"
+    ADDRESS: str = "ADDRESS"
+
+
+@dataclass
+class Arg:
+    value: int
+    type: ArgType
 
 
 @dataclass
 class Operation:
-    class ArgType(Enum):
-        DIRECT: int = auto()
-        ADDRESS: int = auto()
-
     opcode: Opcode
-    arg: int
-    arg_type: ArgType
+    arg: Optional[Arg]

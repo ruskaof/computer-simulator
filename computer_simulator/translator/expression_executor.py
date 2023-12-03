@@ -3,12 +3,9 @@ from abc import ABC
 from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Optional
-from jsonpickle import encode
 
+from computer_simulator.isa import Opcode
 from computer_simulator.translator import Token
-
-
-
 
 
 class Value:
@@ -94,12 +91,6 @@ class Program:
 def exec_binop(op: str, second_expr_result_addr: int, program: Program) -> None:
     if op == "+":
         program.operations.append(Operation(Opcode.ADD, second_expr_result_addr, Operation.AddrType.DATA))
-    elif op == "-":
-        program.operations.append(Operation(Opcode.SUB, second_expr_result_addr, Operation.AddrType.DATA))
-    elif op == "*":
-        program.operations.append(Operation(Opcode.MUL, second_expr_result_addr, Operation.AddrType.DATA))
-    elif op == "/":
-        program.operations.append(Operation(Opcode.DIV, second_expr_result_addr, Operation.AddrType.DATA))
     elif op == "=":
         program.operations.append(Operation(Opcode.EQ, second_expr_result_addr, Operation.AddrType.DATA))
     else:
@@ -126,7 +117,7 @@ def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: b
         raise RuntimeError("Expected close bracket")
 
 
-def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
+def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     if idx >= len(tokens):
         return idx
     elif not _is_expression_start(tokens, idx):
@@ -141,33 +132,35 @@ def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.load_int(int(tokens[idx].value))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.BINOP:
-        first_expr_end_idx: int = execute_expression(tokens, idx + 1, result)
+        first_expr_end_idx: int = translate_expression(tokens, idx + 1, result)
         first_exp_res_addr = result.append_empty_memory()
         result.operations.append(Operation(Opcode.ST, first_exp_res_addr, Operation.AddrType.DATA))
-        second_expr_end_idx: int = execute_expression(tokens, first_expr_end_idx, result)
+        second_expr_end_idx: int = translate_expression(tokens, first_expr_end_idx, result)
         exec_binop(tokens[idx].value, first_exp_res_addr, result)
         result.pop_memory()
         return get_expr_end_idx(tokens, second_expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IF:
-        condition_end_idx: int = execute_expression(tokens, idx + 1, result)
+        condition_end_idx: int = translate_expression(tokens, idx + 1, result)
         result.operations.append(Operation(Opcode.JE, None, Operation.AddrType.PROGRAM))
         je_addr: int = result.get_last_operation_address()
-        true_branch_end_idx: int = execute_expression(tokens, condition_end_idx, result)
+        true_branch_end_idx: int = translate_expression(tokens, condition_end_idx, result)
         result.operations.append(Operation(Opcode.JMP, None, Operation.AddrType.PROGRAM))
         jmp_addr: int = result.get_last_operation_address()
         false_branch_memory_addr: int = result.get_last_operation_address() + 1
-        false_branch_end_idx: int = execute_expression(tokens, true_branch_end_idx, result)
+        false_branch_end_idx: int = translate_expression(tokens, true_branch_end_idx, result)
         result.operations[je_addr].arg = false_branch_memory_addr
         result.operations[jmp_addr].arg = result.get_last_operation_address() + 1
         return get_expr_end_idx(tokens, false_branch_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.SETQ:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
             raise RuntimeError("Expected identifier")
-        expr_end_idx: int = execute_expression(tokens, idx + 2, result)
-        result.operations.append(Operation(Opcode.ST, result.runtime_variables[tokens[idx + 1].value], Operation.AddrType.DATA))
+        expr_end_idx: int = translate_expression(tokens, idx + 2, result)
+        result.operations.append(
+            Operation(Opcode.ST, result.runtime_variables[tokens[idx + 1].value], Operation.AddrType.DATA))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
-        result.operations.append(Operation(Opcode.LD, result.runtime_variables[tokens[idx].value], Operation.AddrType.DATA))
+        result.operations.append(
+            Operation(Opcode.LD, result.runtime_variables[tokens[idx].value], Operation.AddrType.DATA))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.DEFUN:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
@@ -185,13 +178,10 @@ def execute_expression(tokens: list[Token], idx: int, result: Program) -> int:
             function_args_end_idx += 1
 
         result.stack_variables += function_args
-        function_body_end_idx: int = execute_expression(tokens, function_args_end_idx + 1, result)
+        function_body_end_idx: int = translate_expression(tokens, function_args_end_idx + 1, result)
         for _ in function_args:
             result.stack_variables.pop()
             result.operations.append(Operation(Opcode.POP, None, None))
 
         result.operations.append(Operation(Opcode.RET, None, None))
         return get_expr_end_idx(tokens, function_body_end_idx, started_with_open_bracket)
-
-
-

@@ -1,0 +1,24 @@
+{
+    "memory": [
+        1,
+        0,
+        {
+            "opcode": "ADD",
+            "arg": {
+                "value": 42,
+                "type": "DIRECT"
+            }
+        },
+        {
+            "opcode": "ADD",
+            "arg": {
+                "value": 0,
+                "type": "ADDRESS"
+            }
+        },
+        {
+            "opcode": "HLT"
+        }
+    ],
+    "start_idx": 2
+}
