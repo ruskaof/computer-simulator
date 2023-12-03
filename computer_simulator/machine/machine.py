@@ -179,8 +179,9 @@ class DataPath:
 
 class Stage(Enum):
     INSTRUCTION_FETCH = 0
-    OPERAND_FETCH = 1
-    EXECUTE = 2
+    ADDRESS_FETCH = 1
+    OPERAND_FETCH = 2
+    EXECUTE = 3
 
     def next(self) -> 'Stage':
         return Stage((self.value + 1) % Stage.__len__())
@@ -202,6 +203,19 @@ class ControlUnit:
             self.decoded_instruction = self.data_path.latch_dr(DrSelSignal.INSTRUCTION_DECODER)
             self.stage = self.stage.next()
             self.tick_n += 1
+        elif self.stage == Stage.ADDRESS_FETCH:
+            if self.decoded_instruction is None:
+                raise RuntimeError("Instruction is not decoded")
+            if self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDRESS:
+                self.data_path.latch_ar(ArSelSignal.DR)
+                self.data_path.latch_dr(DrSelSignal.INSTRUCTION_DECODER)
+                self.decoded_instruction.arg.type = ArgType.ADDRESS
+                self.decoded_instruction.arg.value = self.data_path.dr
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            else:
+                self.stage = self.stage.next()
+                self.tick()
         elif self.stage == Stage.OPERAND_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")

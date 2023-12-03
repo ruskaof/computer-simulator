@@ -19,9 +19,11 @@ class Opcode(Enum):
     HLT: str = "HLT"
 
 
+
 class ArgType(Enum):
     DIRECT: str = "DIRECT"
     ADDRESS: str = "ADDRESS"
+    INDIRECT_ADDRESS: str = "INDIRECT_ADDRESS"
 
 
 @dataclass

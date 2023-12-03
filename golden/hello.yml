@@ -1,0 +1,7 @@
+source: |-
+  ((setq a "hello") (print a))
+input: |-
+  foo
+code:
+output:
+log:

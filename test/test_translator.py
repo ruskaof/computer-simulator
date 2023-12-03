@@ -12,6 +12,7 @@ def test_whitespace_processing_handles_only_whitespace():
     result = tokenize("   \n\t  ")
     assert result == []
 
+
 def test_number_literal_processing_handles_non_numeric_input():
     result = tokenize("abc")
     assert result == [Token(Token.Type.IDENTIFIER, "abc")]
@@ -50,6 +51,7 @@ def test_tokenize_handles_complex_input():
         Token(Token.Type.IDENTIFIER, "eee"),
         Token(Token.Type.CLOSE_BRACKET, ")"),
     ]
+
 
 def test_tokenize_handles_complex_input2():
     result = tokenize("(+ (1) (2))")

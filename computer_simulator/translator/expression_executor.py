@@ -1,98 +1,147 @@
 import json
-from abc import ABC
 from dataclasses import dataclass
-from enum import Enum, auto
+from enum import Enum
 from typing import Optional
 
 from computer_simulator.isa import Opcode
 from computer_simulator.translator import Token
 
+EXPECTED_IDENTIFIER = "Expected identifier"
 
-class Value:
-    pass
+
+class ArgType(Enum):
+    DIRECT: str = "DIRECT"
+    DATA_ADDRESS: str = "DATA_ADDRESS"
+    INDIRECT_DATA_ADDRESS: str = "INDIRECT_DATA_ADDRESS"
+    PROGRAM_ADDRESS: str = "PROGRAM_ADDRESS"
 
 
 @dataclass
-class IntValue(Value):
+class Arg:
     value: int
-
-
-@dataclass
-class StringValue(Value):
-    memory_address: int
+    type: ArgType
 
 
 @dataclass
 class Operation:
-    class AddrType(Enum):
-        DATA: int = auto()
-        PROGRAM: int = auto()
-
     opcode: Opcode
-    arg: Optional[Value | int]
-    addr_type: Optional[AddrType]
-
-
-class MemoryValue(ABC):
-    pass
+    arg: Optional[Arg]
 
 
 @dataclass
-class IntMemoryValue(MemoryValue):
-    value: int
+class Variable:
+    name: Optional[str]
+    died: bool
 
 
 @dataclass
-class StringHeaderMemoryValue(MemoryValue):
+class PascalStringHeader:
     length: int
 
 
 @dataclass
-class StringCharMemoryValue(MemoryValue):
-    char: str
+class StringCharacter:
+    value: str
+
+
+class AccumValueType(Enum):
+    INT: str = "INT"
+    STRING: str = "STRING"
 
 
 class Program:
-    _runtime_memory: list[MemoryValue | None] = []
-    _max_memory_len: int = 0
-    stack_variables: list[str] = []
+    data_memory: list[Variable | PascalStringHeader | StringCharacter] = []
     operations: list[Operation] = []
-    runtime_acc_value: Value | int = 0
-    runtime_variables: dict[str, int] = {}
-    functions: dict[str, int] = {}
+    accum_value_type: AccumValueType = AccumValueType.INT
 
     def load_int(self, value: int) -> None:
-        self.runtime_acc_value = IntValue(value)
-        self.operations.append(Operation(Opcode.LD, self.runtime_acc_value, None))
+        self.accum_value_type = AccumValueType.INT
+        self.operations.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
 
-    def get_last_operation_address(self) -> int:
+    def load_string(self, addr: int) -> None:
+        self.accum_value_type = AccumValueType.STRING
+        self.operations.append(Operation(Opcode.LD, Arg(addr, ArgType.DATA_ADDRESS)))
+
+    def get_last_operation_index(self) -> int:
         return int(len(self.operations) - 1)
 
-    def append_empty_memory(self) -> int:
-        self._runtime_memory.append(None)
-        self._max_memory_len = max(self._max_memory_len, len(self._runtime_memory))
-        return len(self._runtime_memory) - 1
+    def alloc_string(self, value: str) -> int:
+        self.data_memory.append(PascalStringHeader(len(value)))
+        for char in value:
+            self.data_memory.append(StringCharacter(char))
+        return len(self.data_memory) - 1
 
-    def pop_memory(self) -> None:
-        self._runtime_memory.pop()
+    def alloc_variable(self, name: Optional[str] = None) -> int:
+        for i in range(len(self.data_memory)):
+            if isinstance(self.data_memory[i], Variable) and self.data_memory[i].died:
+                self.data_memory[i].died = False
+                self.data_memory[i].name = name
+                return i
+
+        self.data_memory.append(Variable(name, False))
+        return len(self.data_memory) - 1
+
+    def remove_intermediate_variable(self, addr: int) -> None:
+        self.data_memory[addr].died = True
+
+    def get_variable_address(self, name: str) -> int:
+        for i in range(len(self.data_memory)):
+            if isinstance(self.data_memory[i], Variable) and self.data_memory[i].name == name:
+                return i
+        raise RuntimeError(f"Variable {name} not found")
 
     def to_machine_code(self) -> str:
-        ops = [
+        instructions_offset: int = len(self.data_memory)
+        memory = []
+
+        for memory_item in self.data_memory:
+            if isinstance(memory_item, Variable):
+                memory.append(0)
+            elif isinstance(memory_item, PascalStringHeader):
+                memory.append(memory_item.length)
+            elif isinstance(memory_item, StringCharacter):
+                memory.append(ord(memory_item.value))
+            else:
+                raise RuntimeError("Unknown memory item")
+
+        for operation in self.operations:
+            instruction_dict = {"opcode": operation.opcode.value}
+            if operation.arg is not None:
+                if operation.arg.type == ArgType.PROGRAM_ADDRESS:
+                    instruction_dict["arg"] = {
+                        "value": operation.arg.value + instructions_offset,
+                        "type": "ADDRESS"
+                    }
+                elif operation.arg.type == ArgType.DATA_ADDRESS:
+                    instruction_dict["arg"] = {
+                        "value": operation.arg.value,
+                        "type": "ADDRESS"
+                    }
+                elif operation.arg.type == ArgType.DIRECT:
+                    instruction_dict["arg"] = {
+                        "value": operation.arg.value,
+                        "type": "DIRECT"
+                    }
+                elif operation.arg.type == ArgType.INDIRECT_DATA_ADDRESS:
+                    instruction_dict["arg"] = {
+                        "value": operation.arg.value,
+                        "type": "INDIRECT_ADDRESS"
+                    }
+            memory.append(instruction_dict)
+
+        return json.dumps(
             {
-                "opcode": op.opcode.name,
-                "value_arg": op.arg.value if isinstance(op.arg, IntValue) else op.arg.memory_address if isinstance(
-                    op.arg, StringValue) else op.arg,
-            }
-            for op in self.operations if op.arg is not None
-        ]
-        return json.dumps({"memory": [], "operations": ops}, indent=4)
+                "start_idx": instructions_offset,
+                "memory": memory,
+            },
+            indent=4)
 
 
 def exec_binop(op: str, second_expr_result_addr: int, program: Program) -> None:
     if op == "+":
-        program.operations.append(Operation(Opcode.ADD, second_expr_result_addr, Operation.AddrType.DATA))
+        program.operations.append(Operation(Opcode.ADD, Arg(second_expr_result_addr, ArgType.DATA_ADDRESS)))
     elif op == "=":
-        program.operations.append(Operation(Opcode.EQ, second_expr_result_addr, Operation.AddrType.DATA))
+        program.operations.append(Operation(Opcode.EQ, Arg(second_expr_result_addr, ArgType.DATA_ADDRESS)))
     else:
         raise RuntimeError("Unknown binop")
 
@@ -105,13 +154,14 @@ def _is_expression_start(tokens: list[Token], idx: int) -> bool:
         Token.Type.IF,
         Token.Type.SETQ,
         Token.Type.IDENTIFIER,
+        Token.Type.STRING,
     )
 
 
 def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: bool) -> int:
     if tokens[idx].token_type == Token.Type.CLOSE_BRACKET and started_with_open_bracket:
         return idx + 1
-    elif tokens[idx].token_type != Token.Type.CLOSE_BRACKET and not started_with_open_bracket:
+    elif not started_with_open_bracket:
         return idx
     else:
         raise RuntimeError("Expected close bracket")
@@ -133,55 +183,70 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.BINOP:
         first_expr_end_idx: int = translate_expression(tokens, idx + 1, result)
-        first_exp_res_addr = result.append_empty_memory()
-        result.operations.append(Operation(Opcode.ST, first_exp_res_addr, Operation.AddrType.DATA))
+        first_exp_res_addr = result.alloc_variable()
+        result.operations.append(Operation(Opcode.ST, Arg(first_exp_res_addr, ArgType.DATA_ADDRESS)))
         second_expr_end_idx: int = translate_expression(tokens, first_expr_end_idx, result)
         exec_binop(tokens[idx].value, first_exp_res_addr, result)
-        result.pop_memory()
+        result.remove_intermediate_variable(first_exp_res_addr)
         return get_expr_end_idx(tokens, second_expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IF:
         condition_end_idx: int = translate_expression(tokens, idx + 1, result)
-        result.operations.append(Operation(Opcode.JE, None, Operation.AddrType.PROGRAM))
-        je_addr: int = result.get_last_operation_address()
+        je_idx: int = len(result.operations)
+        result.operations.append(Operation(Opcode.JE, None))
         true_branch_end_idx: int = translate_expression(tokens, condition_end_idx, result)
-        result.operations.append(Operation(Opcode.JMP, None, Operation.AddrType.PROGRAM))
-        jmp_addr: int = result.get_last_operation_address()
-        false_branch_memory_addr: int = result.get_last_operation_address() + 1
+        jmp_idx: int = len(result.operations)
+        result.operations.append(Operation(Opcode.JMP, None))
+        false_branch_memory_idx: int = len(result.operations)
         false_branch_end_idx: int = translate_expression(tokens, true_branch_end_idx, result)
-        result.operations[je_addr].arg = false_branch_memory_addr
-        result.operations[jmp_addr].arg = result.get_last_operation_address() + 1
+        result.operations[je_idx].arg = false_branch_memory_idx
+        result.operations[jmp_idx].arg = len(result.operations)
         return get_expr_end_idx(tokens, false_branch_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.SETQ:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
-            raise RuntimeError("Expected identifier")
+            raise RuntimeError(EXPECTED_IDENTIFIER)
         expr_end_idx: int = translate_expression(tokens, idx + 2, result)
-        result.operations.append(
-            Operation(Opcode.ST, result.runtime_variables[tokens[idx + 1].value], Operation.AddrType.DATA))
+        var_idx: int = result.alloc_variable(tokens[idx + 1].value)
+        result.operations.append(Operation(Opcode.ST, Arg(var_idx, ArgType.DATA_ADDRESS)))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
         result.operations.append(
-            Operation(Opcode.LD, result.runtime_variables[tokens[idx].value], Operation.AddrType.DATA))
+            Operation(Opcode.LD, Arg(result.get_variable_address(tokens[idx].value), ArgType.DATA_ADDRESS)))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
-    elif tokens[idx].token_type == Token.Type.DEFUN:
-        if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
-            raise RuntimeError("Expected identifier")
-        function_name: str = tokens[idx + 1].value
-        if tokens[idx + 2].token_type != Token.Type.OPEN_BRACKET:
-            raise RuntimeError("Expected open bracket")
-        function_args: list[str] = []
-        function_args_end_idx: int = idx + 3
-        result.functions[function_name] = result.get_last_operation_address() + 1
-        while tokens[function_args_end_idx].token_type != Token.Type.CLOSE_BRACKET:
-            if tokens[function_args_end_idx].token_type != Token.Type.IDENTIFIER:
-                raise RuntimeError("Expected identifier")
-            function_args.append(tokens[function_args_end_idx].value)
-            function_args_end_idx += 1
-
-        result.stack_variables += function_args
-        function_body_end_idx: int = translate_expression(tokens, function_args_end_idx + 1, result)
-        for _ in function_args:
-            result.stack_variables.pop()
-            result.operations.append(Operation(Opcode.POP, None, None))
-
-        result.operations.append(Operation(Opcode.RET, None, None))
-        return get_expr_end_idx(tokens, function_body_end_idx, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.OPEN_BRACKET:
+        while tokens[idx].token_type == Token.Type.OPEN_BRACKET:
+            idx = translate_expression(tokens, idx, result)
+        return get_expr_end_idx(tokens, idx, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.STRING:
+        string_addr = result.alloc_string(tokens[idx].value)
+        result.load_string(string_addr)
+        return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.PRINT:
+        idx = translate_expression(tokens, idx + 1, result)
+        if result.accum_value_type == AccumValueType.INT:
+            result.operations.append(Operation(Opcode.OUT, None))
+        else:
+            str_len_idx = result.alloc_variable()
+            result.operations.append(Operation(Opcode.ST, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
+            current_char_n_idx = result.alloc_variable()
+            result.operations.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT)))
+            result.operations.append(Operation(Opcode.ST, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            cycle_start_idx = len(result.operations)
+            result.operations.append(Operation(Opcode.LD, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.EQ, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            je_idx = len(result.operations)
+            result.operations.append(Operation(Opcode.JE, None))
+            result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
+            result.operations.append(Operation(Opcode.ADD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            next_char_addr_idx = result.alloc_variable()
+            result.operations.append(Operation(Opcode.ST, Arg(next_char_addr_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.LD, Arg(next_char_addr_idx, ArgType.INDIRECT_DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.OUT, None))
+            result.operations.append(Operation(Opcode.LD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
+            result.operations.append(Operation(Opcode.ST, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.JMP, Arg(cycle_start_idx, ArgType.PROGRAM_ADDRESS)))
+            result.operations[je_idx].arg = Arg(len(result.operations), ArgType.PROGRAM_ADDRESS)
+            result.remove_intermediate_variable(str_len_idx)
+            result.remove_intermediate_variable(current_char_n_idx)
+            result.remove_intermediate_variable(next_char_addr_idx)
+        return get_expr_end_idx(tokens, idx, started_with_open_bracket)
