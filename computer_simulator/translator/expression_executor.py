@@ -67,8 +67,12 @@ class Program:
 
     def alloc_string(self, value: str) -> int:
         self.data_memory.append(PascalStringHeader(len(value)))
+        self.operations.append(Operation(Opcode.LD, Arg(len(value), ArgType.DIRECT)))
+        self.operations.append(Operation(Opcode.ST, Arg(len(self.data_memory) - 1, ArgType.DATA_ADDRESS)))
         for char in value:
             self.data_memory.append(StringCharacter(char))
+            self.operations.append(Operation(Opcode.LD, Arg(ord(char), ArgType.DIRECT)))
+            self.operations.append(Operation(Opcode.ST, Arg(len(self.data_memory) - 1, ArgType.DATA_ADDRESS)))
         return len(self.data_memory) - len(value) - 1
 
     def alloc_variable(self, name: Optional[str] = None) -> int:
@@ -98,9 +102,9 @@ class Program:
             if isinstance(memory_item, Variable):
                 memory.append(0)
             elif isinstance(memory_item, PascalStringHeader):
-                memory.append(memory_item.length)
+                memory.append(0)
             elif isinstance(memory_item, StringCharacter):
-                memory.append(ord(memory_item.value))
+                memory.append(0)
             else:
                 raise RuntimeError("Unknown memory item")
 
@@ -257,6 +261,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
             result.remove_intermediate_variable(next_char_addr_idx)
             result.remove_intermediate_variable(str_len_addr_idx)
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
+
 
 def translate_program(tokens: list[Token], result: Program) -> None:
     translate_expression(tokens, 0, result)
