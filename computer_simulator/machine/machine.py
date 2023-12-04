@@ -87,8 +87,10 @@ class AluOp(Enum):
 
 
 class Alu:
-    value: int = 0
-    flag_z: bool = True
+
+    def __init__(self):
+        self.value: int = 0
+        self.flag_z: bool = True
 
     def perform(self, op: AluOp, left: int, right: int) -> None:
         if op == AluOp.ADD:
@@ -105,19 +107,16 @@ class Alu:
 
 
 class DataPath:
-    memory: list[Operation | int]
-    ports: dict[str, list[int]]
-    alu: Alu = Alu()
-    ip: int = 0  # instruction pointer
-    dr: int = 0  # data register
-    sp: int = 0  # stack pointer
-    ar: int = 0  # address register
-    ac: int = 0  # accumulator
 
     def __init__(self, memory: list[Operation | int], ports: dict[str, list[int]], start_idx: int) -> None:
-        self.memory = memory
-        self.ports = ports
-        self.ip = start_idx
+        self.memory: list[Operation | int] = memory
+        self.ports: dict[str, list[int]] = ports
+        self.alu: Alu = Alu()
+        self.ip: int = start_idx  # instruction pointer
+        self.dr: int = 0  # data register
+        self.sp: int = 0  # stack pointer
+        self.ar: int = 0  # address register
+        self.ac: int = 0  # accumulator
 
     def latch_ip(self, signal: IpSelSignal) -> None:
         if signal == IpSelSignal.INC:
@@ -197,14 +196,14 @@ NO_FETCH_OPERAND = [
 
 
 class ControlUnit:
-    data_path: DataPath
-    tick_n: int = 0
-    stage: Stage = Stage.INSTRUCTION_FETCH
-    decoded_instruction: Optional[Operation] = None
-    halted: bool = False
 
     def __init__(self, data_path: DataPath):
-        self.data_path = data_path
+        self.data_path: DataPath = data_path
+        self.tick_n: int = 0
+        self.stage: Stage = Stage.INSTRUCTION_FETCH
+        self.decoded_instruction: Optional[Operation] = None
+        self.halted: bool = False
+        self.executed_instruction_n: int = 0
 
     def tick(self) -> None:
         if self.stage == Stage.INSTRUCTION_FETCH:
@@ -308,6 +307,7 @@ class ControlUnit:
                 raise RuntimeError(f"Unknown opcode: {self.decoded_instruction.opcode}")
             if should_inc_ip:
                 self.data_path.latch_ip(IpSelSignal.INC)
+            self.executed_instruction_n += 1
 
     def __repr__(self):
         return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, SP: {self.data_path.sp}, "
@@ -315,16 +315,20 @@ class ControlUnit:
                 f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}")
 
 
-def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> list[int]:
-    data_path = DataPath(program.memory, {Port.IN.name: program_input, Port.OUT.name: []}, program.start_idx)
-    control_unit = ControlUnit(data_path)
+def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> tuple[list[int], int, int]:
+    """
+    Simulate program execution
+    :return: output, instructions_n, ticks_n
+    """
+    data_path: DataPath = DataPath(program.memory, {Port.IN.name: program_input, Port.OUT.name: []}, program.start_idx)
+    control_unit: ControlUnit = ControlUnit(data_path)
 
     logging.debug("%s", control_unit)
     while not control_unit.halted and control_unit.tick_n < limit:
         control_unit.tick()
         logging.debug("%s", control_unit)
 
-    return data_path.ports[Port.OUT.name]
+    return data_path.ports[Port.OUT.name], control_unit.executed_instruction_n, control_unit.tick_n
 
 
 def main(code: str, input_file: str) -> None:
@@ -333,7 +337,8 @@ def main(code: str, input_file: str) -> None:
 
     result = simulation(program, limit=1000, program_input=program_input)
 
-    print("".join(chr(c) for c in result))
+    print("".join([chr(c) for c in result[0]]))
+    print(f"instructions_n: {result[1]} ticks: {result[2]}")
 
 
 if __name__ == '__main__':

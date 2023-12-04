@@ -251,8 +251,11 @@ code: |-
   }
 
 output: |
+  source LoC: 1 code instr: 34
   ============================================================
   hello
+  instructions_n: 90 ticks: 221
+
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 11, DR: 0, SP: 0, AR: 0, AC: 0, ALU: 0, Z: True, INSTR: None
   DEBUG   machine:simulation    TICK: 1, IP: 11, DR: 5, SP: 0, AR: 11, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=5, type=<ArgType.DIRECT: 'DIRECT'>))

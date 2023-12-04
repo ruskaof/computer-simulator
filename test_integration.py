@@ -17,14 +17,14 @@ from computer_simulator.machine import machine
 from computer_simulator.translator import translator
 
 
-@pytest.mark.golden_test("../golden/*.yml")
+@pytest.mark.golden_test("golden/*.yml")
 def test_whole_by_golden(golden, caplog):
     caplog.set_level(logging.DEBUG)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        source = os.path.join(tmpdirname, "source.bf")
-        input_stream = os.path.join(tmpdirname, "input.txt")
-        target = os.path.join(tmpdirname, "target.o")
+        source = os.path.join(tmpdirname, "source")
+        input_stream = os.path.join(tmpdirname, "input")
+        target = os.path.join(tmpdirname, "target")
 
         with open(source, "w", encoding="utf-8") as file:
             file.write(golden["source"])

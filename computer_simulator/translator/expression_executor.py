@@ -50,9 +50,10 @@ class AccumValueType(Enum):
 
 
 class Program:
-    data_memory: list[Variable | PascalStringHeader | StringCharacter] = []
-    operations: list[Operation] = []
-    accum_value_type: AccumValueType = AccumValueType.INT
+    def __init__(self):
+        self.data_memory: list[Variable | PascalStringHeader | StringCharacter] = []
+        self.operations: list[Operation] = []
+        self.accum_value_type: AccumValueType = AccumValueType.INT
 
     def load_int(self, value: int) -> None:
         self.accum_value_type = AccumValueType.INT
