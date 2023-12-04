@@ -109,6 +109,7 @@ def tokenize(program_chars: str) -> list[Token]:
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.DEFUN, "defun")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT, "print")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PROGN, "progn")
         prev_idx = process_number_literal(tokens, prev_idx, program_chars)
         prev_idx = process_string_literal(tokens, prev_idx, program_chars)
         prev_idx = process_identifier(tokens, prev_idx, program_chars)

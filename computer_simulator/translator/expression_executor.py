@@ -217,7 +217,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.operations.append(
             Operation(Opcode.LD, Arg(result.get_variable_address(tokens[idx].value), ArgType.DATA_ADDRESS)))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
-    elif tokens[idx].token_type == Token.Type.OPEN_BRACKET:
+    elif tokens[idx].token_type == Token.Type.PROGN:
+        idx += 1
         while tokens[idx].token_type == Token.Type.OPEN_BRACKET:
             idx = translate_expression(tokens, idx, result)
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)

@@ -18,6 +18,7 @@ class Token(ABC):
         IDENTIFIER: int = auto()
         DEFUN: int = auto()
         PRINT: int = auto()
+        PROGN: int = auto()
 
     token_type: Type
     value: str

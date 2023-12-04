@@ -1,5 +1,5 @@
 source: |-
-  ((setq a "hello") (print a))
+  (progn (setq a "hello") (print a))
 input: |-
   foo
 code: |-

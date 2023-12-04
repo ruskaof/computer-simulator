@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import List
 
 from computer_simulator.translator import Token
 from computer_simulator.translator.expression_executor import translate_expression, Program, translate_program
