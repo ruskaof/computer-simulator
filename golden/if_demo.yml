@@ -340,6 +340,7 @@ log: |
   DEBUG   machine:simulation    TICK: 61, IP: 39, DR: 84, SP: 0, AR: 3, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 62, IP: 40, DR: 84, SP: 0, AR: 3, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 63, IP: 40, DR: 84, SP: 0, AR: 40, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 84 - "T"
   DEBUG   machine:simulation    TICK: 64, IP: 41, DR: 84, SP: 0, AR: 40, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 65, IP: 41, DR: 7, SP: 0, AR: 41, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 66, IP: 41, DR: 0, SP: 0, AR: 7, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))

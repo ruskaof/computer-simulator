@@ -324,6 +324,7 @@ log: |
   DEBUG   machine:simulation    TICK: 64, IP: 38, DR: 104, SP: 0, AR: 1, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 65, IP: 39, DR: 104, SP: 0, AR: 1, AC: 104, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 66, IP: 39, DR: 104, SP: 0, AR: 39, AC: 104, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 104 - "h"
   DEBUG   machine:simulation    TICK: 67, IP: 40, DR: 104, SP: 0, AR: 39, AC: 104, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 68, IP: 40, DR: 9, SP: 0, AR: 40, AC: 104, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 69, IP: 40, DR: 0, SP: 0, AR: 9, AC: 104, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
@@ -357,6 +358,7 @@ log: |
   DEBUG   machine:simulation    TICK: 97, IP: 38, DR: 101, SP: 0, AR: 2, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 98, IP: 39, DR: 101, SP: 0, AR: 2, AC: 101, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 99, IP: 39, DR: 101, SP: 0, AR: 39, AC: 101, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 101 - "e"
   DEBUG   machine:simulation    TICK: 100, IP: 40, DR: 101, SP: 0, AR: 39, AC: 101, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 101, IP: 40, DR: 9, SP: 0, AR: 40, AC: 101, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 102, IP: 40, DR: 1, SP: 0, AR: 9, AC: 101, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
@@ -390,6 +392,7 @@ log: |
   DEBUG   machine:simulation    TICK: 130, IP: 38, DR: 108, SP: 0, AR: 3, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 131, IP: 39, DR: 108, SP: 0, AR: 3, AC: 108, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 132, IP: 39, DR: 108, SP: 0, AR: 39, AC: 108, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 108 - "l"
   DEBUG   machine:simulation    TICK: 133, IP: 40, DR: 108, SP: 0, AR: 39, AC: 108, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 134, IP: 40, DR: 9, SP: 0, AR: 40, AC: 108, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 135, IP: 40, DR: 2, SP: 0, AR: 9, AC: 108, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
@@ -423,6 +426,7 @@ log: |
   DEBUG   machine:simulation    TICK: 163, IP: 38, DR: 108, SP: 0, AR: 4, AC: 4, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 164, IP: 39, DR: 108, SP: 0, AR: 4, AC: 108, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 165, IP: 39, DR: 108, SP: 0, AR: 39, AC: 108, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 108 - "l"
   DEBUG   machine:simulation    TICK: 166, IP: 40, DR: 108, SP: 0, AR: 39, AC: 108, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 167, IP: 40, DR: 9, SP: 0, AR: 40, AC: 108, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 168, IP: 40, DR: 3, SP: 0, AR: 9, AC: 108, ALU: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
@@ -456,6 +460,7 @@ log: |
   DEBUG   machine:simulation    TICK: 196, IP: 38, DR: 111, SP: 0, AR: 5, AC: 5, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 197, IP: 39, DR: 111, SP: 0, AR: 5, AC: 111, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=10, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
   DEBUG   machine:simulation    TICK: 198, IP: 39, DR: 111, SP: 0, AR: 39, AC: 111, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 111 - "o"
   DEBUG   machine:simulation    TICK: 199, IP: 40, DR: 111, SP: 0, AR: 39, AC: 111, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
   DEBUG   machine:simulation    TICK: 200, IP: 40, DR: 9, SP: 0, AR: 40, AC: 111, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))
   DEBUG   machine:simulation    TICK: 201, IP: 40, DR: 4, SP: 0, AR: 9, AC: 111, ALU: 5, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=9, type=<ArgType.ADDRESS: 'ADDRESS'>))

@@ -168,6 +168,7 @@ class DataPath:
             self._rase_for_unknown_signal(signal)
 
     def latch_out(self) -> None:
+        logging.debug("OUT: %s - \"%s\"", self.ac, chr(self.ac))
         self.ports[Port.OUT.name].append(self.ac)
 
     def wr(self):
