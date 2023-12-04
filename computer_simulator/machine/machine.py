@@ -95,7 +95,8 @@ class Alu:
             self.value = (left + right) % WORD_MAX_VALUE
             self.set_flags()
         elif op == AluOp.EQ:
-            self.flag_z = left == right
+            self.value = 1 if left == right else 0
+            self.set_flags()
         else:
             raise RuntimeError(f"Unknown ALU operation: {op}")
 
@@ -187,7 +188,12 @@ class Stage(Enum):
         return Stage((self.value + 1) % Stage.__len__())
 
 
-NO_FETCH_OPERAND = [Opcode.JMP, Opcode.JE, Opcode.ST]
+NO_FETCH_OPERAND = [
+    Opcode.JMP,
+    Opcode.JZ,
+    Opcode.JNZ,
+    Opcode.ST,
+]
 
 
 class ControlUnit:
@@ -252,8 +258,16 @@ class ControlUnit:
                 self.data_path.latch_ac(AcSelSignal.ALU, AluOp.EQ)
                 self.tick_n += 1
                 self.stage = self.stage.next()
-            elif self.decoded_instruction.opcode == Opcode.JE:
+            elif self.decoded_instruction.opcode == Opcode.JZ:
                 if self.data_path.alu.flag_z:
+                    self.data_path.latch_ip(IpSelSignal.DR)
+                    self.tick_n += 1
+                    should_inc_ip = False
+                else:
+                    self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.JNZ:
+                if not self.data_path.alu.flag_z:
                     self.data_path.latch_ip(IpSelSignal.DR)
                     self.tick_n += 1
                     should_inc_ip = False

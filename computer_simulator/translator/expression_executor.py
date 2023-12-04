@@ -196,14 +196,14 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     elif tokens[idx].token_type == Token.Type.IF:
         condition_end_idx: int = translate_expression(tokens, idx + 1, result)
         je_idx: int = len(result.operations)
-        result.operations.append(Operation(Opcode.JE, None))
+        result.operations.append(Operation(Opcode.JZ, None))
         true_branch_end_idx: int = translate_expression(tokens, condition_end_idx, result)
         jmp_idx: int = len(result.operations)
         result.operations.append(Operation(Opcode.JMP, None))
         false_branch_memory_idx: int = len(result.operations)
         false_branch_end_idx: int = translate_expression(tokens, true_branch_end_idx, result)
-        result.operations[je_idx].arg = false_branch_memory_idx
-        result.operations[jmp_idx].arg = len(result.operations)
+        result.operations[je_idx].arg = Arg(false_branch_memory_idx, ArgType.PROGRAM_ADDRESS)
+        result.operations[jmp_idx].arg = Arg(len(result.operations), ArgType.PROGRAM_ADDRESS)
         return get_expr_end_idx(tokens, false_branch_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.SETQ:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
@@ -242,8 +242,9 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
             cycle_start_idx = len(result.operations)
             result.operations.append(Operation(Opcode.LD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
             result.operations.append(Operation(Opcode.EQ, Arg(str_len_idx, ArgType.DATA_ADDRESS)))
+            result.operations.append(Operation(Opcode.LD, Arg(current_char_n_idx, ArgType.DATA_ADDRESS)))
             je_idx = len(result.operations)
-            result.operations.append(Operation(Opcode.JE, None))
+            result.operations.append(Operation(Opcode.JNZ, None))
             result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
             result.operations.append(Operation(Opcode.ADD, Arg(str_len_addr_idx, ArgType.DATA_ADDRESS)))
             next_char_addr_idx = result.alloc_variable()
