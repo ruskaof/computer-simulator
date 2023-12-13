@@ -270,10 +270,6 @@ code: |-
   }
 
 output: |
-  source LoC: 1 code instr: 37
-  ============================================================
-  T
-  instructions_n: 36 ticks: 86
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 9, DR: 0, SP: 0, AR: 0, AC: 0, ALU: 0, Z: True, INSTR: None

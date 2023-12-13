@@ -1,12 +1,12 @@
+import json
 import logging
 import sys
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from dataclasses import dataclass
-import json
 from typing import Optional
 
-from computer_simulator.isa import Operation, Opcode, Arg, ArgType
+from computer_simulator.isa import Operation, Opcode, ArgType
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
@@ -21,7 +21,6 @@ class Port(Enum):
 @dataclass
 class BinaryProgram:
     memory: list[Operation | int]
-    start_idx: int
 
 
 def read_file(file_path: str) -> str:
@@ -47,11 +46,16 @@ def read_program(exe: str) -> BinaryProgram:
             memory.append(word)
         else:
             arg = None
+            arg_value = None
+            arg_type = None
             if "arg" in word:
-                arg = Arg(word["arg"]["value"], ArgType(word["arg"]["type"]))
+                arg_value = word["arg"]
+            if "arg_type" in word:
+                arg_type = word["arg_type"]
+            if arg_value is not None and arg_type is not None:
+                arg = ArgType(arg_type)
             memory.append(Operation(Opcode(word["opcode"]), arg))
-    start_idx = json_exe["start_idx"]
-    return BinaryProgram(memory, start_idx)
+    return BinaryProgram(memory)
 
 
 class IpSelSignal(Enum):
@@ -74,7 +78,7 @@ class ArSelSignal(Enum):
 class AcSelSignal(Enum):
     IN = 0
     ALU = 1
-    SP = 2
+    DR = 2
 
 
 class DrSelSignal(Enum):
@@ -116,11 +120,11 @@ class Alu:
 
 class DataPath:
 
-    def __init__(self, memory: list[Operation | int], ports: dict[str, list[int]], start_idx: int) -> None:
+    def __init__(self, memory: list[Operation | int], ports: dict[str, list[int]]) -> None:
         self.memory: list[Operation | int] = memory
         self.ports: dict[str, list[int]] = ports
         self.alu: Alu = Alu()
-        self.ip: int = start_idx  # instruction pointer
+        self.ip: int = 0  # instruction pointer
         self.dr: int = 0  # data register
         self.sp: int = 0  # stack pointer
         self.ar: int = 0  # address register
@@ -160,7 +164,7 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_dr(self, signal: DrSelSignal, alu_res: Optional[int]) -> Optional[Operation]:
+    def latch_dr(self, signal: DrSelSignal, alu_res: Optional[int] = None) -> Optional[Operation]:
         if signal == DrSelSignal.INSTRUCTION_DECODER:
             cell = self.memory[self.ip]
             if cell.arg is not None:
@@ -231,7 +235,6 @@ class ControlUnit:
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.STACK_OFFSET:
-                self.data_path.latch_ac(AcSelSignal.SP)
                 self.data_path.alu.perform(AluOp.SUBTRACT, self.data_path.ac, self.data_path.dr)
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -325,7 +328,7 @@ class ControlUnit:
 
     def __repr__(self):
         return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, SP: {self.data_path.sp}, "
-                f"AR: {self.data_path.ar}, AC: {self.data_path.ac}, ALU: {self.data_path.alu.value}, "
+                f"AR: {self.data_path.ar}, AC: {self.data_path.ac}, "
                 f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}")
 
 
@@ -334,7 +337,7 @@ def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> 
     Simulate program execution
     :return: output, instructions_n, ticks_n
     """
-    data_path: DataPath = DataPath(program.memory, {Port.IN.name: program_input, Port.OUT.name: []}, program.start_idx)
+    data_path: DataPath = DataPath(program.memory, {Port.IN.name: program_input, Port.OUT.name: []})
     control_unit: ControlUnit = ControlUnit(data_path)
 
     logging.debug("%s", control_unit)

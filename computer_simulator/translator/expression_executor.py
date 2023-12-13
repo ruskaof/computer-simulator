@@ -114,16 +114,13 @@ class Program:
                 return len(self.current_stack) - i - 1
 
     def to_machine_code(self) -> str:
+        memory = []
+
+        for i in range(len(self.operations)):
+
         return json.dumps(
             {
-                "memory": [
-                    {
-                        "opcode": operation.opcode.value,
-                        "arg": operation.arg.get_arg_for_compilation().value if operation.arg is not None else None,
-                        "arg_type": operation.arg.get_arg_for_compilation().type.value if operation.arg is not None else None,
-                    }
-                    for operation in self.operations
-                ],
+                "memory": ,
             }
         )
 
