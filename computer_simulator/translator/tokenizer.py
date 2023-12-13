@@ -1,5 +1,7 @@
 from computer_simulator.translator import Token
 
+IDENTIFIER_NON_ALPHA_CHARS = {"_"}
+
 
 def process_whitespace(idx: int, chars: str) -> int:
     if idx >= len(chars):
@@ -84,7 +86,7 @@ def process_identifier_like_statement(tokens: list, idx: int, chars: str, token_
         return idx
     value = ""
     end_idx = idx
-    while end_idx < len(chars) and chars[end_idx].isalpha():
+    while end_idx < len(chars) and (chars[end_idx].isalpha() or chars[end_idx] in IDENTIFIER_NON_ALPHA_CHARS):
         value += chars[end_idx]
         end_idx += 1
     if value == keyword:
@@ -108,14 +110,15 @@ def tokenize(program_chars: str) -> list[Token]:
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.IF, "if")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.DEFUN, "defun")
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT, "print")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT_INT, "print_int")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT_STRING, "print_string")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PROGN, "progn")
         prev_idx = process_number_literal(tokens, prev_idx, program_chars)
         prev_idx = process_string_literal(tokens, prev_idx, program_chars)
         prev_idx = process_identifier(tokens, prev_idx, program_chars)
 
         if prev_idx == idx:
-            raise RuntimeError("Unknown token")
+            raise RuntimeError(f"Unknown token: {program_chars[prev_idx]}")
         idx = prev_idx
 
     return tokens

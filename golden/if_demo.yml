@@ -1,5 +1,5 @@
 source: |-
-  (progn (setq x 1) (print (if (= x 1) "T" "F")))
+  (progn (setq x 1) (print_int (if (= x 1) 1 2)))
 input: |-
   foo
 code: |-

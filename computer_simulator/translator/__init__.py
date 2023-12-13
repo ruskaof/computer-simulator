@@ -17,7 +17,8 @@ class Token(ABC):
         SETQ: int = auto()
         IDENTIFIER: int = auto()
         DEFUN: int = auto()
-        PRINT: int = auto()
+        PRINT_INT: int = auto()
+        PRINT_STRING: int = auto()
         PROGN: int = auto()
 
     token_type: Type

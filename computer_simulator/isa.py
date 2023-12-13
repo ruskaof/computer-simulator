@@ -8,6 +8,8 @@ class Opcode(Enum):
     ST: str = "ST"
     ADD: str = "ADD"
     EQ: str = "EQ"
+    MOD: str = "MOD"
+    DIV: str = "DIV"
     JZ: str = "JZ"
     JNZ: str = "JNZ"
     JMP: str = "JMP"
@@ -20,11 +22,11 @@ class Opcode(Enum):
     HLT: str = "HLT"
 
 
-
 class ArgType(Enum):
     DIRECT: str = "DIRECT"
     ADDRESS: str = "ADDRESS"
-    INDIRECT_ADDRESS: str = "INDIRECT_ADDRESS"
+    INDIRECT_ADDR: str = "INDIRECT_ADDRESS"
+    STACK_OFFSET: str = "STACK_OFFSET"
 
 
 @dataclass

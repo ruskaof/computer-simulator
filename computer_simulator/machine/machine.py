@@ -25,7 +25,7 @@ class BinaryProgram:
 
 
 def read_file(file_path: str) -> str:
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, encoding="utf-8") as file:
         return file.read()
 
 
@@ -34,7 +34,7 @@ def read_json_file(file_path: str) -> dict:
 
 
 def read_input_as_pascal_string(file_path: str) -> list[int]:
-    with open(file_path, "r", encoding="utf-8") as file:
+    with open(file_path, encoding="utf-8") as file:
         file_str = file.read()
         return [len(file_str)] + [ord(c) for c in file_str]
 
@@ -65,45 +65,53 @@ class SpSelSignal(Enum):
 
 
 class ArSelSignal(Enum):
-    DR = 0
+    AC = 0
     SP = 1
     IP = 2
+    DR = 3
 
 
 class AcSelSignal(Enum):
     IN = 0
     ALU = 1
-    DR = 2
+    SP = 2
 
 
 class DrSelSignal(Enum):
     INSTRUCTION_DECODER = 0
     MEMORY = 1
+    ALU = 2
 
 
 class AluOp(Enum):
     ADD = 0
-    EQ = 1
+    SUBTRACT = 1
+    EQ = 2
 
 
 class Alu:
 
     def __init__(self):
-        self.value: int = 0
         self.flag_z: bool = True
 
-    def perform(self, op: AluOp, left: int, right: int) -> None:
+    def perform(self, op: AluOp, left: int, right: int) -> int:
         if op == AluOp.ADD:
-            self.value = (left + right) % WORD_MAX_VALUE
-            self.set_flags()
+            value = (left + right) % WORD_MAX_VALUE
+            self.set_flags(value)
+        elif op == AluOp.SUBTRACT:
+            value = (left - right) % WORD_MAX_VALUE
+            if value < 0:
+                raise RuntimeError("ALU value is negative")
+            self.set_flags(value)
         elif op == AluOp.EQ:
-            self.value = 1 if left == right else 0
-            self.set_flags()
+            value = 1 if left == right else 0
+            self.set_flags(value)
         else:
             raise RuntimeError(f"Unknown ALU operation: {op}")
+        return value
 
-    def set_flags(self) -> None:
-        self.flag_z = self.value == 0
+    def set_flags(self, value) -> None:
+        self.flag_z = value == 0
 
 
 class DataPath:
@@ -148,14 +156,11 @@ class DataPath:
         if signal == AcSelSignal.IN:
             self.ac = self.memory[self.ar]
         elif signal == AcSelSignal.ALU:
-            self.alu.perform(alu_op, self.ac, self.dr)
-            self.ac = self.alu.value
-        elif signal == AcSelSignal.DR:
-            self.ac = self.dr
+            self.ac = self.alu.perform(alu_op, self.ac, self.dr)
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_dr(self, signal: DrSelSignal) -> Optional[Operation]:
+    def latch_dr(self, signal: DrSelSignal, alu_res: Optional[int]) -> Optional[Operation]:
         if signal == DrSelSignal.INSTRUCTION_DECODER:
             cell = self.memory[self.ip]
             if cell.arg is not None:
@@ -163,6 +168,9 @@ class DataPath:
             return self.memory[self.ip]
         elif signal == DrSelSignal.MEMORY:
             self.dr = self.memory[self.ar]
+            return None
+        elif signal == DrSelSignal.ALU:
+            self.dr = alu_res
             return None
         else:
             self._rase_for_unknown_signal(signal)
@@ -193,6 +201,8 @@ NO_FETCH_OPERAND = [
     Opcode.JZ,
     Opcode.JNZ,
     Opcode.ST,
+    Opcode.PUSH,
+    Opcode.POP,
 ]
 
 
@@ -215,10 +225,14 @@ class ControlUnit:
         elif self.stage == Stage.ADDRESS_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            if (self.decoded_instruction.arg is not None
-                    and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDRESS):
-                self.data_path.latch_ar(ArSelSignal.DR)
+            if self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDR:
+                self.data_path.latch_ar(ArSelSignal.AC)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.STACK_OFFSET:
+                self.data_path.latch_ac(AcSelSignal.SP)
+                self.data_path.alu.perform(AluOp.SUBTRACT, self.data_path.ac, self.data_path.dr)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
@@ -229,8 +243,7 @@ class ControlUnit:
                 raise RuntimeError("Instruction is not decoded")
             if (self.decoded_instruction.arg is not None
                     and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                    and self.decoded_instruction.arg.type in (ArgType.ADDRESS, ArgType.INDIRECT_ADDRESS)):
-                self.data_path.latch_ar(ArSelSignal.DR)
+                    and self.decoded_instruction.arg.type in (ArgType.ADDRESS, ArgType.INDIRECT_ADDR)):
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -242,7 +255,7 @@ class ControlUnit:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
             if self.decoded_instruction.opcode == Opcode.LD:
-                self.data_path.latch_ac(AcSelSignal.DR)
+                self.data_path.latch_ac(AcSelSignal.ALU)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.ST:

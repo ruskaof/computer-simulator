@@ -1,0 +1,107 @@
+source: |-
+  (progn (setq a 1) (setq a (+ a 1)) (print_int a))
+input: |-
+  foo
+code: |-
+  {
+      "start_idx": 2,
+      "memory": [
+          0,
+          0,
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 0,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 0,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 1,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "arg": {
+                  "value": 1,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 1,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 0,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "OUT"
+          },
+          {
+              "opcode": "HLT"
+          }
+      ]
+  }
+
+output: |
+  source LoC: 1 code instr: 10
+  ============================================================
+
+  instructions_n: 10 ticks: 23
+
+log: |
+  DEBUG   machine:simulation    TICK: 0, IP: 2, DR: 0, SP: 0, AR: 0, AC: 0, ALU: 0, Z: True, INSTR: None
+  DEBUG   machine:simulation    TICK: 1, IP: 2, DR: 1, SP: 0, AR: 2, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 2, IP: 3, DR: 1, SP: 0, AR: 2, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 3, IP: 3, DR: 0, SP: 0, AR: 3, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 4, IP: 4, DR: 0, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 5, IP: 4, DR: 0, SP: 0, AR: 4, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 6, IP: 4, DR: 1, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 7, IP: 5, DR: 1, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 8, IP: 5, DR: 1, SP: 0, AR: 5, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 9, IP: 6, DR: 1, SP: 0, AR: 1, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 10, IP: 6, DR: 1, SP: 0, AR: 6, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 11, IP: 7, DR: 1, SP: 0, AR: 6, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 12, IP: 7, DR: 1, SP: 0, AR: 7, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 13, IP: 7, DR: 1, SP: 0, AR: 1, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 14, IP: 8, DR: 1, SP: 0, AR: 1, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 15, IP: 8, DR: 1, SP: 0, AR: 8, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 16, IP: 9, DR: 1, SP: 0, AR: 1, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 17, IP: 9, DR: 0, SP: 0, AR: 9, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 18, IP: 9, DR: 1, SP: 0, AR: 0, AC: 2, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 19, IP: 10, DR: 1, SP: 0, AR: 0, AC: 1, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 20, IP: 10, DR: 1, SP: 0, AR: 10, AC: 1, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 1 - ""
+  DEBUG   machine:simulation    TICK: 21, IP: 11, DR: 1, SP: 0, AR: 10, AC: 1, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 22, IP: 11, DR: 1, SP: 0, AR: 11, AC: 1, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 23, IP: 12, DR: 1, SP: 0, AR: 11, AC: 1, ALU: 2, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
