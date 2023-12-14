@@ -6,10 +6,11 @@ from enum import Enum
 from pathlib import Path
 from typing import Optional
 
-from computer_simulator.isa import Operation, Opcode, ArgType
+from computer_simulator.isa import Operation, Opcode, ArgType, Arg
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
+MEMORY_SIZE: int = 700
 
 
 @dataclass
@@ -40,21 +41,13 @@ def read_input_as_pascal_string(file_path: str) -> list[int]:
 
 def read_program(exe: str) -> BinaryProgram:
     json_exe = read_json_file(exe)
-    memory = []
+    memory = [0 for _ in range(MEMORY_SIZE)]
     for word in json_exe["memory"]:
-        if isinstance(word, int):
-            memory.append(word)
-        else:
-            arg = None
-            arg_value = None
-            arg_type = None
-            if "arg" in word:
-                arg_value = word["arg"]
-            if "arg_type" in word:
-                arg_type = word["arg_type"]
-            if arg_value is not None and arg_type is not None:
-                arg = ArgType(arg_type)
-            memory.append(Operation(Opcode(word["opcode"]), arg))
+        arg = None
+        if "arg" in word:
+            arg = Arg(word["arg"]["value"], ArgType(word["arg"]["type"]))
+        address: int = word["address"]
+        memory[address] = Operation(Opcode(word["opcode"]), arg)
     return BinaryProgram(memory)
 
 
@@ -126,7 +119,7 @@ class DataPath:
         self.alu: Alu = Alu()
         self.ip: int = 0  # instruction pointer
         self.dr: int = 0  # data register
-        self.sp: int = 0  # stack pointer
+        self.sp: int = len(self.memory) - 1  # stack pointer
         self.ar: int = 0  # address register
         self.ac: int = 0  # accumulator
 
@@ -161,6 +154,8 @@ class DataPath:
             self.ac = self.memory[self.ar]
         elif signal == AcSelSignal.ALU:
             self.ac = self.alu.perform(alu_op, self.ac, self.dr)
+        elif signal == AcSelSignal.DR:
+            self.ac = self.dr
         else:
             self._rase_for_unknown_signal(signal)
 
@@ -229,24 +224,25 @@ class ControlUnit:
         elif self.stage == Stage.ADDRESS_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            if self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT_ADDR:
-                self.data_path.latch_ar(ArSelSignal.AC)
-                self.data_path.latch_dr(DrSelSignal.MEMORY)
+            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.STACK_OFFSET:
+                alu_res = self.data_path.alu.perform(AluOp.ADD, self.data_path.sp, self.data_path.dr)
+                self.data_path.latch_dr(DrSelSignal.ALU, alu_res)
                 self.tick_n += 1
                 self.stage = self.stage.next()
-            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.STACK_OFFSET:
-                self.data_path.alu.perform(AluOp.SUBTRACT, self.data_path.ac, self.data_path.dr)
+            elif self.decoded_instruction.opcode == Opcode.LD_BY_AC:
+                alu_res = self.data_path.alu.perform(AluOp.ADD, self.data_path.ac, 0)
+                self.data_path.latch_dr(DrSelSignal.ALU, alu_res)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
                 self.stage = self.stage.next()
-                self.tick()
         elif self.stage == Stage.OPERAND_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
             if (self.decoded_instruction.arg is not None
                     and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                    and self.decoded_instruction.arg.type in (ArgType.ADDRESS, ArgType.INDIRECT_ADDR)):
+                    and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS)):
+                self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -258,7 +254,7 @@ class ControlUnit:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
             if self.decoded_instruction.opcode == Opcode.LD:
-                self.data_path.latch_ac(AcSelSignal.ALU)
+                self.data_path.latch_ac(AcSelSignal.DR)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.ST:
@@ -296,7 +292,7 @@ class ControlUnit:
                 should_inc_ip = False
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.POP:
-                self.data_path.latch_sp(SpSelSignal.DEC)
+                self.data_path.latch_sp(SpSelSignal.INC)
                 self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.data_path.latch_ac(AcSelSignal.DR)
@@ -304,7 +300,7 @@ class ControlUnit:
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.PUSH:
                 self.data_path.latch_ar(ArSelSignal.SP)
-                self.data_path.latch_sp(SpSelSignal.INC)
+                self.data_path.latch_sp(SpSelSignal.DEC)
                 self.data_path.wr()
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -318,6 +314,12 @@ class ControlUnit:
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.HLT:
                 self.halted = True
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.LD_BY_AC:
+                self.data_path.latch_ar(ArSelSignal.DR)
+                self.data_path.latch_dr(DrSelSignal.MEMORY)
+                self.data_path.latch_ac(AcSelSignal.DR)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:

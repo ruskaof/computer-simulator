@@ -5,6 +5,7 @@ from typing import Optional
 
 class Opcode(Enum):
     LD: str = "LD"
+    LD_BY_AC: str = "LD_BY_AC"
     ST: str = "ST"
     ADD: str = "ADD"
     EQ: str = "EQ"
@@ -25,7 +26,6 @@ class Opcode(Enum):
 class ArgType(Enum):
     DIRECT: str = "DIRECT"
     ADDRESS: str = "ADDRESS"
-    INDIRECT_ADDR: str = "INDIRECT_ADDRESS"
     STACK_OFFSET: str = "STACK_OFFSET"
 
 

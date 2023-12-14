@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 from computer_simulator.translator import Token
-from computer_simulator.translator.expression_executor import translate_expression, Program, translate_program
+from computer_simulator.translator.expression_executor import Program, translate_program
 from computer_simulator.translator.tokenizer import tokenize
 
 
