@@ -1,1 +1,1 @@
-(progn (setq a "hello") (print_string a))
+(progn (setq a 1) (print_int a))

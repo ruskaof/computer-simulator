@@ -11,6 +11,7 @@ from computer_simulator.translator import Token
 EXPECTED_IDENTIFIER = "Expected identifier"
 STATIC_MEMORY_SIZE = 512
 DEFAULT_WORD = 0
+NUMBER_OFFSET_IN_UTF8 = 48
 
 
 class ArgType(Enum):
@@ -227,6 +228,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.PRINT_INT:
         idx = translate_expression(tokens, idx + 1, result)
+        result.operations.append(Operation(Opcode.ADD, Arg(NUMBER_OFFSET_IN_UTF8, ArgType.DIRECT)))
         result.operations.append(Operation(Opcode.OUT, None))
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.PRINT_STRING:

@@ -1,362 +1,254 @@
 source: |-
-  (progn (setq x 1) (print_int (if (= x 1) 1 2)))
+  (progn (setq x 1) (print_int (if (= x 1) "T" "F")))
 input: |-
   foo
 code: |-
   {
-      "start_idx": 9,
       "memory": [
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
-          0,
           {
-              "opcode": "LD",
+              "opcode": "JMP",
               "arg": {
-                  "value": 1,
-                  "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 0,
+                  "value": 513,
                   "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 0,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 1,
-                  "type": "ADDRESS"
-              }
+              },
+              "address": 0
           },
           {
               "opcode": "LD",
               "arg": {
                   "value": 1,
                   "type": "DIRECT"
-              }
+              },
+              "address": 513
+          },
+          {
+              "opcode": "PUSH",
+              "address": 514
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              },
+              "address": 515
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              },
+              "address": 516
+          },
+          {
+              "opcode": "PUSH",
+              "address": 517
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              },
+              "address": 518
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              },
+              "address": 519
           },
           {
               "opcode": "EQ",
               "arg": {
                   "value": 1,
-                  "type": "ADDRESS"
-              }
+                  "type": "STACK_OFFSET"
+              },
+              "address": 520
           },
           {
               "opcode": "JZ",
               "arg": {
-                  "value": 22,
+                  "value": 528,
                   "type": "ADDRESS"
-              }
+              },
+              "address": 521
           },
           {
               "opcode": "LD",
               "arg": {
                   "value": 1,
                   "type": "DIRECT"
-              }
+              },
+              "address": 522
           },
           {
               "opcode": "ST",
               "arg": {
-                  "value": 2,
+                  "value": 1,
                   "type": "ADDRESS"
-              }
+              },
+              "address": 523
           },
           {
               "opcode": "LD",
               "arg": {
                   "value": 84,
                   "type": "DIRECT"
-              }
+              },
+              "address": 524
+          },
+          {
+              "opcode": "ST",
+              "arg": {
+                  "value": 2,
+                  "type": "ADDRESS"
+              },
+              "address": 525
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              },
+              "address": 526
+          },
+          {
+              "opcode": "JMP",
+              "arg": {
+                  "value": 533,
+                  "type": "ADDRESS"
+              },
+              "address": 527
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              },
+              "address": 528
           },
           {
               "opcode": "ST",
               "arg": {
                   "value": 3,
                   "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 2,
-                  "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "JMP",
-              "arg": {
-                  "value": 27,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 1,
-                  "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 4,
-                  "type": "ADDRESS"
-              }
+              },
+              "address": 529
           },
           {
               "opcode": "LD",
               "arg": {
                   "value": 70,
                   "type": "DIRECT"
-              }
+              },
+              "address": 530
           },
           {
               "opcode": "ST",
-              "arg": {
-                  "value": 5,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
               "arg": {
                   "value": 4,
+                  "type": "ADDRESS"
+              },
+              "address": 531
+          },
+          {
+              "opcode": "LD",
+              "arg": {
+                  "value": 3,
                   "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 1,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 1,
-                  "type": "INDIRECT_ADDRESS"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 6,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 0,
-                  "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 7,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 7,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "EQ",
-              "arg": {
-                  "value": 6,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 7,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "JNZ",
-              "arg": {
-                  "value": 45,
-                  "type": "ADDRESS"
-              }
+              },
+              "address": 532
           },
           {
               "opcode": "ADD",
               "arg": {
-                  "value": 1,
+                  "value": 48,
                   "type": "DIRECT"
-              }
+              },
+              "address": 533
           },
           {
-              "opcode": "ADD",
-              "arg": {
-                  "value": 1,
-                  "type": "ADDRESS"
-              }
+              "opcode": "OUT",
+              "address": 534
           },
           {
-              "opcode": "ST",
-              "arg": {
-                  "value": 8,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 8,
-                  "type": "INDIRECT_ADDRESS"
-              }
-          },
-          {
-              "opcode": "OUT"
-          },
-          {
-              "opcode": "LD",
-              "arg": {
-                  "value": 7,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "ADD",
-              "arg": {
-                  "value": 1,
-                  "type": "DIRECT"
-              }
-          },
-          {
-              "opcode": "ST",
-              "arg": {
-                  "value": 7,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "JMP",
-              "arg": {
-                  "value": 32,
-                  "type": "ADDRESS"
-              }
-          },
-          {
-              "opcode": "HLT"
+              "opcode": "HLT",
+              "address": 535
           }
       ]
   }
 
 output: |
+  source LoC: 1 code instr: 24
+  ============================================================
+  1
+  instructions_n: 19 ticks: 44
 
 log: |
-  DEBUG   machine:simulation    TICK: 0, IP: 9, DR: 0, SP: 0, AR: 0, AC: 0, ALU: 0, Z: True, INSTR: None
-  DEBUG   machine:simulation    TICK: 1, IP: 9, DR: 1, SP: 0, AR: 9, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 2, IP: 10, DR: 1, SP: 0, AR: 9, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 3, IP: 10, DR: 0, SP: 0, AR: 10, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 4, IP: 11, DR: 0, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 5, IP: 11, DR: 0, SP: 0, AR: 11, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 6, IP: 11, DR: 1, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 7, IP: 12, DR: 1, SP: 0, AR: 0, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 8, IP: 12, DR: 1, SP: 0, AR: 12, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 9, IP: 13, DR: 1, SP: 0, AR: 1, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 10, IP: 13, DR: 1, SP: 0, AR: 13, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 11, IP: 14, DR: 1, SP: 0, AR: 13, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 12, IP: 14, DR: 1, SP: 0, AR: 14, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 13, IP: 14, DR: 1, SP: 0, AR: 1, AC: 1, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 14, IP: 15, DR: 1, SP: 0, AR: 1, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 15, IP: 15, DR: 22, SP: 0, AR: 15, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JZ: 'JZ'>, arg=Arg(value=22, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 16, IP: 16, DR: 22, SP: 0, AR: 15, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JZ: 'JZ'>, arg=Arg(value=22, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 17, IP: 16, DR: 1, SP: 0, AR: 16, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 18, IP: 17, DR: 1, SP: 0, AR: 16, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 19, IP: 17, DR: 2, SP: 0, AR: 17, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=2, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 20, IP: 18, DR: 2, SP: 0, AR: 2, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=2, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 21, IP: 18, DR: 84, SP: 0, AR: 18, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=84, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 22, IP: 19, DR: 84, SP: 0, AR: 18, AC: 84, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=84, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 23, IP: 19, DR: 3, SP: 0, AR: 19, AC: 84, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=3, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 24, IP: 20, DR: 3, SP: 0, AR: 3, AC: 84, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=3, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 25, IP: 20, DR: 2, SP: 0, AR: 20, AC: 84, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=2, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 26, IP: 21, DR: 2, SP: 0, AR: 20, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=2, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 27, IP: 21, DR: 27, SP: 0, AR: 21, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=27, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 28, IP: 27, DR: 27, SP: 0, AR: 21, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=27, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 29, IP: 27, DR: 1, SP: 0, AR: 27, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 30, IP: 28, DR: 1, SP: 0, AR: 1, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 31, IP: 28, DR: 1, SP: 0, AR: 28, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 32, IP: 28, DR: 2, SP: 0, AR: 1, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 33, IP: 28, DR: 1, SP: 0, AR: 2, AC: 2, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 34, IP: 29, DR: 1, SP: 0, AR: 2, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 35, IP: 29, DR: 6, SP: 0, AR: 29, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 36, IP: 30, DR: 6, SP: 0, AR: 6, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 37, IP: 30, DR: 0, SP: 0, AR: 30, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 38, IP: 31, DR: 0, SP: 0, AR: 30, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=0, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 39, IP: 31, DR: 7, SP: 0, AR: 31, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 40, IP: 32, DR: 7, SP: 0, AR: 7, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 41, IP: 32, DR: 7, SP: 0, AR: 32, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 42, IP: 32, DR: 0, SP: 0, AR: 7, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 43, IP: 33, DR: 0, SP: 0, AR: 7, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 44, IP: 33, DR: 6, SP: 0, AR: 33, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 45, IP: 33, DR: 1, SP: 0, AR: 6, AC: 0, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 46, IP: 34, DR: 1, SP: 0, AR: 6, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 47, IP: 34, DR: 7, SP: 0, AR: 34, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 48, IP: 34, DR: 0, SP: 0, AR: 7, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 49, IP: 35, DR: 0, SP: 0, AR: 7, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 50, IP: 35, DR: 45, SP: 0, AR: 35, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.JNZ: 'JNZ'>, arg=Arg(value=45, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 51, IP: 36, DR: 45, SP: 0, AR: 35, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.JNZ: 'JNZ'>, arg=Arg(value=45, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 52, IP: 36, DR: 1, SP: 0, AR: 36, AC: 0, ALU: 0, Z: True, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 53, IP: 37, DR: 1, SP: 0, AR: 36, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 54, IP: 37, DR: 1, SP: 0, AR: 37, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 55, IP: 37, DR: 2, SP: 0, AR: 1, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 56, IP: 38, DR: 2, SP: 0, AR: 1, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 57, IP: 38, DR: 8, SP: 0, AR: 38, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=8, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 58, IP: 39, DR: 8, SP: 0, AR: 8, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=8, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 59, IP: 39, DR: 8, SP: 0, AR: 39, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 60, IP: 39, DR: 3, SP: 0, AR: 8, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 61, IP: 39, DR: 84, SP: 0, AR: 3, AC: 3, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 62, IP: 40, DR: 84, SP: 0, AR: 3, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=8, type=<ArgType.INDIRECT_ADDRESS: 'INDIRECT_ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 63, IP: 40, DR: 84, SP: 0, AR: 40, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
-  DEBUG   machine:latch_out     OUT: 84 - "T"
-  DEBUG   machine:simulation    TICK: 64, IP: 41, DR: 84, SP: 0, AR: 40, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
-  DEBUG   machine:simulation    TICK: 65, IP: 41, DR: 7, SP: 0, AR: 41, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 66, IP: 41, DR: 0, SP: 0, AR: 7, AC: 84, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 67, IP: 42, DR: 0, SP: 0, AR: 7, AC: 0, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 68, IP: 42, DR: 1, SP: 0, AR: 42, AC: 0, ALU: 3, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 69, IP: 43, DR: 1, SP: 0, AR: 42, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
-  DEBUG   machine:simulation    TICK: 70, IP: 43, DR: 7, SP: 0, AR: 43, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 71, IP: 44, DR: 7, SP: 0, AR: 7, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 72, IP: 44, DR: 32, SP: 0, AR: 44, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=32, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 73, IP: 32, DR: 32, SP: 0, AR: 44, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=32, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 74, IP: 32, DR: 7, SP: 0, AR: 32, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 75, IP: 32, DR: 1, SP: 0, AR: 7, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 76, IP: 33, DR: 1, SP: 0, AR: 7, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 77, IP: 33, DR: 6, SP: 0, AR: 33, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 78, IP: 33, DR: 1, SP: 0, AR: 6, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 79, IP: 34, DR: 1, SP: 0, AR: 6, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=6, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 80, IP: 34, DR: 7, SP: 0, AR: 34, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 81, IP: 34, DR: 1, SP: 0, AR: 7, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 82, IP: 35, DR: 1, SP: 0, AR: 7, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=7, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 83, IP: 35, DR: 45, SP: 0, AR: 35, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JNZ: 'JNZ'>, arg=Arg(value=45, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 84, IP: 45, DR: 45, SP: 0, AR: 35, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.JNZ: 'JNZ'>, arg=Arg(value=45, type=<ArgType.ADDRESS: 'ADDRESS'>))
-  DEBUG   machine:simulation    TICK: 85, IP: 45, DR: 45, SP: 0, AR: 45, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
-  DEBUG   machine:simulation    TICK: 86, IP: 46, DR: 45, SP: 0, AR: 45, AC: 1, ALU: 1, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, SP: 699, AR: 0, AC: 0, Z: True, INSTR: None
+  DEBUG   machine:simulation    TICK: 1, IP: 0, DR: 513, SP: 699, AR: 0, AC: 0, Z: True, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=513, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 1, IP: 0, DR: 513, SP: 699, AR: 0, AC: 0, Z: True, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=513, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 2, IP: 513, DR: 513, SP: 699, AR: 0, AC: 0, Z: True, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=513, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 3, IP: 513, DR: 1, SP: 699, AR: 513, AC: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 3, IP: 513, DR: 1, SP: 699, AR: 513, AC: 0, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 4, IP: 514, DR: 1, SP: 699, AR: 513, AC: 1, Z: True, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 5, IP: 514, DR: 1, SP: 699, AR: 514, AC: 1, Z: True, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 5, IP: 514, DR: 1, SP: 699, AR: 514, AC: 1, Z: True, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 6, IP: 515, DR: 1, SP: 698, AR: 699, AC: 1, Z: True, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 7, IP: 515, DR: 1, SP: 698, AR: 515, AC: 1, Z: True, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 8, IP: 515, DR: 699, SP: 698, AR: 515, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 9, IP: 516, DR: 699, SP: 698, AR: 699, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 10, IP: 516, DR: 1, SP: 698, AR: 516, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 11, IP: 516, DR: 699, SP: 698, AR: 516, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 12, IP: 516, DR: 1, SP: 698, AR: 699, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 13, IP: 517, DR: 1, SP: 698, AR: 699, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 14, IP: 517, DR: 1, SP: 698, AR: 517, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 14, IP: 517, DR: 1, SP: 698, AR: 517, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 15, IP: 518, DR: 1, SP: 697, AR: 698, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.PUSH: 'PUSH'>, arg=None)
+  DEBUG   machine:simulation    TICK: 16, IP: 518, DR: 1, SP: 697, AR: 518, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 17, IP: 518, DR: 698, SP: 697, AR: 518, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 18, IP: 519, DR: 698, SP: 697, AR: 698, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 19, IP: 519, DR: 1, SP: 697, AR: 519, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 19, IP: 519, DR: 1, SP: 697, AR: 519, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 20, IP: 520, DR: 1, SP: 697, AR: 519, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 21, IP: 520, DR: 1, SP: 697, AR: 520, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 22, IP: 520, DR: 698, SP: 697, AR: 520, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 23, IP: 520, DR: 1, SP: 697, AR: 698, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 24, IP: 521, DR: 1, SP: 697, AR: 698, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.EQ: 'EQ'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>))
+  DEBUG   machine:simulation    TICK: 25, IP: 521, DR: 528, SP: 697, AR: 521, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JZ: 'JZ'>, arg=Arg(value=528, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 25, IP: 521, DR: 528, SP: 697, AR: 521, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JZ: 'JZ'>, arg=Arg(value=528, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 26, IP: 522, DR: 528, SP: 697, AR: 521, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JZ: 'JZ'>, arg=Arg(value=528, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 27, IP: 522, DR: 1, SP: 697, AR: 522, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 27, IP: 522, DR: 1, SP: 697, AR: 522, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 28, IP: 523, DR: 1, SP: 697, AR: 522, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 29, IP: 523, DR: 1, SP: 697, AR: 523, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 29, IP: 523, DR: 1, SP: 697, AR: 523, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 30, IP: 524, DR: 1, SP: 697, AR: 1, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=1, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 31, IP: 524, DR: 84, SP: 697, AR: 524, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=84, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 31, IP: 524, DR: 84, SP: 697, AR: 524, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=84, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 32, IP: 525, DR: 84, SP: 697, AR: 524, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=84, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 33, IP: 525, DR: 2, SP: 697, AR: 525, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=2, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 33, IP: 525, DR: 2, SP: 697, AR: 525, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=2, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 34, IP: 526, DR: 2, SP: 697, AR: 2, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=2, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 35, IP: 526, DR: 1, SP: 697, AR: 526, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 35, IP: 526, DR: 1, SP: 697, AR: 526, AC: 84, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 36, IP: 527, DR: 1, SP: 697, AR: 526, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 37, IP: 527, DR: 533, SP: 697, AR: 527, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=533, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 37, IP: 527, DR: 533, SP: 697, AR: 527, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=533, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 38, IP: 533, DR: 533, SP: 697, AR: 527, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JMP: 'JMP'>, arg=Arg(value=533, type=<ArgType.ADDRESS: 'ADDRESS'>))
+  DEBUG   machine:simulation    TICK: 39, IP: 533, DR: 48, SP: 697, AR: 533, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=48, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 39, IP: 533, DR: 48, SP: 697, AR: 533, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=48, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 40, IP: 534, DR: 48, SP: 697, AR: 533, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.ADD: 'ADD'>, arg=Arg(value=48, type=<ArgType.DIRECT: 'DIRECT'>))
+  DEBUG   machine:simulation    TICK: 41, IP: 534, DR: 48, SP: 697, AR: 534, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 41, IP: 534, DR: 48, SP: 697, AR: 534, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:latch_out     OUT: 49 - "1"
+  DEBUG   machine:simulation    TICK: 42, IP: 535, DR: 48, SP: 697, AR: 534, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.OUT: 'OUT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 43, IP: 535, DR: 48, SP: 697, AR: 535, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 43, IP: 535, DR: 48, SP: 697, AR: 535, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
+  DEBUG   machine:simulation    TICK: 44, IP: 536, DR: 48, SP: 697, AR: 535, AC: 49, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None)
