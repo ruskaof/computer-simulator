@@ -12,12 +12,15 @@ EXPECTED_IDENTIFIER = "Expected identifier"
 STATIC_MEMORY_SIZE = 512
 DEFAULT_WORD = 0
 NUMBER_OFFSET_IN_UTF8 = 48
+STRING_ALLOC_SIZE = 32
+SERVICE_VARIABLE_ADDRESS = 1
 
 
 class ArgType(Enum):
     DIRECT: str = "DIRECT"
     DATA_ADDRESS: str = "DATA_ADDRESS"
     PROGRAM_ADDRESS: str = "PROGRAM_ADDRESS"
+    INDIRECT: str = "INDIRECT"
     STACK_OFFSET: str = "STACK_OFFSET"
 
 
@@ -35,6 +38,8 @@ class Arg:
             return CompiledArg(self.value + STATIC_MEMORY_SIZE, CompiledArgType.ADDRESS)
         elif self.type == ArgType.STACK_OFFSET:
             return CompiledArg(self.value, CompiledArgType.STACK_OFFSET)
+        elif self.type == ArgType.INDIRECT:
+            return CompiledArg(self.value, CompiledArgType.INDIRECT)
         else:
             raise RuntimeError("Unexpected arg type")
 
@@ -81,7 +86,7 @@ class StackValue:
 class Program:
     def __init__(self):
         # only for strings
-        self.memory: list[int] = [0]
+        self.memory: list[int] = [0, 0] # jmp, service data
         self.operations: list[Operation] = []
         self.current_stack: list[StackValue] = []
 
@@ -89,7 +94,7 @@ class Program:
         self.operations.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
 
     # allocates variable on top of stack
-    def alloc_variable(self, name: Optional[str] = None) -> None:
+    def push_var_to_stack(self, name: Optional[str] = None) -> None:
         self.operations.append(Operation(Opcode.PUSH, None))
         self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
 
@@ -105,6 +110,14 @@ class Program:
             self.operations.append(Operation(Opcode.LD, Arg(ord(char), ArgType.DIRECT)))
             self.operations.append(Operation(Opcode.ST, Arg(len(self.memory) - 1, ArgType.DATA_ADDRESS)))
         return len(self.memory) - len(value) - 1
+
+    def alloc_string_of_size(self, size: int) -> int:
+        self.memory.append(size)
+        self.operations.append(Operation(Opcode.LD, Arg(size, ArgType.DIRECT)))
+        self.operations.append(Operation(Opcode.ST, Arg(len(self.memory) - 1, ArgType.DATA_ADDRESS)))
+        for _ in range(size):
+            self.memory.append(0)
+        return len(self.memory) - size - 1
 
     def get_var_sp_offset(self, name: str) -> int:
         for i in range(len(self.current_stack) - 1, -1, -1):
@@ -188,7 +201,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.BINOP:
         first_expr_end_idx: int = translate_expression(tokens, idx + 1, result)
-        result.alloc_variable()
+        result.push_var_to_stack()
         result.operations.append(Operation(Opcode.ST, Arg(1, ArgType.STACK_OFFSET)))
         second_expr_end_idx: int = translate_expression(tokens, first_expr_end_idx, result)
         exec_binop(tokens[idx].value, result)
@@ -210,7 +223,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
             raise RuntimeError(EXPECTED_IDENTIFIER)
         expr_end_idx: int = translate_expression(tokens, idx + 2, result)
-        result.alloc_variable(tokens[idx + 1].value)
+        result.push_var_to_stack(tokens[idx + 1].value)
         result.operations.append(Operation(Opcode.ST, Arg(1, ArgType.STACK_OFFSET)))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
@@ -234,19 +247,21 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     elif tokens[idx].token_type == Token.Type.PRINT_STRING:
         idx = translate_expression(tokens, idx + 1, result)
 
-        result.alloc_variable("#str_p")
+        result.push_var_to_stack("#str_p")
         # save string pointer
         result.operations.append(Operation(Opcode.ST, Arg(result.get_var_sp_offset("#str_p"), ArgType.STACK_OFFSET)))
 
         # save string size:
         # load string size to ac
-        result.operations.append(Operation(Opcode.LD_BY_AC, None))
+        result.operations.append(Operation(Opcode.ST, Arg(SERVICE_VARIABLE_ADDRESS, ArgType.DATA_ADDRESS)))
+        result.operations.append(Operation(Opcode.LD, Arg(SERVICE_VARIABLE_ADDRESS, ArgType.INDIRECT)))
+
         # store string size
-        result.alloc_variable("#str_size")
+        result.push_var_to_stack("#str_size")
         result.operations.append(Operation(Opcode.ST, Arg(result.get_var_sp_offset("#str_size"), ArgType.STACK_OFFSET)))
 
         # init index
-        result.alloc_variable("#i")
+        result.push_var_to_stack("#i")
         result.operations.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT)))
         result.operations.append(Operation(Opcode.ST, Arg(result.get_var_sp_offset("#i"), ArgType.STACK_OFFSET)))
 
@@ -267,7 +282,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.operations.append(Operation(Opcode.ADD, Arg(1, ArgType.DIRECT)))
 
         # load char
-        result.operations.append(Operation(Opcode.LD_BY_AC, None))
+        result.operations.append(Operation(Opcode.ST, Arg(SERVICE_VARIABLE_ADDRESS, ArgType.DATA_ADDRESS)))
+        result.operations.append(Operation(Opcode.LD, Arg(SERVICE_VARIABLE_ADDRESS, ArgType.INDIRECT)))
         result.operations.append(Operation(Opcode.OUT, None))
 
         # increment index
@@ -283,6 +299,27 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.current_stack.pop()  # str_size
         result.current_stack.pop()  # str_p
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.READ_STRING:
+        if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
+            raise RuntimeError(EXPECTED_IDENTIFIER)
+
+        var_sp_offset = result.get_var_sp_offset(tokens[idx + 1].value)
+        if var_sp_offset is None:
+            result.push_var_to_stack(tokens[idx + 1].value)
+            var_sp_offset = 1
+
+        # alloc string
+        result.alloc_string_of_size(STRING_ALLOC_SIZE)
+
+        # index
+        result.push_var_to_stack("#i")
+
+        # cycle start
+        cycle_start_idx = len(result.operations)
+
+        # read char
+        result.operations.append(Operation(Opcode.IN, None))
+        #result.operations.append(Operation(Opcode.ST, Ar
 
 
 def translate_program(tokens: list[Token], result: Program) -> None:

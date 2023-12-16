@@ -20,6 +20,7 @@ class Token(ABC):
         PRINT_INT: int = auto()
         PRINT_STRING: int = auto()
         PROGN: int = auto()
+        READ_STRING: int = auto()
 
     token_type: Type
     value: str

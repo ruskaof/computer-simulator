@@ -229,9 +229,9 @@ class ControlUnit:
                 self.data_path.latch_dr(DrSelSignal.ALU, alu_res)
                 self.tick_n += 1
                 self.stage = self.stage.next()
-            elif self.decoded_instruction.opcode == Opcode.LD_BY_AC:
-                alu_res = self.data_path.alu.perform(AluOp.ADD, self.data_path.ac, 0)
-                self.data_path.latch_dr(DrSelSignal.ALU, alu_res)
+            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT:
+                self.data_path.latch_ar(ArSelSignal.DR)
+                self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
@@ -241,7 +241,7 @@ class ControlUnit:
                 raise RuntimeError("Instruction is not decoded")
             if (self.decoded_instruction.arg is not None
                     and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                    and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS)):
+                    and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS, ArgType.INDIRECT)):
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
@@ -314,12 +314,6 @@ class ControlUnit:
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.HLT:
                 self.halted = True
-                self.tick_n += 1
-                self.stage = self.stage.next()
-            elif self.decoded_instruction.opcode == Opcode.LD_BY_AC:
-                self.data_path.latch_ar(ArSelSignal.DR)
-                self.data_path.latch_dr(DrSelSignal.MEMORY)
-                self.data_path.latch_ac(AcSelSignal.DR)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:
