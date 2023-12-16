@@ -1,9 +1,4 @@
-(progn
-  (setq x 1)
-  (while
-    (< x 3)
-    (progn
-      (setq x (+ x 1))
-    )
+  (progn
+    (read_string a)
+    (print_string a)
   )
-)
