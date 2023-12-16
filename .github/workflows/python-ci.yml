@@ -23,15 +23,15 @@ jobs:
         python -m pip install --upgrade pip
         pip install poetry
         poetry install
-        pip install coverage
 
     - name: Run tests and coverage
       run: |
-        coverage run -m pytest --verbose
-        find . -type f -name "*.py" | xargs -t coverage report
+        poetry run pytest --verbose
+        poetry run coverage run -m pytest
+        poetry run coverage report
 
     - name: Check code formatting
-      run: ruff format --check .
+      run: poetry run ruff format --check .
 
     - name: Run code linting
-      run: ruff check .
+      run: poetry run ruff check .
