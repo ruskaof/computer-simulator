@@ -7,6 +7,7 @@ class Opcode(Enum):
     LD: str = "LD"
     ST: str = "ST"
     ADD: str = "ADD"
+    SUB: str = "SUB"
     EQ: str = "EQ"
     MOD: str = "MOD"
     DIV: str = "DIV"

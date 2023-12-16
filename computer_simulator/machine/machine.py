@@ -10,7 +10,7 @@ from computer_simulator.isa import Operation, Opcode, ArgType, Arg
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
-MEMORY_SIZE: int = 700
+MEMORY_SIZE: int = 2048
 
 
 @dataclass
@@ -33,10 +33,10 @@ def read_json_file(file_path: str) -> dict:
     return json.loads(read_file(file_path))
 
 
-def read_input_as_pascal_string(file_path: str) -> list[int]:
+def read_input(file_path: str) -> list[int]:
     with open(file_path, encoding="utf-8") as file:
         file_str = file.read()
-        return [len(file_str)] + [ord(c) for c in file_str]
+        return [ord(c) for c in file_str]
 
 
 def read_program(exe: str) -> BinaryProgram:
@@ -82,7 +82,7 @@ class DrSelSignal(Enum):
 
 class AluOp(Enum):
     ADD = 0
-    SUBTRACT = 1
+    SUB = 1
     EQ = 2
 
 
@@ -95,7 +95,7 @@ class Alu:
         if op == AluOp.ADD:
             value = (left + right) % WORD_MAX_VALUE
             self.set_flags(value)
-        elif op == AluOp.SUBTRACT:
+        elif op == AluOp.SUB:
             value = (left - right) % WORD_MAX_VALUE
             if value < 0:
                 raise RuntimeError("ALU value is negative")
@@ -151,7 +151,12 @@ class DataPath:
 
     def latch_ac(self, signal: AcSelSignal, alu_op: Optional[AluOp] = None) -> None:
         if signal == AcSelSignal.IN:
-            self.ac = self.memory[self.ar]
+            if len(self.ports[Port.IN.name]) == 0:
+                self.ac = 0
+                logging.debug("IN: %s", self.ac)
+            else:
+                self.ac = self.ports[Port.IN.name].pop(0)
+                logging.debug("IN: %s - \"%s\"", self.ac, chr(self.ac))
         elif signal == AcSelSignal.ALU:
             self.ac = self.alu.perform(alu_op, self.ac, self.dr)
         elif signal == AcSelSignal.DR:
@@ -266,6 +271,10 @@ class ControlUnit:
                 self.data_path.latch_ac(AcSelSignal.ALU, AluOp.ADD)
                 self.tick_n += 1
                 self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.SUB:
+                self.data_path.latch_ac(AcSelSignal.ALU, AluOp.SUB)
+                self.tick_n += 1
+                self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.EQ:
                 self.data_path.latch_ac(AcSelSignal.ALU, AluOp.EQ)
                 self.tick_n += 1
@@ -292,10 +301,10 @@ class ControlUnit:
                 should_inc_ip = False
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.POP:
-                self.data_path.latch_sp(SpSelSignal.INC)
                 self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.data_path.latch_ac(AcSelSignal.DR)
+                self.data_path.latch_sp(SpSelSignal.INC)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.PUSH:
@@ -323,9 +332,17 @@ class ControlUnit:
             self.executed_instruction_n += 1
 
     def __repr__(self):
-        return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, SP: {self.data_path.sp}, "
+        stack_str = ""
+        for i in range(10):
+            if self.data_path.sp + i < len(self.data_path.memory):
+                stack_str += f"{self.data_path.memory[self.data_path.sp + i]} "
+            else:
+                break
+
+        return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, "
                 f"AR: {self.data_path.ar}, AC: {self.data_path.ac}, "
-                f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}")
+                f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}, SP: {self.data_path.sp}, "
+                f"Stack: {stack_str}")
 
 
 def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> tuple[list[int], int, int]:
@@ -346,9 +363,9 @@ def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> 
 
 def main(code: str, input_file: str) -> None:
     program: BinaryProgram = read_program(code)
-    program_input: list[int] = read_input_as_pascal_string(input_file)
+    program_input: list[int] = read_input(input_file)
 
-    result = simulation(program, limit=1000, program_input=program_input)
+    result = simulation(program, limit=10_000, program_input=program_input)
 
     print("".join([chr(c) for c in result[0]]))
     print(f"instructions_n: {result[1]} ticks: {result[2]}")
