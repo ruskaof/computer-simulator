@@ -633,16 +633,16 @@ log: |
   DEBUG   machine:simulation    TICK: 160, IP: 541, DR: 2047, AR: 2047, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.ST: 'ST'>, arg=Arg(value=4, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2043, Stack: 0 0 4 2 2 
   DEBUG   machine:simulation    TICK: 161, IP: 541, DR: 2047, AR: 541, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2043, Stack: 0 0 4 2 2 
   DEBUG   machine:simulation    TICK: 161, IP: 541, DR: 2047, AR: 541, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2043, Stack: 0 0 4 2 2 
-  DEBUG   machine:simulation    TICK: 162, IP: 542, DR: 0, AR: 2043, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
-  DEBUG   machine:simulation    TICK: 163, IP: 542, DR: 0, AR: 542, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
-  DEBUG   machine:simulation    TICK: 163, IP: 542, DR: 0, AR: 542, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
-  DEBUG   machine:simulation    TICK: 164, IP: 543, DR: 0, AR: 2044, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
-  DEBUG   machine:simulation    TICK: 165, IP: 543, DR: 0, AR: 543, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
-  DEBUG   machine:simulation    TICK: 165, IP: 543, DR: 0, AR: 543, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
-  DEBUG   machine:simulation    TICK: 166, IP: 544, DR: 4, AR: 2045, AC: 4, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 167, IP: 544, DR: 1, AR: 544, AC: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 168, IP: 544, DR: 2047, AR: 544, AC: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 169, IP: 544, DR: 2, AR: 2047, AC: 4, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 162, IP: 542, DR: 0, AR: 2043, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
+  DEBUG   machine:simulation    TICK: 163, IP: 542, DR: 0, AR: 542, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
+  DEBUG   machine:simulation    TICK: 163, IP: 542, DR: 0, AR: 542, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 0 4 2 2 
+  DEBUG   machine:simulation    TICK: 164, IP: 543, DR: 0, AR: 2044, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
+  DEBUG   machine:simulation    TICK: 165, IP: 543, DR: 0, AR: 543, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
+  DEBUG   machine:simulation    TICK: 165, IP: 543, DR: 0, AR: 543, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 4 2 2 
+  DEBUG   machine:simulation    TICK: 166, IP: 544, DR: 4, AR: 2045, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 167, IP: 544, DR: 1, AR: 544, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 168, IP: 544, DR: 2047, AR: 544, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 169, IP: 544, DR: 2, AR: 2047, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
   DEBUG   machine:simulation    TICK: 170, IP: 545, DR: 2, AR: 2047, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
   DEBUG   machine:simulation    TICK: 171, IP: 545, DR: 1, AR: 545, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
   DEBUG   machine:simulation    TICK: 172, IP: 545, DR: 2047, AR: 545, AC: 2, Z: False, INSTR: Operation(opcode=<Opcode.LD: 'LD'>, arg=Arg(value=1, type=<ArgType.STACK_OFFSET: 'STACK_OFFSET'>)), SP: 2046, Stack: 2 2 
@@ -827,13 +827,13 @@ log: |
   DEBUG   machine:simulation    TICK: 324, IP: 568, DR: 568, AR: 557, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.JNZ: 'JNZ'>, arg=Arg(value=568, type=<ArgType.ADDRESS: 'ADDRESS'>)), SP: 2043, Stack: 0 3 3 2 2 
   DEBUG   machine:simulation    TICK: 325, IP: 568, DR: 568, AR: 568, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2043, Stack: 0 3 3 2 2 
   DEBUG   machine:simulation    TICK: 325, IP: 568, DR: 568, AR: 568, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2043, Stack: 0 3 3 2 2 
-  DEBUG   machine:simulation    TICK: 326, IP: 569, DR: 0, AR: 2043, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
-  DEBUG   machine:simulation    TICK: 327, IP: 569, DR: 0, AR: 569, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
-  DEBUG   machine:simulation    TICK: 327, IP: 569, DR: 0, AR: 569, AC: 0, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
-  DEBUG   machine:simulation    TICK: 328, IP: 570, DR: 3, AR: 2044, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
-  DEBUG   machine:simulation    TICK: 329, IP: 570, DR: 3, AR: 570, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
-  DEBUG   machine:simulation    TICK: 329, IP: 570, DR: 3, AR: 570, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
-  DEBUG   machine:simulation    TICK: 330, IP: 571, DR: 3, AR: 2045, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 331, IP: 571, DR: 3, AR: 571, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 331, IP: 571, DR: 3, AR: 571, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 
-  DEBUG   machine:simulation    TICK: 332, IP: 572, DR: 3, AR: 571, AC: 3, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 326, IP: 569, DR: 0, AR: 2043, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
+  DEBUG   machine:simulation    TICK: 327, IP: 569, DR: 0, AR: 569, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
+  DEBUG   machine:simulation    TICK: 327, IP: 569, DR: 0, AR: 569, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2044, Stack: 3 3 2 2 
+  DEBUG   machine:simulation    TICK: 328, IP: 570, DR: 3, AR: 2044, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
+  DEBUG   machine:simulation    TICK: 329, IP: 570, DR: 3, AR: 570, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
+  DEBUG   machine:simulation    TICK: 329, IP: 570, DR: 3, AR: 570, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2045, Stack: 3 2 2 
+  DEBUG   machine:simulation    TICK: 330, IP: 571, DR: 3, AR: 2045, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.POP: 'POP'>, arg=None), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 331, IP: 571, DR: 3, AR: 571, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 331, IP: 571, DR: 3, AR: 571, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 332, IP: 572, DR: 3, AR: 571, AC: 1, Z: False, INSTR: Operation(opcode=<Opcode.HLT: 'HLT'>, arg=None), SP: 2046, Stack: 2 2 

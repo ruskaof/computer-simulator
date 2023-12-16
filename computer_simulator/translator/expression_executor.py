@@ -167,6 +167,12 @@ def exec_binop(op: str, program: Program) -> None:
         program.operations.append(Operation(Opcode.MOD, Arg(1, ArgType.STACK_OFFSET)))
     elif op == "/":
         program.operations.append(Operation(Opcode.DIV, Arg(1, ArgType.STACK_OFFSET)))
+    elif op == "<":
+        program.operations.append(Operation(Opcode.LT, Arg(1, ArgType.STACK_OFFSET)))
+    elif op == ">":
+        program.operations.append(Operation(Opcode.GT, Arg(1, ArgType.STACK_OFFSET)))
+    else:
+        raise RuntimeError(f"Unexpected binop: {op}")
 
 
 def _is_expression_start(tokens: list[Token], idx: int) -> bool:
@@ -187,7 +193,21 @@ def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: b
     elif not started_with_open_bracket:
         return idx
     else:
-        raise RuntimeError(f"Expected close bracket in index {idx}")
+        raise RuntimeError(f"Expected close bracket, got {tokens[idx]}")
+
+
+def seek_end_of_expression(tokens: list[Token], idx: int) -> int:
+    if idx >= len(tokens):
+        return idx
+    elif tokens[idx].token_type == Token.Type.OPEN_BRACKET:
+        idx += 1
+        while tokens[idx].token_type != Token.Type.CLOSE_BRACKET:
+            idx = seek_end_of_expression(tokens, idx)
+        return idx + 1
+    elif tokens[idx].token_type == Token.Type.CLOSE_BRACKET:
+        return idx + 1
+    else:
+        return idx + 1
 
 
 def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
@@ -205,10 +225,10 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.load(int(tokens[idx].value))
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.BINOP:
-        first_expr_end_idx: int = translate_expression(tokens, idx + 1, result)
-        result.push_var_to_stack()
-        result.operations.append(Operation(Opcode.ST, Arg(1, ArgType.STACK_OFFSET)))
+        first_expr_end_idx: int = seek_end_of_expression(tokens, idx + 1)
         second_expr_end_idx: int = translate_expression(tokens, first_expr_end_idx, result)
+        result.push_var_to_stack()
+        translate_expression(tokens, idx + 1, result)
         exec_binop(tokens[idx].value, result)
         result.pop_var_from_stack()
         return get_expr_end_idx(tokens, second_expr_end_idx, started_with_open_bracket)
@@ -228,7 +248,14 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
             raise RuntimeError(EXPECTED_IDENTIFIER)
         expr_end_idx: int = translate_expression(tokens, idx + 2, result)
-        result.push_var_to_stack(tokens[idx + 1].value)
+
+        varname: str = tokens[idx + 1].value
+        var_sp_offset: int = result.get_var_sp_offset(varname)
+        if var_sp_offset is None:
+            result.push_var_to_stack(varname)
+            var_sp_offset = result.get_var_sp_offset(varname)
+
+        result.operations.append(Operation(Opcode.ST, Arg(var_sp_offset, ArgType.STACK_OFFSET)))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
         result.operations.append(
@@ -243,9 +270,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         string_addr = result.alloc_string(tokens[idx].value)
         result.load(string_addr)
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
-    elif tokens[idx].token_type == Token.Type.PRINT_INT:
+    elif tokens[idx].token_type == Token.Type.PRINT_CHAR:
         idx = translate_expression(tokens, idx + 1, result)
-        result.operations.append(Operation(Opcode.ADD, Arg(NUMBER_OFFSET_IN_UTF8, ArgType.DIRECT)))
         result.operations.append(Operation(Opcode.OUT, None))
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.PRINT_STRING:
@@ -372,6 +398,16 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.operations.append(Operation(Opcode.LD, Arg(result.get_var_sp_offset(varname), ArgType.STACK_OFFSET)))
 
         return get_expr_end_idx(tokens, idx + 2, started_with_open_bracket)
+    elif tokens[idx].token_type == Token.Type.WHILE:
+        loop_start_idx = len(result.operations)
+        condition_end_idx = translate_expression(tokens, idx + 1, result)
+        jz_idx = len(result.operations)
+        result.operations.append(Operation(Opcode.JZ, None))
+        body_end_idx = translate_expression(tokens, condition_end_idx, result)
+        result.operations.append(Operation(Opcode.JMP, Arg(loop_start_idx, ArgType.PROGRAM_ADDRESS)))
+        result.operations[jz_idx].arg = Arg(len(result.operations), ArgType.PROGRAM_ADDRESS)
+
+        return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
 
 def translate_program(tokens: list[Token], result: Program) -> None:

@@ -1,6 +1,9 @@
 (progn
-    (setq a "a")
-    (setq c "b")
-    (print_string a)
-    (print_string c)
+  (setq x 1)
+  (while
+    (< x 3)
+    (progn
+      (setq x (+ x 1))
+    )
   )
+)

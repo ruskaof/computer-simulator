@@ -8,6 +8,8 @@ class Opcode(Enum):
     ST: str = "ST"
     ADD: str = "ADD"
     SUB: str = "SUB"
+    LT: str = "LT"
+    GT: str = "GT"
     EQ: str = "EQ"
     MOD: str = "MOD"
     DIV: str = "DIV"

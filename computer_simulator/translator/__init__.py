@@ -17,10 +17,11 @@ class Token(ABC):
         SETQ: int = auto()
         IDENTIFIER: int = auto()
         DEFUN: int = auto()
-        PRINT_INT: int = auto()
+        PRINT_CHAR: int = auto()
         PRINT_STRING: int = auto()
         PROGN: int = auto()
         READ_STRING: int = auto()
+        WHILE: int = auto()
 
     token_type: Type
     value: str

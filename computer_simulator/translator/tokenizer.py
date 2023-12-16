@@ -26,7 +26,7 @@ def process_brackets(tokens: list, idx: int, chars: str) -> int:
 def process_binpos(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
-    if chars[idx] in ("+", "-", "*", "/", "="):
+    if chars[idx] in ("+", "-", "*", "/", "=", "<", ">"):
         tokens.append(Token(Token.Type.BINOP, chars[idx]))
         idx += 1
     return idx
@@ -110,10 +110,11 @@ def tokenize(program_chars: str) -> list[Token]:
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.IF, "if")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.DEFUN, "defun")
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT_INT, "print_int")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT_CHAR, "print_char")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PRINT_STRING, "print_string")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PROGN, "progn")
         prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.READ_STRING, "read_string")
+        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.WHILE, "while")
         prev_idx = process_number_literal(tokens, prev_idx, program_chars)
         prev_idx = process_string_literal(tokens, prev_idx, program_chars)
         prev_idx = process_identifier(tokens, prev_idx, program_chars)
