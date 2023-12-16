@@ -45,6 +45,7 @@ class Program:
         self.memory[0] = Operation(Opcode.JMP, Arg(STATIC_MEMORY_SIZE, ArgType.ADDRESS))
         self.memory_used: int = 2
         self.current_stack: list[StackValue] = []
+        self.functions: dict[str, int] = {}
 
     def load(self, value: int) -> None:
         self.memory.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
@@ -52,6 +53,9 @@ class Program:
     # allocates variable on top of stack
     def push_var_to_stack(self, name: str | None = None) -> None:
         self.memory.append(Operation(Opcode.PUSH, None))
+        self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
+
+    def resolve_stack_var(self, name: str) -> None:
         self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
 
     def pop_var_from_stack(self) -> None:
@@ -168,6 +172,30 @@ def seek_end_of_expression(tokens: list[Token], idx: int) -> int:
         return idx + 1
 
 
+def get_args_of_func(tokens: list[Token], idx: int) -> tuple[list[str], int]:
+    if tokens[idx].token_type != Token.Type.OPEN_BRACKET:
+        raise RuntimeError("Expected open bracket")
+    idx += 1
+    passed_args: list[str] = []
+    while tokens[idx].token_type != Token.Type.CLOSE_BRACKET:
+        if tokens[idx].token_type != Token.Type.IDENTIFIER:
+            raise RuntimeError(EXPECTED_IDENTIFIER)
+        passed_args.append(tokens[idx].value)
+        idx += 1
+    return passed_args, idx + 1
+
+
+def pass_args_to_func(tokens: list[Token], idx: int, result: Program) -> tuple[int, int]:
+    idx += 1
+    args_n = 0
+    while tokens[idx].token_type != Token.Type.CLOSE_BRACKET:
+        translate_expression(tokens, idx, result)
+        result.push_var_to_stack()
+        idx += 1
+        args_n += 1
+    return idx, args_n
+
+
 def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     if idx >= len(tokens):
         return idx
@@ -216,6 +244,13 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory.append(Operation(Opcode.ST, Arg(var_sp_offset, ArgType.STACK_OFFSET)))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
+        if tokens[idx].value in result.functions:
+            args_end_idx, args_n = pass_args_to_func(tokens, idx + 1, result)
+            result.memory.append(Operation(Opcode.CALL, Arg(result.functions[tokens[idx].value], ArgType.ADDRESS)))
+            for _ in range(args_n):
+                result.pop_var_from_stack()
+            return get_expr_end_idx(tokens, args_end_idx, started_with_open_bracket)
+
         result.memory.append(
             Operation(Opcode.LD, Arg(result.get_var_sp_offset(tokens[idx].value), ArgType.STACK_OFFSET))
         )
@@ -367,7 +402,26 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory[jz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
-    return None
+    elif tokens[idx].token_type == Token.Type.DEFUN:
+        if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
+            raise RuntimeError(EXPECTED_IDENTIFIER)
+
+        jmp_idx = len(result.memory)
+        result.memory.append(Operation(Opcode.JMP, None))
+        result.functions[tokens[idx + 1].value] = len(result.memory)
+
+        # add variables to stack
+        stack_variables, args_end_idx = get_args_of_func(tokens, idx + 2)
+        for var in stack_variables:
+            result.resolve_stack_var(var)
+        result.resolve_stack_var("#ret_addr")
+
+        body_end_idx = translate_expression(tokens, args_end_idx, result)
+        result.memory.append(Operation(Opcode.RET, None))
+
+        result.memory[jmp_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
+
+        return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
 
 def translate_program(tokens: list[Token], result: Program) -> None:

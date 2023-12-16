@@ -73,6 +73,7 @@ class AcSelSignal(Enum):
     IN = 0
     ALU = 1
     DR = 2
+    IP = 3
 
 
 class DrSelSignal(Enum):
@@ -168,6 +169,8 @@ class DataPath:
             self.ac = self.alu.perform(alu_op, self.ac, self.dr)
         elif signal == AcSelSignal.DR:
             self.ac = self.dr
+        elif signal == AcSelSignal.IP:
+            self.ac = self.ip
         else:
             self._rase_for_unknown_signal(signal)
 
@@ -215,6 +218,7 @@ NO_FETCH_OPERAND = [
     Opcode.ST,
     Opcode.PUSH,
     Opcode.POP,
+    Opcode.CALL,
 ]
 
 
@@ -341,6 +345,23 @@ class ControlUnit:
             elif self.decoded_instruction.opcode == Opcode.GT:
                 self.data_path.latch_ac(AcSelSignal.ALU, AluOp.GT)
                 self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.CALL:
+                self.data_path.latch_ac(AcSelSignal.IP)
+                self.data_path.latch_ar(ArSelSignal.SP)
+                self.data_path.latch_sp(SpSelSignal.DEC)
+                self.data_path.latch_ip(IpSelSignal.DR)
+                self.data_path.wr()
+                self.tick_n += 1
+                should_inc_ip = False
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.RET:
+                self.data_path.latch_ar(ArSelSignal.SP)
+                self.data_path.latch_dr(DrSelSignal.MEMORY)
+                self.data_path.latch_ip(IpSelSignal.DR)
+                self.data_path.latch_sp(SpSelSignal.INC)
+                self.tick_n += 1
+                should_inc_ip = False
                 self.stage = self.stage.next()
             else:
                 raise RuntimeError(f"Unknown opcode: {self.decoded_instruction.opcode}")
