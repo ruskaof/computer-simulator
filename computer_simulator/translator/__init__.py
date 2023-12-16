@@ -1,7 +1,8 @@
+from abc import ABC
 from dataclasses import dataclass
 from enum import Enum, auto
-from abc import ABC
-from typing import NewType, Optional
+
+STATIC_MEMORY_SIZE = 512
 
 
 @dataclass
