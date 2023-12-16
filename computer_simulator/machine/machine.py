@@ -9,7 +9,7 @@ from typing import Optional
 from computer_simulator.isa import Operation, Opcode, ArgType, Arg
 
 WORD_SIZE: int = 64
-WORD_MAX_VALUE: int = 2 ** WORD_SIZE
+WORD_MAX_VALUE: int = 2**WORD_SIZE
 MEMORY_SIZE: int = 2048
 
 
@@ -89,7 +89,6 @@ class AluOp(Enum):
 
 
 class Alu:
-
     def __init__(self):
         self.flag_z: bool = True
 
@@ -120,7 +119,6 @@ class Alu:
 
 
 class DataPath:
-
     def __init__(self, memory: list[Operation | int], ports: dict[str, list[int]]) -> None:
         self.memory: list[Operation | int] = memory
         self.ports: dict[str, list[int]] = ports
@@ -164,7 +162,7 @@ class DataPath:
                 logging.debug("IN: %s", self.ac)
             else:
                 self.ac = self.ports[Port.IN.name].pop(0)
-                logging.debug("IN: %s - \"%s\"", self.ac, chr(self.ac))
+                logging.debug('IN: %s - "%s"', self.ac, chr(self.ac))
         elif signal == AcSelSignal.ALU:
             self.ac = self.alu.perform(alu_op, self.ac, self.dr)
         elif signal == AcSelSignal.DR:
@@ -188,7 +186,7 @@ class DataPath:
             self._rase_for_unknown_signal(signal)
 
     def latch_out(self) -> None:
-        logging.debug("OUT: %s - \"%s\"", self.ac, chr(self.ac))
+        logging.debug('OUT: %s - "%s"', self.ac, chr(self.ac))
         self.ports[Port.OUT.name].append(self.ac)
 
     def wr(self):
@@ -204,7 +202,7 @@ class Stage(Enum):
     OPERAND_FETCH = 2
     EXECUTE = 3
 
-    def next(self) -> 'Stage':
+    def next(self) -> "Stage":
         return Stage((self.value + 1) % Stage.__len__())
 
 
@@ -219,7 +217,6 @@ NO_FETCH_OPERAND = [
 
 
 class ControlUnit:
-
     def __init__(self, data_path: DataPath):
         self.data_path: DataPath = data_path
         self.tick_n: int = 0
@@ -252,9 +249,11 @@ class ControlUnit:
         elif self.stage == Stage.OPERAND_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            if (self.decoded_instruction.arg is not None
-                    and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                    and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS, ArgType.INDIRECT)):
+            if (
+                self.decoded_instruction.arg is not None
+                and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
+                and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS, ArgType.INDIRECT)
+            ):
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
@@ -355,10 +354,12 @@ class ControlUnit:
             else:
                 break
 
-        return (f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, "
-                f"AR: {self.data_path.ar}, AC: {self.data_path.ac}, "
-                f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}, SP: {self.data_path.sp}, "
-                f"Stack: {stack_str}")
+        return (
+            f"TICK: {self.tick_n}, IP: {self.data_path.ip}, DR: {self.data_path.dr}, "
+            f"AR: {self.data_path.ar}, AC: {self.data_path.ac}, "
+            f"Z: {self.data_path.alu.flag_z}, INSTR: {self.decoded_instruction}, SP: {self.data_path.sp}, "
+            f"Stack: {stack_str}"
+        )
 
 
 def simulation(program: BinaryProgram, limit: int, program_input: list[int]) -> tuple[list[int], int, int]:
@@ -387,7 +388,7 @@ def main(code: str, input_file: str) -> None:
     print(f"instructions_n: {result[1]} ticks: {result[2]}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     logging.getLogger().setLevel(logging.DEBUG)
     assert len(sys.argv) >= 3, f"Usage: python3 {Path(__file__).name} <code> <input>"
     main(sys.argv[1], sys.argv[2])

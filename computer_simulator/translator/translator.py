@@ -25,7 +25,9 @@ def main(source: str, target: str) -> None:
         tokenized_code: list[Token] = tokenize(source_code)
         program: Program = run_translator(tokenized_code)
 
-        print(f"source LoC: {len(source_code.split("\n"))} code instr: {len([x for x in program.memory if isinstance(x, Operation)])}")
+        print(
+            f"source LoC: {len(source_code.split("\n"))} code instr: {len([x for x in program.memory if isinstance(x, Operation)])}"
+        )
         f.write(program.to_machine_code())
 
 

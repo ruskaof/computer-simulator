@@ -217,7 +217,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.IDENTIFIER:
         result.memory.append(
-            Operation(Opcode.LD, Arg(result.get_var_sp_offset(tokens[idx].value), ArgType.STACK_OFFSET)))
+            Operation(Opcode.LD, Arg(result.get_var_sp_offset(tokens[idx].value), ArgType.STACK_OFFSET))
+        )
         return get_expr_end_idx(tokens, idx + 1, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.PROGN:
         idx += 1
