@@ -369,6 +369,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.pop_var_from_stack()  # char
         result.pop_var_from_stack()  # str_p
 
+        result.operations.append(Operation(Opcode.LD, Arg(result.get_var_sp_offset(varname), ArgType.STACK_OFFSET)))
+
         return get_expr_end_idx(tokens, idx + 2, started_with_open_bracket)
 
 
