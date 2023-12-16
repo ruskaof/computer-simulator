@@ -3,10 +3,7 @@ name: Python CI
 on:
   push:
     branches:
-      - main
-
-permissions:
-  contents: read
+      - master
 
 jobs:
   computer-simulator:
