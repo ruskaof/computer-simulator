@@ -14,6 +14,7 @@ NUMBER_OFFSET_IN_UTF8 = 48
 STRING_ALLOC_SIZE = 32
 SERVICE_VARIABLE_ADDRESS = 1
 
+
 @dataclass
 class Variable:
     name: Optional[str]
