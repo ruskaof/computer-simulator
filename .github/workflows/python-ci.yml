@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   computer-simulator:
     runs-on: ubuntu-latest
