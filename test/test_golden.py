@@ -1,10 +1,3 @@
-# pylint: disable=missing-class-docstring     # чтобы не быть Капитаном Очевидностью
-# pylint: disable=missing-function-docstring  # чтобы не быть Капитаном Очевидностью
-# pylint: disable=line-too-long               # строки с ожидаемым выводом
-
-"""Интеграционные тесты транслятора и машины
-"""
-
 import contextlib
 import io
 import logging
@@ -16,7 +9,7 @@ from computer_simulator.machine import machine
 from computer_simulator.translator import translator
 
 
-@pytest.mark.golden_test("golden/*.yml")
+@pytest.mark.golden_test("../golden/*.yml")
 def test_whole_by_golden(golden, caplog):
     caplog.set_level(logging.DEBUG)
 
