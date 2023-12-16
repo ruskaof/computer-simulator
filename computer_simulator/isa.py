@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from enum import Enum, auto
-from typing import Optional
+from enum import Enum
 
 
 class Opcode(Enum):
@@ -35,10 +36,10 @@ class ArgType(Enum):
 @dataclass
 class Arg:
     value: int
-    type: ArgType
+    arg_type: ArgType
 
 
 @dataclass
 class Operation:
     opcode: Opcode
-    arg: Optional[Arg]
+    arg: Arg | None

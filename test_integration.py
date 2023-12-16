@@ -12,7 +12,6 @@ import os
 import tempfile
 
 import pytest
-
 from computer_simulator.machine import machine
 from computer_simulator.translator import translator
 

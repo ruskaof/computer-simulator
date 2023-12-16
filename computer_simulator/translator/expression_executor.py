@@ -1,10 +1,10 @@
+from __future__ import annotations
+
 import json
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
 
-from computer_simulator.isa import Opcode
-from computer_simulator.isa import Operation, Arg, ArgType
+from computer_simulator.isa import Arg, ArgType, Opcode, Operation
 from computer_simulator.translator import Token
 
 EXPECTED_IDENTIFIER = "Expected identifier"
@@ -17,7 +17,7 @@ SERVICE_VARIABLE_ADDRESS = 1
 
 @dataclass
 class Variable:
-    name: Optional[str]
+    name: str | None
     died: bool
 
 
@@ -32,10 +32,10 @@ class StackValue:
         STRING_ADDR: str = "STRING"
         RETURN_ADDR: str = "RETURN_ADDR"
 
-    def __init__(self, value: int, value_type: Type, name: Optional[str] = None):
+    def __init__(self, value: int, value_type: Type, name: str | None = None):
         self.value: int = value
         self.value_type: StackValue.Type = value_type
-        self.name: Optional[str] = name
+        self.name: str | None = name
 
 
 class Program:
@@ -50,7 +50,7 @@ class Program:
         self.memory.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
 
     # allocates variable on top of stack
-    def push_var_to_stack(self, name: Optional[str] = None) -> None:
+    def push_var_to_stack(self, name: str | None = None) -> None:
         self.memory.append(Operation(Opcode.PUSH, None))
         self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
 
@@ -85,8 +85,8 @@ class Program:
     def get_var_sp_offset(self, name: str) -> int:
         for i in range(len(self.current_stack) - 1, -1, -1):
             if self.current_stack[i].name == name:
-                result = len(self.current_stack) - i
-                return result
+                return len(self.current_stack) - i
+        return None
 
     def to_machine_code(self) -> str:
         memory = []
@@ -108,7 +108,7 @@ class Program:
                             "opcode": self.memory[i].opcode.value,
                             "arg": {
                                 "value": arg.value,
-                                "type": arg.type.value,
+                                "type": arg.arg_type.value,
                             },
                             "address": i,
                         },
@@ -367,6 +367,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory[jz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
+    return None
 
 
 def translate_program(tokens: list[Token], result: Program) -> None:

@@ -1,12 +1,13 @@
+from __future__ import annotations
+
 import json
 import logging
 import sys
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Optional
 
-from computer_simulator.isa import Operation, Opcode, ArgType, Arg
+from computer_simulator.isa import Arg, ArgType, Opcode, Operation
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2**WORD_SIZE
@@ -155,7 +156,7 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_ac(self, signal: AcSelSignal, alu_op: Optional[AluOp] = None) -> None:
+    def latch_ac(self, signal: AcSelSignal, alu_op: AluOp | None = None) -> None:
         if signal == AcSelSignal.IN:
             if len(self.ports[Port.IN.name]) == 0:
                 self.ac = 0
@@ -170,7 +171,7 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_dr(self, signal: DrSelSignal, alu_res: Optional[int] = None) -> Optional[Operation]:
+    def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None) -> Operation | None:
         if signal == DrSelSignal.INSTRUCTION_DECODER:
             cell = self.memory[self.ip]
             if cell.arg is not None:
@@ -184,6 +185,7 @@ class DataPath:
             return None
         else:
             self._rase_for_unknown_signal(signal)
+            return None
 
     def latch_out(self) -> None:
         logging.debug('OUT: %s - "%s"', self.ac, chr(self.ac))
@@ -202,7 +204,7 @@ class Stage(Enum):
     OPERAND_FETCH = 2
     EXECUTE = 3
 
-    def next(self) -> "Stage":
+    def next(self) -> Stage:
         return Stage((self.value + 1) % Stage.__len__())
 
 
@@ -221,7 +223,7 @@ class ControlUnit:
         self.data_path: DataPath = data_path
         self.tick_n: int = 0
         self.stage: Stage = Stage.INSTRUCTION_FETCH
-        self.decoded_instruction: Optional[Operation] = None
+        self.decoded_instruction: Operation | None = None
         self.halted: bool = False
         self.executed_instruction_n: int = 0
 
@@ -234,12 +236,12 @@ class ControlUnit:
         elif self.stage == Stage.ADDRESS_FETCH:
             if self.decoded_instruction is None:
                 raise RuntimeError("Instruction is not decoded")
-            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.STACK_OFFSET:
+            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.arg_type == ArgType.STACK_OFFSET:
                 alu_res = self.data_path.alu.perform(AluOp.ADD, self.data_path.sp, self.data_path.dr)
                 self.data_path.latch_dr(DrSelSignal.ALU, alu_res)
                 self.tick_n += 1
                 self.stage = self.stage.next()
-            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.type == ArgType.INDIRECT:
+            elif self.decoded_instruction.arg is not None and self.decoded_instruction.arg.arg_type == ArgType.INDIRECT:
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.tick_n += 1
@@ -252,7 +254,7 @@ class ControlUnit:
             if (
                 self.decoded_instruction.arg is not None
                 and self.decoded_instruction.opcode not in NO_FETCH_OPERAND
-                and self.decoded_instruction.arg.type in (ArgType.STACK_OFFSET, ArgType.ADDRESS, ArgType.INDIRECT)
+                and self.decoded_instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.ADDRESS, ArgType.INDIRECT)
             ):
                 self.data_path.latch_ar(ArSelSignal.DR)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)

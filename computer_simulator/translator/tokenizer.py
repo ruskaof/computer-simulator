@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from computer_simulator.translator import Token
 
 IDENTIFIER_NON_ALPHA_CHARS = {"_"}
