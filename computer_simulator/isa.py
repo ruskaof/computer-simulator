@@ -50,7 +50,7 @@ class Arg:
 
 
 @dataclass
-class Operation:
+class Instruction:
     opcode: Opcode
     arg: Arg | None
     comment: str | None = None

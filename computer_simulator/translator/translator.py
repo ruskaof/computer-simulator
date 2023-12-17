@@ -3,7 +3,7 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from computer_simulator.isa import Operation
+from computer_simulator.isa import Instruction
 from computer_simulator.translator import Token
 from computer_simulator.translator.expression_executor import Program, translate_program
 from computer_simulator.translator.tokenizer import tokenize
@@ -26,7 +26,7 @@ def main(source: str, target: str) -> None:
         program: Program = run_translator(tokenized_code)
 
         print(
-            f"source LoC: {len(source_code.split("\n"))} code instr: {len([x for x in program.memory if isinstance(x, Operation)])}"
+            f"source LoC: {len(source_code.split("\n"))} code instr: {len([x for x in program.memory if isinstance(x, Instruction)])}"
         )
         f.write(program.to_machine_code())
 

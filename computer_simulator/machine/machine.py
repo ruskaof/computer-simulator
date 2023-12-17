@@ -6,7 +6,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from computer_simulator.isa import Arg, ArgType, Opcode, Operation
+from computer_simulator.isa import Arg, ArgType, Opcode, Instruction
 from computer_simulator.machine.hardwire import DataPath, ControlUnit, Port
 
 MEMORY_SIZE: int = 2048
@@ -14,7 +14,7 @@ MEMORY_SIZE: int = 2048
 
 @dataclass
 class BinaryProgram:
-    memory: list[Operation | int]
+    memory: list[Instruction | int]
 
 
 def read_file(file_path: str) -> str:
@@ -34,7 +34,7 @@ def read_input(file_path: str) -> list[int]:
 
 def read_program(exe: str) -> BinaryProgram:
     json_exe = read_json_file(exe)
-    memory = [0 for _ in range(MEMORY_SIZE)]
+    memory: list[Instruction | int] = [0 for _ in range(MEMORY_SIZE)]
     for word in json_exe["memory"]:
         arg = None
         if "arg" in word:
@@ -43,7 +43,7 @@ def read_program(exe: str) -> BinaryProgram:
         if "comment" in word:
             comment = word["comment"]
         address: int = word["address"]
-        memory[address] = Operation(Opcode(word["opcode"]), arg, comment)
+        memory[address] = Instruction(Opcode(word["opcode"]), arg, comment)
     return BinaryProgram(memory)
 
 

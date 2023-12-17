@@ -1,9 +1,8 @@
-import json
 import logging
 from dataclasses import dataclass
 from enum import Enum
 
-from computer_simulator.isa import Operation, ArgType, Opcode
+from computer_simulator.isa import Instruction, ArgType, Opcode
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
@@ -66,39 +65,26 @@ class AluRight(Enum):
     DR = 1
 
 
+ALU_OP_HANDLERS: dict[AluOp, callable] = {
+    AluOp.ADD: lambda left, right: left + right,
+    AluOp.SUB: lambda left, right: left - right,
+    AluOp.EQ: lambda left, right: 1 if left == right else 0,
+    AluOp.GT: lambda left, right: 1 if left > right else 0,
+    AluOp.LT: lambda left, right: 1 if left < right else 0,
+    AluOp.MOD: lambda left, right: left % right,
+    AluOp.DIV: lambda left, right: left // right,
+    AluOp.MULT: lambda left, right: left * right,
+}
+
+
 class Alu:
     def __init__(self):
         self.flag_z: bool = True
 
     def perform(self, op: AluOp, left: int, right: int) -> int:
-        if op == AluOp.ADD:
-            value = (left + right) % WORD_MAX_VALUE
-            self.set_flags(value)
-        elif op == AluOp.SUB:
-            value = (left - right) % WORD_MAX_VALUE
-            if value < 0:
-                raise RuntimeError("ALU value is negative")
-            self.set_flags(value)
-        elif op == AluOp.EQ:
-            value = 1 if left == right else 0
-            self.set_flags(value)
-        elif op == AluOp.GT:
-            value = 1 if left > right else 0
-            self.set_flags(value)
-        elif op == AluOp.LT:
-            value = 1 if left < right else 0
-            self.set_flags(value)
-        elif op == AluOp.MOD:
-            value = left % right
-            self.set_flags(value)
-        elif op == AluOp.DIV:
-            value = left // right
-            self.set_flags(value)
-        elif op == AluOp.MULT:
-            value = left * right
-            self.set_flags(value)
-        else:
-            raise RuntimeError(f"Unknown ALU operation: {op}")
+        handler = ALU_OP_HANDLERS[op]
+        value = handler(left, right)
+        self.set_flags(value)
         return value
 
     def set_flags(self, value) -> None:
@@ -106,8 +92,8 @@ class Alu:
 
 
 class DataPath:
-    def __init__(self, memory: list[Operation | int], ports: dict[str, list[int]]) -> None:
-        self.memory: list[Operation | int] = memory
+    def __init__(self, memory: list[Instruction | int], ports: dict[str, list[int]]) -> None:
+        self.memory: list[Instruction | int] = memory
         self.ports: dict[str, list[int]] = ports
         self.alu: Alu = Alu()
         self.ip: int = 0  # instruction pointer
@@ -173,7 +159,7 @@ class DataPath:
             self._rase_for_unknown_signal(signal)
 
     def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None,
-                 mem_value: int | None = None) -> Operation | None:
+                 mem_value: int | None = None) -> Instruction | None:
         if signal == DrSelSignal.MEMORY:
             self.dr = mem_value
             return None
@@ -203,7 +189,7 @@ class DataPath:
     def wr(self, addr_sel_signal: AddrSelSignal) -> None:
         self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)] = self.ac
 
-    def oe(self, addr_sel_signal: AddrSelSignal) -> Operation | int:
+    def oe(self, addr_sel_signal: AddrSelSignal) -> Instruction | int:
         return self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)]
 
     def _rase_for_unknown_signal(self, unknown_signal: any) -> None:
@@ -233,7 +219,7 @@ class ControlUnit:
         self.data_path: DataPath = data_path
         self.stage: Stage = Stage.INSTRUCTION_FETCH  # stage counter
         self.tc: int = 0  # tick counter
-        self.decoded_instruction: Operation | None = None
+        self.decoded_instruction: Instruction | None = None
         self.halted: bool = False
 
         # not a part of the control unit, but useful model information
@@ -274,7 +260,7 @@ def _raise_for_invalid_instruction(control_unit: ControlUnit):
     raise RuntimeError(f"Invalid instruction: {control_unit.decoded_instruction}")
 
 
-def _need_address_fetch(instruction: Operation) -> bool:
+def _need_address_fetch(instruction: Instruction) -> bool:
     return instruction.arg is not None and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT)
 
 
@@ -289,7 +275,7 @@ NO_FETCH_OPERAND_INSTR = [
 ]
 
 
-def _need_operand_fetch(instruction: Operation) -> bool:
+def _need_operand_fetch(instruction: Instruction) -> bool:
     return instruction.arg is not None \
         and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT, ArgType.ADDRESS) \
         and instruction.opcode not in NO_FETCH_OPERAND_INSTR
@@ -448,7 +434,7 @@ def command_handle_execute_hlt(control_unit: ControlUnit):
     control_unit.stage = Stage.INSTRUCTION_FETCH
 
 
-execute_handlers: dict[Opcode, callable] = {
+EXECUTE_HANDLERS: dict[Opcode, callable] = {
     Opcode.LD: command_handle_execute_ld,
     Opcode.ST: command_handle_execute_st,
     Opcode.ADD: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.ADD),
@@ -473,7 +459,7 @@ execute_handlers: dict[Opcode, callable] = {
 
 
 def handle_execute_tick(control_unit: ControlUnit):
-    handler = execute_handlers.get(control_unit.decoded_instruction.opcode)
+    handler = EXECUTE_HANDLERS.get(control_unit.decoded_instruction.opcode)
     handler(control_unit)
 
 
