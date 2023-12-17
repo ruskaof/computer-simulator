@@ -74,7 +74,7 @@ def process_string_literal(tokens: list, idx: int, chars: str) -> int:
             idx += 1
 
         if idx >= len(chars):
-            raise InvalidSymbolsError(got=chars[idx], expected="closing quote")
+            raise InvalidSymbolsError(got="string index out of range", expected="closing quote")
 
         tokens.append(Token(Token.Type.STRING, value))
         idx += 1

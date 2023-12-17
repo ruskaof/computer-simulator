@@ -1,5 +1,6 @@
 import pytest
 from computer_simulator.translator import Token
+from computer_simulator.translator.errors import InvalidSymbolsError
 from computer_simulator.translator.tokenizer import tokenize
 
 
@@ -24,7 +25,7 @@ def test_identifier_processing_handles_non_alpha_input():
 
 
 def test_string_literal_processing_handles_unterminated_string():
-    with pytest.raises(RuntimeError):
+    with pytest.raises(InvalidSymbolsError):
         tokenize('"abc')
 
 
