@@ -58,7 +58,7 @@ class Instruction:
     def __str__(self) -> str:
         r = f"{self.opcode}"
         if self.arg:
-            r += f" {self.arg}"
+            r += f" arg - {self.arg}"
         if self.comment:
             r += f" ({self.comment})"
-        return f"Operation({r})"
+        return f"Instruction({r})"
