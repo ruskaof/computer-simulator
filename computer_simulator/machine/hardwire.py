@@ -9,7 +9,7 @@ from typing import Callable, cast, Any
 from computer_simulator.isa import ArgType, Instruction, Opcode, Arg
 
 WORD_SIZE: int = 64
-WORD_MAX_VALUE: int = 2 ** WORD_SIZE
+WORD_MAX_VALUE: int = 2**WORD_SIZE
 
 
 class UnknownSignalError(Exception):
@@ -309,9 +309,11 @@ NO_FETCH_OPERAND_INSTR = [
 
 
 def _need_operand_fetch(instruction: Instruction) -> bool:
-    return instruction.arg is not None \
-        and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT, ArgType.ADDRESS) \
+    return (
+        instruction.arg is not None
+        and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT, ArgType.ADDRESS)
         and instruction.opcode not in NO_FETCH_OPERAND_INSTR
+    )
 
 
 def handle_instruction_fetch_tick(control_unit: ControlUnit):
@@ -526,8 +528,9 @@ def handle_execute_tick(control_unit: ControlUnit):
     if control_unit.decoded_instruction is None:
         raise UncodedInstructionError(control_unit)
 
-    handler: Callable[[ControlUnit], None] = \
-        EXECUTE_HANDLERS[cast(Instruction, control_unit.decoded_instruction).opcode]
+    handler: Callable[[ControlUnit], None] = EXECUTE_HANDLERS[
+        cast(Instruction, control_unit.decoded_instruction).opcode
+    ]
     handler(control_unit)
 
 

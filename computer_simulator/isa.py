@@ -62,4 +62,3 @@ class Instruction:
         if self.comment:
             r += f" ({self.comment})"
         return f"Operation({r})"
-

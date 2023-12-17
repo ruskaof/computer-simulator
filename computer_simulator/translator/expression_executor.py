@@ -267,7 +267,8 @@ def handle_token_print_string(tokens: list[Token], idx: int, result: Program, st
     # load string size to ac
     result.memory.append(Instruction(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
     result.memory.append(
-        Instruction(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load string size inside print_str"))
+        Instruction(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load string size inside print_str")
+    )
 
     # store string size
     result.push_var_to_stack("#str_size")
@@ -280,7 +281,9 @@ def handle_token_print_string(tokens: list[Token], idx: int, result: Program, st
     # compare index with string size:
     # load index
     result.memory.append(Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset("#i")), ArgType.STACK_OFFSET)))
-    result.memory.append(Instruction(Opcode.EQ, Arg(cast(int, result.get_var_sp_offset("#str_size")), ArgType.STACK_OFFSET)))
+    result.memory.append(
+        Instruction(Opcode.EQ, Arg(cast(int, result.get_var_sp_offset("#str_size")), ArgType.STACK_OFFSET))
+    )
 
     jnz_idx: int = len(result.memory)
     # jump if index == string size
@@ -288,27 +291,27 @@ def handle_token_print_string(tokens: list[Token], idx: int, result: Program, st
 
     # load string pointer
     result.memory.append(
-        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET))
+    )
     result.memory.append(Instruction(Opcode.ADD, Arg(cast(int, result.get_var_sp_offset("#i")), ArgType.STACK_OFFSET)))
 
     result.memory.append(Instruction(Opcode.ADD, Arg(1, ArgType.DIRECT)))
 
     # load char
     result.memory.append(Instruction(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
-    result.memory.append(
-        Instruction(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load char inside print_str"))
+    result.memory.append(Instruction(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load char inside print_str"))
     result.memory.append(Instruction(Opcode.OUT, None))
 
     # increment index
     increment_index(result)
 
     # jump to compare index with string size
-    result.memory.append(
-        Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS), "Jump to read str loop start"))
+    result.memory.append(Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS), "Jump to read str loop start"))
     cast(Instruction, result.memory[jnz_idx]).arg = Arg(len(result.memory), ArgType.ADDRESS)
 
     result.memory.append(
-        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET))
+    )
 
     result.pop_var_from_stack(comment="Pop #i used to print string")
     result.pop_var_from_stack(comment="Pop #str_size used to print string")
@@ -351,7 +354,9 @@ def handle_token_read_string(tokens: list[Token], idx: int, result: Program, sta
 
     # read char
     result.memory.append(Instruction(Opcode.IN, None))
-    result.memory.append(Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(char_varname)), ArgType.STACK_OFFSET)))
+    result.memory.append(
+        Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(char_varname)), ArgType.STACK_OFFSET))
+    )
 
     # if char is 0, then break
     result.memory.append(Instruction(Opcode.EQ, Arg(0, ArgType.DIRECT)))
@@ -360,10 +365,13 @@ def handle_token_read_string(tokens: list[Token], idx: int, result: Program, sta
 
     # save char by index
     result.memory.append(
-        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET))
+    )
     result.memory.append(Instruction(Opcode.ADD, Arg(cast(int, result.get_var_sp_offset("#i")), ArgType.STACK_OFFSET)))
     result.memory.append(Instruction(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
-    result.memory.append(Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(char_varname)), ArgType.STACK_OFFSET)))
+    result.memory.append(
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(char_varname)), ArgType.STACK_OFFSET))
+    )
     result.memory.append(Instruction(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Save char by index"))
 
     increment_index(result)
@@ -374,7 +382,8 @@ def handle_token_read_string(tokens: list[Token], idx: int, result: Program, sta
 
     # save string size
     result.memory.append(
-        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET))
+    )
     result.memory.append(Instruction(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
     result.memory.append(Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset("#i")), ArgType.STACK_OFFSET)))
     result.memory.append(Instruction(Opcode.SUB, Arg(1, ArgType.DIRECT)))
@@ -382,14 +391,19 @@ def handle_token_read_string(tokens: list[Token], idx: int, result: Program, sta
 
     # save string pointer to variable
     result.memory.append(
-        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET)))
-    result.memory.append(Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(str_pointer_varname)), ArgType.STACK_OFFSET))
+    )
+    result.memory.append(
+        Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET))
+    )
 
     result.pop_var_from_stack(comment="Pop #i used to read string")
     result.pop_var_from_stack(comment="Pop #char used to read string")
     result.pop_var_from_stack(comment="Pop #str_p used to read string")
 
-    result.memory.append(Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET)))
+    result.memory.append(
+        Instruction(Opcode.LD, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET))
+    )
 
     return get_expr_end_idx(tokens, idx + 2, started_with_open_bracket)
 
@@ -403,8 +417,7 @@ def handle_token_while(tokens: list[Token], idx: int, result: Program, started_w
     result.memory.append(Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS)))
     cast(Instruction, result.memory[jz_idx]).arg = Arg(len(result.memory), ArgType.ADDRESS)
 
-    result.memory.append(
-        Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
+    result.memory.append(Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
 
     return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
@@ -437,8 +450,7 @@ def handle_token_defun(tokens: list[Token], idx: int, result: Program, started_w
     for var in stack_variables:
         result.unresolve_stack_var(var)
 
-    result.memory.append(
-        Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
+    result.memory.append(Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
 
     return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
