@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from enum import Enum
 from typing import Callable
 
 from computer_simulator.isa import Arg, ArgType, Opcode, Instruction
@@ -22,26 +21,9 @@ class Function:
 
 
 @dataclass
-class Variable:
-    name: str | None
-    died: bool
-
-
-class AccumValueType(Enum):
-    INT: str = "INT"
-    STRING: str = "STRING"
-
-
 class StackValue:
-    class Type(Enum):
-        INT: str = "INT"
-        STRING_ADDR: str = "STRING"
-        RETURN_ADDR: str = "RETURN_ADDR"
-
-    def __init__(self, value: int, value_type: Type, name: str | None = None):
-        self.value: int = value
-        self.value_type: StackValue.Type = value_type
-        self.name: str | None = name
+    value: int
+    name: str | None
 
 
 class Program:
@@ -60,10 +42,10 @@ class Program:
     # allocates variable on top of stack
     def push_var_to_stack(self, name: str | None = None) -> None:
         self.memory.append(Instruction(Opcode.PUSH, arg=None, comment=f"Push var {name}"))
-        self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
+        self.current_stack.append(StackValue(len(self.memory), name))
 
     def resolve_stack_var(self, name: str) -> None:
-        self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
+        self.current_stack.append(StackValue(len(self.memory), name))
 
     def unresolve_stack_var(self, name: str) -> None:
         for i in range(len(self.current_stack) - 1, -1, -1):
