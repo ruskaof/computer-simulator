@@ -57,8 +57,8 @@ class Program:
         self.memory.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
 
     # allocates variable on top of stack
-    def push_var_to_stack(self, name: str | None = None, comment: str | None = None) -> None:
-        self.memory.append(Operation(Opcode.PUSH, None, comment))
+    def push_var_to_stack(self, name: str | None = None) -> None:
+        self.memory.append(Operation(Opcode.PUSH, arg=None, comment=f"Push var {name}"))
         self.current_stack.append(StackValue(len(self.memory), StackValue.Type.INT, name))
 
     def resolve_stack_var(self, name: str) -> None:
@@ -110,16 +110,17 @@ class Program:
 
         for i in range(len(self.memory)):
             if isinstance(self.memory[i], Operation):
-                instruction_dict = {"opcode": self.memory[i].opcode.value, "address": i}
+                instruction = self.memory[i]
+                instruction_dict = {"opcode": instruction.opcode.value, "address": i}
 
-                if self.memory[i].arg is not None:
+                if instruction.arg is not None:
                     instruction_dict["arg"] = {
-                        "value": self.memory[i].arg.value,
-                        "type": self.memory[i].arg.arg_type.value,
+                        "value": instruction.arg.value,
+                        "type": instruction.arg.arg_type.value,
                     }
 
-                if self.memory[i].comment is not None:
-                    instruction_dict["comment"] = self.memory[i].comment
+                if instruction.comment is not None:
+                    instruction_dict["comment"] = instruction.comment
 
                 memory.append(instruction_dict)
         return json.dumps({"memory": memory}, indent=4)
@@ -219,7 +220,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     elif tokens[idx].token_type == Token.Type.BINOP:
         first_expr_end_idx: int = seek_end_of_expression(tokens, idx + 1)
         second_expr_end_idx: int = translate_expression(tokens, first_expr_end_idx, result)
-        result.push_var_to_stack(comment="Save second expression for binop result")
+        result.push_var_to_stack("#binop result")
         translate_expression(tokens, idx + 1, result)
         exec_binop(tokens[idx].value, result)
         result.pop_var_from_stack()
@@ -288,12 +289,10 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
 
         # store string size
         result.push_var_to_stack("#str_size")
-        result.memory.append(Operation(Opcode.ST, Arg(result.get_var_sp_offset("#str_size"), ArgType.STACK_OFFSET)))
 
         # init index
-        result.push_var_to_stack("#i")
         result.memory.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT)))
-        result.memory.append(Operation(Opcode.ST, Arg(result.get_var_sp_offset("#i"), ArgType.STACK_OFFSET)))
+        result.push_var_to_stack("#i")
 
         loop_start_idx: int = len(result.memory)
         # compare index with string size:
