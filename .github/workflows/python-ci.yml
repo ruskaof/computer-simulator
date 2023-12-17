@@ -39,5 +39,3 @@ jobs:
     - name: Run code linting
       run: |
         poetry run ruff check .
-        poetry run pylint computer_simulator
-      
