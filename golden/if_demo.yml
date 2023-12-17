@@ -324,32 +324,40 @@ code: |-
               "comment": "Jump to read str loop start"
           },
           {
-              "opcode": "POP",
+              "opcode": "LD",
               "address": 553,
-              "comment": "Pop #i used to print string"
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
           },
           {
               "opcode": "POP",
               "address": 554,
-              "comment": "Pop #str_size used to print string"
+              "comment": "Pop #i used to print string"
           },
           {
               "opcode": "POP",
               "address": 555,
+              "comment": "Pop #str_size used to print string"
+          },
+          {
+              "opcode": "POP",
+              "address": 556,
               "comment": "Pop #str_p used to print string"
           },
           {
               "opcode": "HLT",
-              "address": 556
+              "address": 557
           }
       ]
   }
 
 output: |
-  source LoC: 6 code instr: 46
+  source LoC: 6 code instr: 47
   ============================================================
   T
-  instructions_n: 44 ticks: 114
+  instructions_n: 45 ticks: 118
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 
@@ -485,15 +493,19 @@ log: |
   DEBUG   machine:simulation    TICK: 105, IP: 542, DR: 553, AR: 542, AC: 1, Z: False, INSTR: Operation(JNZ 553 (ADDRESS)), SP: 2044, Stack: 1 1 2 1 
   DEBUG   machine:simulation    TICK: 105, IP: 542, DR: 553, AR: 542, AC: 1, Z: False, INSTR: Operation(JNZ 553 (ADDRESS)), SP: 2044, Stack: 1 1 2 1 
   DEBUG   machine:simulation    TICK: 106, IP: 553, DR: 553, AR: 542, AC: 1, Z: False, INSTR: Operation(JNZ 553 (ADDRESS)), SP: 2044, Stack: 1 1 2 1 
-  DEBUG   machine:simulation    TICK: 107, IP: 553, DR: 553, AR: 553, AC: 1, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2044, Stack: 1 1 2 1 
-  DEBUG   machine:simulation    TICK: 107, IP: 553, DR: 553, AR: 553, AC: 1, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2044, Stack: 1 1 2 1 
-  DEBUG   machine:simulation    TICK: 108, IP: 554, DR: 1, AR: 2044, AC: 1, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2045, Stack: 1 2 1 
-  DEBUG   machine:simulation    TICK: 109, IP: 554, DR: 1, AR: 554, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2045, Stack: 1 2 1 
-  DEBUG   machine:simulation    TICK: 109, IP: 554, DR: 1, AR: 554, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2045, Stack: 1 2 1 
-  DEBUG   machine:simulation    TICK: 110, IP: 555, DR: 1, AR: 2045, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2046, Stack: 2 1 
-  DEBUG   machine:simulation    TICK: 111, IP: 555, DR: 1, AR: 555, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2046, Stack: 2 1 
-  DEBUG   machine:simulation    TICK: 111, IP: 555, DR: 1, AR: 555, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2046, Stack: 2 1 
-  DEBUG   machine:simulation    TICK: 112, IP: 556, DR: 2, AR: 2046, AC: 1, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2047, Stack: 1 
-  DEBUG   machine:simulation    TICK: 113, IP: 556, DR: 2, AR: 556, AC: 1, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 
-  DEBUG   machine:simulation    TICK: 113, IP: 556, DR: 2, AR: 556, AC: 1, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 
-  DEBUG   machine:simulation    TICK: 114, IP: 557, DR: 2, AR: 556, AC: 1, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 
+  DEBUG   machine:simulation    TICK: 107, IP: 553, DR: 2, AR: 553, AC: 1, Z: False, INSTR: Operation(LD 2 (STACK_OFFSET)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 108, IP: 553, DR: 2046, AR: 553, AC: 1, Z: False, INSTR: Operation(LD 2 (STACK_OFFSET)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 109, IP: 553, DR: 2, AR: 2046, AC: 1, Z: False, INSTR: Operation(LD 2 (STACK_OFFSET)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 110, IP: 554, DR: 2, AR: 2046, AC: 2, Z: False, INSTR: Operation(LD 2 (STACK_OFFSET)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 111, IP: 554, DR: 2, AR: 554, AC: 2, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 111, IP: 554, DR: 2, AR: 554, AC: 2, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2044, Stack: 1 1 2 1 
+  DEBUG   machine:simulation    TICK: 112, IP: 555, DR: 1, AR: 2044, AC: 2, Z: False, INSTR: Operation(POP (Pop #i used to print string)), SP: 2045, Stack: 1 2 1 
+  DEBUG   machine:simulation    TICK: 113, IP: 555, DR: 1, AR: 555, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2045, Stack: 1 2 1 
+  DEBUG   machine:simulation    TICK: 113, IP: 555, DR: 1, AR: 555, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2045, Stack: 1 2 1 
+  DEBUG   machine:simulation    TICK: 114, IP: 556, DR: 1, AR: 2045, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_size used to print string)), SP: 2046, Stack: 2 1 
+  DEBUG   machine:simulation    TICK: 115, IP: 556, DR: 1, AR: 556, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2046, Stack: 2 1 
+  DEBUG   machine:simulation    TICK: 115, IP: 556, DR: 1, AR: 556, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2046, Stack: 2 1 
+  DEBUG   machine:simulation    TICK: 116, IP: 557, DR: 2, AR: 2046, AC: 2, Z: False, INSTR: Operation(POP (Pop #str_p used to print string)), SP: 2047, Stack: 1 
+  DEBUG   machine:simulation    TICK: 117, IP: 557, DR: 2, AR: 557, AC: 2, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 
+  DEBUG   machine:simulation    TICK: 117, IP: 557, DR: 2, AR: 557, AC: 2, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 
+  DEBUG   machine:simulation    TICK: 118, IP: 558, DR: 2, AR: 557, AC: 2, Z: False, INSTR: Operation(HLT), SP: 2047, Stack: 1 

@@ -10,7 +10,6 @@ from computer_simulator.translator import Token
 EXPECTED_IDENTIFIER = "Expected identifier"
 STATIC_MEMORY_SIZE = 512
 DEFAULT_WORD = 0
-NUMBER_OFFSET_IN_UTF8 = 48
 STRING_ALLOC_SIZE = 32
 SERVICE_VAR_ADDR = 1
 
@@ -327,9 +326,12 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory.append(Operation(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS), "Jump to read str loop start"))
         result.memory[jnz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
+        result.memory.append(Operation(Opcode.LD, Arg(result.get_var_sp_offset("#str_p"), ArgType.STACK_OFFSET)))
+
         result.pop_var_from_stack(comment="Pop #i used to print string")
         result.pop_var_from_stack(comment="Pop #str_size used to print string")
         result.pop_var_from_stack(comment="Pop #str_p used to print string")
+
         return get_expr_end_idx(tokens, idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.READ_STRING:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
@@ -409,6 +411,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory.append(Operation(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS)))
         result.memory[jz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
+        result.memory.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
+
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.DEFUN:
         if tokens[idx + 1].token_type != Token.Type.IDENTIFIER:
@@ -437,6 +441,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
 
         for var in stack_variables:
             result.unresolve_stack_var(var)
+
+        result.memory.append(Operation(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
 
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
