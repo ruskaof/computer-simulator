@@ -5,7 +5,7 @@ from pathlib import Path
 
 from computer_simulator.isa import Instruction
 from computer_simulator.translator import Token
-from computer_simulator.translator.expression_executor import Program, translate_program
+from computer_simulator.translator.expression_translator import Program, translate_program
 from computer_simulator.translator.tokenizer import tokenize
 
 

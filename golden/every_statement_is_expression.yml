@@ -1,0 +1,1568 @@
+source: |-
+  (progn 
+    (defun print_int (x)
+      (progn
+        (setq num_to_div 1)
+        (while (> (/ x num_to_div) 10)
+          (setq num_to_div (* num_to_div 10))
+        )
+        (while (> x 0)
+          (progn
+            (print_char (+ 48 (/ x num_to_div)))
+            (if (* (= (% x num_to_div) 0) (> num_to_div 1))
+              (progn
+                (while (> num_to_div 1)
+                  (progn
+                    (print_char 48)
+                    (setq num_to_div (/ num_to_div 10))
+                  )
+                )
+              )
+              (0)
+            )
+            (setq x (% x num_to_div))
+            (setq num_to_div (/ num_to_div 10))
+          )
+        )
+      )
+    )
+
+    (setq a (setq b "hello"))
+    (print_string a)
+    (setq a (defun foo (x) (+ x 1)))
+    (print_int a)
+  )
+input: |-
+  foo
+code: |-
+  {
+      "memory": [
+          {
+              "opcode": "JMP",
+              "address": 0,
+              "arg": {
+                  "value": 512,
+                  "type": "ADDRESS"
+              },
+              "comment": "Skip static memory"
+          },
+          {
+              "opcode": "JMP",
+              "address": 512,
+              "arg": {
+                  "value": 602,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 513,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 514,
+              "comment": "Push var num_to_div"
+          },
+          {
+              "opcode": "ST",
+              "address": 515,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 516,
+              "arg": {
+                  "value": 10,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 517,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 518,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 519,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 520,
+              "arg": {
+                  "value": 4,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "DIV",
+              "address": 521,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 522
+          },
+          {
+              "opcode": "GT",
+              "address": 523,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 524
+          },
+          {
+              "opcode": "JZ",
+              "address": 525,
+              "arg": {
+                  "value": 533,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 526,
+              "arg": {
+                  "value": 10,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 527,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 528,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "MUL",
+              "address": 529,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 530
+          },
+          {
+              "opcode": "ST",
+              "address": 531,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "JMP",
+              "address": 532,
+              "arg": {
+                  "value": 516,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 533,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              },
+              "comment": "Load 0 so that defun expression returns 0"
+          },
+          {
+              "opcode": "LD",
+              "address": 534,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 535,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 536,
+              "arg": {
+                  "value": 3,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "GT",
+              "address": 537,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 538
+          },
+          {
+              "opcode": "JZ",
+              "address": 539,
+              "arg": {
+                  "value": 599,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 540,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 541,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 542,
+              "arg": {
+                  "value": 3,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "DIV",
+              "address": 543,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 544
+          },
+          {
+              "opcode": "PUSH",
+              "address": 545,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 546,
+              "arg": {
+                  "value": 48,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "address": 547,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 548
+          },
+          {
+              "opcode": "OUT",
+              "address": 549
+          },
+          {
+              "opcode": "LD",
+              "address": 550,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 551,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 552,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "GT",
+              "address": 553,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 554
+          },
+          {
+              "opcode": "PUSH",
+              "address": 555,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 556,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 557,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 558,
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 559,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 560,
+              "arg": {
+                  "value": 5,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "MOD",
+              "address": 561,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 562
+          },
+          {
+              "opcode": "EQ",
+              "address": 563,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 564
+          },
+          {
+              "opcode": "MUL",
+              "address": 565,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 566
+          },
+          {
+              "opcode": "JZ",
+              "address": 567,
+              "arg": {
+                  "value": 585,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 568,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 569,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 570,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "GT",
+              "address": 571,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 572
+          },
+          {
+              "opcode": "JZ",
+              "address": 573,
+              "arg": {
+                  "value": 583,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 574,
+              "arg": {
+                  "value": 48,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "OUT",
+              "address": 575
+          },
+          {
+              "opcode": "LD",
+              "address": 576,
+              "arg": {
+                  "value": 10,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 577,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 578,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "DIV",
+              "address": 579,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 580
+          },
+          {
+              "opcode": "ST",
+              "address": 581,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "JMP",
+              "address": 582,
+              "arg": {
+                  "value": 568,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 583,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              },
+              "comment": "Load 0 so that defun expression returns 0"
+          },
+          {
+              "opcode": "JMP",
+              "address": 584,
+              "arg": {
+                  "value": 586,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 585,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 586,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 587,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 588,
+              "arg": {
+                  "value": 3,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "MOD",
+              "address": 589,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 590
+          },
+          {
+              "opcode": "ST",
+              "address": 591,
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 592,
+              "arg": {
+                  "value": 10,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 593,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 594,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "DIV",
+              "address": 595,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 596
+          },
+          {
+              "opcode": "ST",
+              "address": 597,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "JMP",
+              "address": 598,
+              "arg": {
+                  "value": 534,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 599,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              },
+              "comment": "Load 0 so that defun expression returns 0"
+          },
+          {
+              "opcode": "POP",
+              "address": 600,
+              "comment": "Pop local var of function print_int"
+          },
+          {
+              "opcode": "RET",
+              "address": 601
+          },
+          {
+              "opcode": "LD",
+              "address": 602,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              },
+              "comment": "Load 0 so that defun expression returns 0"
+          },
+          {
+              "opcode": "LD",
+              "address": 603,
+              "arg": {
+                  "value": 5,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 604,
+              "arg": {
+                  "value": 2,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 605,
+              "arg": {
+                  "value": 104,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 606,
+              "arg": {
+                  "value": 3,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 607,
+              "arg": {
+                  "value": 101,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 608,
+              "arg": {
+                  "value": 4,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 609,
+              "arg": {
+                  "value": 108,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 610,
+              "arg": {
+                  "value": 5,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 611,
+              "arg": {
+                  "value": 108,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 612,
+              "arg": {
+                  "value": 6,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 613,
+              "arg": {
+                  "value": 111,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 614,
+              "arg": {
+                  "value": 7,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 615,
+              "arg": {
+                  "value": 2,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 616,
+              "comment": "Push var b"
+          },
+          {
+              "opcode": "ST",
+              "address": 617,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 618,
+              "comment": "Push var a"
+          },
+          {
+              "opcode": "ST",
+              "address": 619,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 620,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 621,
+              "comment": "Push var #str_p"
+          },
+          {
+              "opcode": "ST",
+              "address": 622,
+              "arg": {
+                  "value": 1,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 623,
+              "arg": {
+                  "value": 1,
+                  "type": "INDIRECT"
+              },
+              "comment": "Load string size inside print_str"
+          },
+          {
+              "opcode": "PUSH",
+              "address": 624,
+              "comment": "Push var #str_size"
+          },
+          {
+              "opcode": "LD",
+              "address": 625,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 626,
+              "comment": "Push var #i"
+          },
+          {
+              "opcode": "LD",
+              "address": 627,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "EQ",
+              "address": 628,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "JNZ",
+              "address": 629,
+              "arg": {
+                  "value": 640,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 630,
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "address": 631,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "address": 632,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 633,
+              "arg": {
+                  "value": 1,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 634,
+              "arg": {
+                  "value": 1,
+                  "type": "INDIRECT"
+              },
+              "comment": "Load char inside print_str"
+          },
+          {
+              "opcode": "OUT",
+              "address": 635
+          },
+          {
+              "opcode": "LD",
+              "address": 636,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "address": 637,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "ST",
+              "address": 638,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "JMP",
+              "address": 639,
+              "arg": {
+                  "value": 627,
+                  "type": "ADDRESS"
+              },
+              "comment": "Jump to read str loop start"
+          },
+          {
+              "opcode": "LD",
+              "address": 640,
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 641,
+              "comment": "Pop #i used to print string"
+          },
+          {
+              "opcode": "POP",
+              "address": 642,
+              "comment": "Pop #str_size used to print string"
+          },
+          {
+              "opcode": "POP",
+              "address": 643,
+              "comment": "Pop #str_p used to print string"
+          },
+          {
+              "opcode": "JMP",
+              "address": 644,
+              "arg": {
+                  "value": 651,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 645,
+              "arg": {
+                  "value": 1,
+                  "type": "DIRECT"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 646,
+              "comment": "Push var #binop result"
+          },
+          {
+              "opcode": "LD",
+              "address": 647,
+              "arg": {
+                  "value": 2,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "ADD",
+              "address": 648,
+              "arg": {
+                  "value": 0,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 649
+          },
+          {
+              "opcode": "RET",
+              "address": 650
+          },
+          {
+              "opcode": "LD",
+              "address": 651,
+              "arg": {
+                  "value": 0,
+                  "type": "DIRECT"
+              },
+              "comment": "Load 0 so that defun expression returns 0"
+          },
+          {
+              "opcode": "ST",
+              "address": 652,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "LD",
+              "address": 653,
+              "arg": {
+                  "value": 1,
+                  "type": "STACK_OFFSET"
+              }
+          },
+          {
+              "opcode": "PUSH",
+              "address": 654,
+              "comment": "Push arg"
+          },
+          {
+              "opcode": "CALL",
+              "address": 655,
+              "arg": {
+                  "value": 513,
+                  "type": "ADDRESS"
+              }
+          },
+          {
+              "opcode": "POP",
+              "address": 656,
+              "comment": "Pop arg 0"
+          },
+          {
+              "opcode": "HLT",
+              "address": 657
+          }
+      ]
+  }
+
+output: |
+  source LoC: 33 code instr: 147
+  ============================================================
+  hello
+  instructions_n: 0 ticks: 493
+
+log: |
+  DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 1, IP: 0, DR: 512, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 512 (ADDRESS) (Skip static memory)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 2, IP: 1, DR: 512, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 512 (ADDRESS) (Skip static memory)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 3, IP: 512, DR: 512, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 512 (ADDRESS) (Skip static memory)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 4, IP: 512, DR: 602, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 602 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 5, IP: 513, DR: 602, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 602 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 6, IP: 602, DR: 602, AR: 0, AC: 0, Z: True, INSTR: Instruction(JMP arg - 602 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 7, IP: 602, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 8, IP: 603, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 9, IP: 603, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 10, IP: 603, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 5 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 11, IP: 604, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 5 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 12, IP: 604, DR: 5, AR: 0, AC: 5, Z: True, INSTR: Instruction(LD arg - 5 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 13, IP: 604, DR: 2, AR: 0, AC: 5, Z: True, INSTR: Instruction(ST arg - 2 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 14, IP: 605, DR: 2, AR: 0, AC: 5, Z: True, INSTR: Instruction(ST arg - 2 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 15, IP: 605, DR: 2, AR: 0, AC: 5, Z: True, INSTR: Instruction(ST arg - 2 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 16, IP: 605, DR: 104, AR: 0, AC: 5, Z: True, INSTR: Instruction(LD arg - 104 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 17, IP: 606, DR: 104, AR: 0, AC: 5, Z: True, INSTR: Instruction(LD arg - 104 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 18, IP: 606, DR: 104, AR: 0, AC: 104, Z: True, INSTR: Instruction(LD arg - 104 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 19, IP: 606, DR: 3, AR: 0, AC: 104, Z: True, INSTR: Instruction(ST arg - 3 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 20, IP: 607, DR: 3, AR: 0, AC: 104, Z: True, INSTR: Instruction(ST arg - 3 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 21, IP: 607, DR: 3, AR: 0, AC: 104, Z: True, INSTR: Instruction(ST arg - 3 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 22, IP: 607, DR: 101, AR: 0, AC: 104, Z: True, INSTR: Instruction(LD arg - 101 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 23, IP: 608, DR: 101, AR: 0, AC: 104, Z: True, INSTR: Instruction(LD arg - 101 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 24, IP: 608, DR: 101, AR: 0, AC: 101, Z: True, INSTR: Instruction(LD arg - 101 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 25, IP: 608, DR: 4, AR: 0, AC: 101, Z: True, INSTR: Instruction(ST arg - 4 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 26, IP: 609, DR: 4, AR: 0, AC: 101, Z: True, INSTR: Instruction(ST arg - 4 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 27, IP: 609, DR: 4, AR: 0, AC: 101, Z: True, INSTR: Instruction(ST arg - 4 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 28, IP: 609, DR: 108, AR: 0, AC: 101, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 29, IP: 610, DR: 108, AR: 0, AC: 101, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 30, IP: 610, DR: 108, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 31, IP: 610, DR: 5, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 5 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 32, IP: 611, DR: 5, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 5 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 33, IP: 611, DR: 5, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 5 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 34, IP: 611, DR: 108, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 35, IP: 612, DR: 108, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 36, IP: 612, DR: 108, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 108 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 37, IP: 612, DR: 6, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 6 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 38, IP: 613, DR: 6, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 6 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 39, IP: 613, DR: 6, AR: 0, AC: 108, Z: True, INSTR: Instruction(ST arg - 6 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 40, IP: 613, DR: 111, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 111 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 41, IP: 614, DR: 111, AR: 0, AC: 108, Z: True, INSTR: Instruction(LD arg - 111 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 42, IP: 614, DR: 111, AR: 0, AC: 111, Z: True, INSTR: Instruction(LD arg - 111 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 43, IP: 614, DR: 7, AR: 0, AC: 111, Z: True, INSTR: Instruction(ST arg - 7 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 44, IP: 615, DR: 7, AR: 0, AC: 111, Z: True, INSTR: Instruction(ST arg - 7 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 45, IP: 615, DR: 7, AR: 0, AC: 111, Z: True, INSTR: Instruction(ST arg - 7 (ADDRESS)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 46, IP: 615, DR: 2, AR: 0, AC: 111, Z: True, INSTR: Instruction(LD arg - 2 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 47, IP: 616, DR: 2, AR: 0, AC: 111, Z: True, INSTR: Instruction(LD arg - 2 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 48, IP: 616, DR: 2, AR: 0, AC: 2, Z: True, INSTR: Instruction(LD arg - 2 (DIRECT)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 49, IP: 616, DR: 2, AR: 0, AC: 2, Z: True, INSTR: Instruction(PUSH (Push var b)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 50, IP: 617, DR: 2, AR: 0, AC: 2, Z: True, INSTR: Instruction(PUSH (Push var b)), SP: 2048, Stack: 
+  DEBUG   machine:simulation    TICK: 51, IP: 617, DR: 2, AR: 0, AC: 2, Z: True, INSTR: Instruction(PUSH (Push var b)), SP: 2047, Stack: 0 
+  DEBUG   machine:simulation    TICK: 52, IP: 617, DR: 2, AR: 0, AC: 2, Z: True, INSTR: Instruction(PUSH (Push var b)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 53, IP: 617, DR: 0, AR: 0, AC: 2, Z: True, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 54, IP: 618, DR: 0, AR: 0, AC: 2, Z: True, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 55, IP: 618, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 56, IP: 618, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 57, IP: 618, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var a)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 58, IP: 619, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var a)), SP: 2047, Stack: 2 
+  DEBUG   machine:simulation    TICK: 59, IP: 619, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var a)), SP: 2046, Stack: 0 2 
+  DEBUG   machine:simulation    TICK: 60, IP: 619, DR: 2047, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var a)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 61, IP: 619, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 62, IP: 620, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 63, IP: 620, DR: 2046, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 64, IP: 620, DR: 2046, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 65, IP: 620, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 66, IP: 621, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 67, IP: 621, DR: 2046, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 68, IP: 621, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 69, IP: 621, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 70, IP: 621, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var #str_p)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 71, IP: 622, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var #str_p)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 72, IP: 622, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var #str_p)), SP: 2045, Stack: 0 2 2 
+  DEBUG   machine:simulation    TICK: 73, IP: 622, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(PUSH (Push var #str_p)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 74, IP: 622, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 75, IP: 623, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 76, IP: 623, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 77, IP: 623, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load string size inside print_str)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 78, IP: 624, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load string size inside print_str)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 79, IP: 624, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load string size inside print_str)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 80, IP: 624, DR: 5, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load string size inside print_str)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 81, IP: 624, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load string size inside print_str)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 82, IP: 624, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(PUSH (Push var #str_size)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 83, IP: 625, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(PUSH (Push var #str_size)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 84, IP: 625, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(PUSH (Push var #str_size)), SP: 2044, Stack: 0 2 2 2 
+  DEBUG   machine:simulation    TICK: 85, IP: 625, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(PUSH (Push var #str_size)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 86, IP: 625, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 87, IP: 626, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 88, IP: 626, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 89, IP: 626, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push var #i)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 90, IP: 627, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push var #i)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 91, IP: 627, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push var #i)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 92, IP: 627, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push var #i)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 93, IP: 627, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 94, IP: 628, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 95, IP: 628, DR: 2043, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 96, IP: 628, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 97, IP: 628, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 98, IP: 628, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 99, IP: 629, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 100, IP: 629, DR: 2044, AR: 0, AC: 0, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 101, IP: 629, DR: 5, AR: 0, AC: 0, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 102, IP: 629, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 103, IP: 629, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 104, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 105, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 106, IP: 630, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 107, IP: 631, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 108, IP: 631, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 109, IP: 631, DR: 2, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 110, IP: 631, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 111, IP: 631, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 112, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 113, IP: 632, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 114, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 115, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 116, IP: 632, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 117, IP: 633, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 118, IP: 633, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 119, IP: 633, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 120, IP: 634, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 121, IP: 634, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 122, IP: 634, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 123, IP: 635, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 124, IP: 635, DR: 3, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 125, IP: 635, DR: 104, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 126, IP: 635, DR: 104, AR: 0, AC: 104, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 127, IP: 635, DR: 104, AR: 0, AC: 104, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 128, IP: 636, DR: 104, AR: 0, AC: 104, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   hardwire:latch_out     OUT: 104 - "h"
+  DEBUG   machine:simulation    TICK: 129, IP: 636, DR: 104, AR: 0, AC: 104, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 130, IP: 636, DR: 0, AR: 0, AC: 104, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 131, IP: 637, DR: 0, AR: 0, AC: 104, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 132, IP: 637, DR: 2043, AR: 0, AC: 104, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 133, IP: 637, DR: 0, AR: 0, AC: 104, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 134, IP: 637, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 135, IP: 637, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 136, IP: 638, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 137, IP: 638, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 138, IP: 638, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 139, IP: 639, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 140, IP: 639, DR: 2043, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 0 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 141, IP: 639, DR: 2043, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 142, IP: 639, DR: 627, AR: 0, AC: 1, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 143, IP: 640, DR: 627, AR: 0, AC: 1, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 144, IP: 627, DR: 627, AR: 0, AC: 1, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 145, IP: 627, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 146, IP: 628, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 147, IP: 628, DR: 2043, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 148, IP: 628, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 149, IP: 628, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 150, IP: 628, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 151, IP: 629, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 152, IP: 629, DR: 2044, AR: 0, AC: 1, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 153, IP: 629, DR: 5, AR: 0, AC: 1, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 154, IP: 629, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 155, IP: 629, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 156, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 157, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 158, IP: 630, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 159, IP: 631, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 160, IP: 631, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 161, IP: 631, DR: 2, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 162, IP: 631, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 163, IP: 631, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 164, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 165, IP: 632, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 166, IP: 632, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 167, IP: 632, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 168, IP: 632, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 169, IP: 633, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 170, IP: 633, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 171, IP: 633, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 172, IP: 634, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 173, IP: 634, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 174, IP: 634, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 175, IP: 635, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 176, IP: 635, DR: 4, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 177, IP: 635, DR: 101, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 178, IP: 635, DR: 101, AR: 0, AC: 101, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 179, IP: 635, DR: 101, AR: 0, AC: 101, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 180, IP: 636, DR: 101, AR: 0, AC: 101, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   hardwire:latch_out     OUT: 101 - "e"
+  DEBUG   machine:simulation    TICK: 181, IP: 636, DR: 101, AR: 0, AC: 101, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 182, IP: 636, DR: 0, AR: 0, AC: 101, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 183, IP: 637, DR: 0, AR: 0, AC: 101, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 184, IP: 637, DR: 2043, AR: 0, AC: 101, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 185, IP: 637, DR: 1, AR: 0, AC: 101, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 186, IP: 637, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 187, IP: 637, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 188, IP: 638, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 189, IP: 638, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 190, IP: 638, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 191, IP: 639, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 192, IP: 639, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 193, IP: 639, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 194, IP: 639, DR: 627, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 195, IP: 640, DR: 627, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 196, IP: 627, DR: 627, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 197, IP: 627, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 198, IP: 628, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 199, IP: 628, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 200, IP: 628, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 201, IP: 628, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 202, IP: 628, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 203, IP: 629, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 204, IP: 629, DR: 2044, AR: 0, AC: 2, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 205, IP: 629, DR: 5, AR: 0, AC: 2, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 206, IP: 629, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 207, IP: 629, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 208, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 209, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 210, IP: 630, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 211, IP: 631, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 212, IP: 631, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 213, IP: 631, DR: 2, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 214, IP: 631, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 215, IP: 631, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 216, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 217, IP: 632, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 218, IP: 632, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 219, IP: 632, DR: 2, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 220, IP: 632, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 221, IP: 633, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 222, IP: 633, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 223, IP: 633, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 224, IP: 634, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 225, IP: 634, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 226, IP: 634, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 227, IP: 635, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 228, IP: 635, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 229, IP: 635, DR: 108, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 230, IP: 635, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 231, IP: 635, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 232, IP: 636, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   hardwire:latch_out     OUT: 108 - "l"
+  DEBUG   machine:simulation    TICK: 233, IP: 636, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 234, IP: 636, DR: 0, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 235, IP: 637, DR: 0, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 236, IP: 637, DR: 2043, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 237, IP: 637, DR: 2, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 238, IP: 637, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 239, IP: 637, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 240, IP: 638, DR: 1, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 241, IP: 638, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 242, IP: 638, DR: 0, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 243, IP: 639, DR: 0, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 244, IP: 639, DR: 2043, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 2 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 245, IP: 639, DR: 2043, AR: 0, AC: 3, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 246, IP: 639, DR: 627, AR: 0, AC: 3, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 247, IP: 640, DR: 627, AR: 0, AC: 3, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 248, IP: 627, DR: 627, AR: 0, AC: 3, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 249, IP: 627, DR: 0, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 250, IP: 628, DR: 0, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 251, IP: 628, DR: 2043, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 252, IP: 628, DR: 3, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 253, IP: 628, DR: 3, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 254, IP: 628, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 255, IP: 629, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 256, IP: 629, DR: 2044, AR: 0, AC: 3, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 257, IP: 629, DR: 5, AR: 0, AC: 3, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 258, IP: 629, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 259, IP: 629, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 260, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 261, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 262, IP: 630, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 263, IP: 631, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 264, IP: 631, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 265, IP: 631, DR: 2, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 266, IP: 631, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 267, IP: 631, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 268, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 269, IP: 632, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 270, IP: 632, DR: 3, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 271, IP: 632, DR: 3, AR: 0, AC: 5, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 272, IP: 632, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 273, IP: 633, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 274, IP: 633, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 275, IP: 633, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 276, IP: 634, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 277, IP: 634, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 278, IP: 634, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 279, IP: 635, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 280, IP: 635, DR: 6, AR: 0, AC: 6, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 281, IP: 635, DR: 108, AR: 0, AC: 6, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 282, IP: 635, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 283, IP: 635, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 284, IP: 636, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   hardwire:latch_out     OUT: 108 - "l"
+  DEBUG   machine:simulation    TICK: 285, IP: 636, DR: 108, AR: 0, AC: 108, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 286, IP: 636, DR: 0, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 287, IP: 637, DR: 0, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 288, IP: 637, DR: 2043, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 289, IP: 637, DR: 3, AR: 0, AC: 108, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 290, IP: 637, DR: 3, AR: 0, AC: 3, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 291, IP: 637, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 292, IP: 638, DR: 1, AR: 0, AC: 3, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 293, IP: 638, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 294, IP: 638, DR: 0, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 295, IP: 639, DR: 0, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 296, IP: 639, DR: 2043, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 3 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 297, IP: 639, DR: 2043, AR: 0, AC: 4, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 298, IP: 639, DR: 627, AR: 0, AC: 4, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 299, IP: 640, DR: 627, AR: 0, AC: 4, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 300, IP: 627, DR: 627, AR: 0, AC: 4, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 301, IP: 627, DR: 0, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 302, IP: 628, DR: 0, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 303, IP: 628, DR: 2043, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 304, IP: 628, DR: 4, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 305, IP: 628, DR: 4, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 306, IP: 628, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 307, IP: 629, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 308, IP: 629, DR: 2044, AR: 0, AC: 4, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 309, IP: 629, DR: 5, AR: 0, AC: 4, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 310, IP: 629, DR: 5, AR: 0, AC: 0, Z: True, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 311, IP: 629, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 312, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 313, IP: 630, DR: 640, AR: 0, AC: 0, Z: True, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 314, IP: 630, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 315, IP: 631, DR: 2, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 316, IP: 631, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 317, IP: 631, DR: 2, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 318, IP: 631, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 319, IP: 631, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 320, IP: 632, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 321, IP: 632, DR: 2043, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 322, IP: 632, DR: 4, AR: 0, AC: 2, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 323, IP: 632, DR: 4, AR: 0, AC: 6, Z: False, INSTR: Instruction(ADD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 324, IP: 632, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 325, IP: 633, DR: 1, AR: 0, AC: 6, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 326, IP: 633, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 327, IP: 633, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 328, IP: 634, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 329, IP: 634, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(ST arg - 1 (ADDRESS)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 330, IP: 634, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 331, IP: 635, DR: 1, AR: 0, AC: 7, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 332, IP: 635, DR: 7, AR: 0, AC: 7, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 333, IP: 635, DR: 111, AR: 0, AC: 7, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 334, IP: 635, DR: 111, AR: 0, AC: 111, Z: False, INSTR: Instruction(LD arg - 1 (INDIRECT) (Load char inside print_str)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 335, IP: 635, DR: 111, AR: 0, AC: 111, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 336, IP: 636, DR: 111, AR: 0, AC: 111, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   hardwire:latch_out     OUT: 111 - "o"
+  DEBUG   machine:simulation    TICK: 337, IP: 636, DR: 111, AR: 0, AC: 111, Z: False, INSTR: Instruction(OUT), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 338, IP: 636, DR: 0, AR: 0, AC: 111, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 339, IP: 637, DR: 0, AR: 0, AC: 111, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 340, IP: 637, DR: 2043, AR: 0, AC: 111, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 341, IP: 637, DR: 4, AR: 0, AC: 111, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 342, IP: 637, DR: 4, AR: 0, AC: 4, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 343, IP: 637, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 344, IP: 638, DR: 1, AR: 0, AC: 4, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 345, IP: 638, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(ADD arg - 1 (DIRECT)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 346, IP: 638, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 347, IP: 639, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 348, IP: 639, DR: 2043, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 4 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 349, IP: 639, DR: 2043, AR: 0, AC: 5, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 350, IP: 639, DR: 627, AR: 0, AC: 5, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 351, IP: 640, DR: 627, AR: 0, AC: 5, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 352, IP: 627, DR: 627, AR: 0, AC: 5, Z: False, INSTR: Instruction(JMP arg - 627 (ADDRESS) (Jump to read str loop start)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 353, IP: 627, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 354, IP: 628, DR: 0, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 355, IP: 628, DR: 2043, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 356, IP: 628, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 357, IP: 628, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(LD arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 358, IP: 628, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 359, IP: 629, DR: 1, AR: 0, AC: 5, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 360, IP: 629, DR: 2044, AR: 0, AC: 5, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 361, IP: 629, DR: 5, AR: 0, AC: 5, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 362, IP: 629, DR: 5, AR: 0, AC: 1, Z: False, INSTR: Instruction(EQ arg - 1 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 363, IP: 629, DR: 640, AR: 0, AC: 1, Z: False, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 364, IP: 630, DR: 640, AR: 0, AC: 1, Z: False, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 365, IP: 640, DR: 640, AR: 0, AC: 1, Z: False, INSTR: Instruction(JNZ arg - 640 (ADDRESS)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 366, IP: 640, DR: 2, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 367, IP: 641, DR: 2, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 368, IP: 641, DR: 2045, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 369, IP: 641, DR: 2, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 370, IP: 641, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 2 (STACK_OFFSET)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 371, IP: 641, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #i used to print string)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 372, IP: 642, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #i used to print string)), SP: 2043, Stack: 5 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 373, IP: 642, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #i used to print string)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 374, IP: 642, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_size used to print string)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 375, IP: 643, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_size used to print string)), SP: 2044, Stack: 5 2 2 2 
+  DEBUG   machine:simulation    TICK: 376, IP: 643, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_size used to print string)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 377, IP: 643, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_p used to print string)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 378, IP: 644, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_p used to print string)), SP: 2045, Stack: 2 2 2 
+  DEBUG   machine:simulation    TICK: 379, IP: 644, DR: 2, AR: 0, AC: 2, Z: False, INSTR: Instruction(POP (Pop #str_p used to print string)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 380, IP: 644, DR: 651, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 651 (ADDRESS)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 381, IP: 645, DR: 651, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 651 (ADDRESS)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 382, IP: 651, DR: 651, AR: 0, AC: 2, Z: False, INSTR: Instruction(JMP arg - 651 (ADDRESS)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 383, IP: 651, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 384, IP: 652, DR: 0, AR: 0, AC: 2, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 385, IP: 652, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 386, IP: 652, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(ST arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 387, IP: 653, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(ST arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 388, IP: 653, DR: 2047, AR: 0, AC: 0, Z: False, INSTR: Instruction(ST arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 2 
+  DEBUG   machine:simulation    TICK: 389, IP: 653, DR: 2047, AR: 0, AC: 0, Z: False, INSTR: Instruction(ST arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 390, IP: 653, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 391, IP: 654, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 392, IP: 654, DR: 2047, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 393, IP: 654, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 394, IP: 654, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 395, IP: 654, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push arg)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 396, IP: 655, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push arg)), SP: 2046, Stack: 2 0 
+  DEBUG   machine:simulation    TICK: 397, IP: 655, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push arg)), SP: 2045, Stack: 2 2 0 
+  DEBUG   machine:simulation    TICK: 398, IP: 655, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(PUSH (Push arg)), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 399, IP: 655, DR: 513, AR: 0, AC: 0, Z: False, INSTR: Instruction(CALL arg - 513 (ADDRESS)), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 400, IP: 656, DR: 513, AR: 0, AC: 0, Z: False, INSTR: Instruction(CALL arg - 513 (ADDRESS)), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 401, IP: 657, DR: 513, AR: 0, AC: 0, Z: False, INSTR: Instruction(CALL arg - 513 (ADDRESS)), SP: 2044, Stack: 5 0 2 0 
+  DEBUG   machine:simulation    TICK: 402, IP: 657, DR: 513, AR: 0, AC: 657, Z: False, INSTR: Instruction(CALL arg - 513 (ADDRESS)), SP: 2044, Stack: 5 0 2 0 
+  DEBUG   machine:simulation    TICK: 403, IP: 513, DR: 513, AR: 0, AC: 657, Z: False, INSTR: Instruction(CALL arg - 513 (ADDRESS)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 404, IP: 513, DR: 1, AR: 0, AC: 657, Z: False, INSTR: Instruction(LD arg - 1 (DIRECT)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 405, IP: 514, DR: 1, AR: 0, AC: 657, Z: False, INSTR: Instruction(LD arg - 1 (DIRECT)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 406, IP: 514, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 1 (DIRECT)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 407, IP: 514, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var num_to_div)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 408, IP: 515, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var num_to_div)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 409, IP: 515, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var num_to_div)), SP: 2043, Stack: 5 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 410, IP: 515, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var num_to_div)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 411, IP: 515, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 412, IP: 516, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 413, IP: 516, DR: 2043, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 414, IP: 516, DR: 2043, AR: 0, AC: 1, Z: False, INSTR: Instruction(ST arg - 0 (STACK_OFFSET)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 415, IP: 516, DR: 10, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 10 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 416, IP: 517, DR: 10, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 10 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 417, IP: 517, DR: 10, AR: 0, AC: 10, Z: False, INSTR: Instruction(LD arg - 10 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 418, IP: 517, DR: 10, AR: 0, AC: 10, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 419, IP: 518, DR: 10, AR: 0, AC: 10, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 420, IP: 518, DR: 10, AR: 0, AC: 10, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 421, IP: 518, DR: 10, AR: 0, AC: 10, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 422, IP: 518, DR: 1, AR: 0, AC: 10, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 423, IP: 519, DR: 1, AR: 0, AC: 10, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 424, IP: 519, DR: 2043, AR: 0, AC: 10, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 425, IP: 519, DR: 1, AR: 0, AC: 10, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 426, IP: 519, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 1 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 427, IP: 519, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 428, IP: 520, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 429, IP: 520, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2041, Stack: 0 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 430, IP: 520, DR: 1, AR: 0, AC: 1, Z: False, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 431, IP: 520, DR: 4, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 4 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 432, IP: 521, DR: 4, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 4 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 433, IP: 521, DR: 2045, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 4 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 434, IP: 521, DR: 0, AR: 0, AC: 1, Z: False, INSTR: Instruction(LD arg - 4 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 435, IP: 521, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 4 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 436, IP: 521, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(DIV arg - 0 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 437, IP: 522, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(DIV arg - 0 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 438, IP: 522, DR: 2041, AR: 0, AC: 0, Z: False, INSTR: Instruction(DIV arg - 0 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 439, IP: 522, DR: 1, AR: 0, AC: 0, Z: False, INSTR: Instruction(DIV arg - 0 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 440, IP: 522, DR: 1, AR: 0, AC: 0, Z: True, INSTR: Instruction(DIV arg - 0 (STACK_OFFSET)), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 441, IP: 522, DR: 1, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 442, IP: 523, DR: 1, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2041, Stack: 1 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 443, IP: 523, DR: 1, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 444, IP: 523, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 445, IP: 524, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 446, IP: 524, DR: 2042, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 447, IP: 524, DR: 10, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 448, IP: 524, DR: 10, AR: 0, AC: 0, Z: True, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 449, IP: 524, DR: 10, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 450, IP: 525, DR: 10, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 451, IP: 525, DR: 10, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 452, IP: 525, DR: 533, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 533 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 453, IP: 526, DR: 533, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 533 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 454, IP: 533, DR: 533, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 533 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 455, IP: 533, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 456, IP: 534, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 457, IP: 534, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 458, IP: 534, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 459, IP: 535, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 460, IP: 535, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 461, IP: 535, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 462, IP: 536, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 463, IP: 536, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 10 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 464, IP: 536, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(PUSH (Push var #binop result)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 465, IP: 536, DR: 3, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 3 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 466, IP: 537, DR: 3, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 3 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 467, IP: 537, DR: 2045, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 3 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 468, IP: 537, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 3 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 469, IP: 537, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(LD arg - 3 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 470, IP: 537, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 471, IP: 538, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 472, IP: 538, DR: 2042, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 473, IP: 538, DR: 0, AR: 0, AC: 0, Z: False, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 474, IP: 538, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(GT arg - 0 (STACK_OFFSET)), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 475, IP: 538, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 476, IP: 539, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2042, Stack: 0 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 477, IP: 539, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 478, IP: 539, DR: 599, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 599 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 479, IP: 540, DR: 599, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 599 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 480, IP: 599, DR: 599, AR: 0, AC: 0, Z: True, INSTR: Instruction(JZ arg - 599 (ADDRESS)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 481, IP: 599, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 482, IP: 600, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 483, IP: 600, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(LD arg - 0 (DIRECT) (Load 0 so that defun expression returns 0)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 484, IP: 600, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP (Pop local var of function print_int)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 485, IP: 601, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP (Pop local var of function print_int)), SP: 2043, Stack: 1 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 486, IP: 601, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(POP (Pop local var of function print_int)), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 487, IP: 601, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(RET), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 488, IP: 602, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instruction(RET), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 489, IP: 657, DR: 657, AR: 0, AC: 0, Z: True, INSTR: Instruction(RET), SP: 2044, Stack: 657 0 2 0 
+  DEBUG   machine:simulation    TICK: 490, IP: 657, DR: 657, AR: 0, AC: 0, Z: True, INSTR: Instruction(RET), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 491, IP: 657, DR: 657, AR: 0, AC: 0, Z: True, INSTR: Instruction(HLT), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 492, IP: 658, DR: 657, AR: 0, AC: 0, Z: True, INSTR: Instruction(HLT), SP: 2045, Stack: 0 2 0 
+  DEBUG   machine:simulation    TICK: 493, IP: 658, DR: 657, AR: 0, AC: 0, Z: True, INSTR: Instruction(HLT), SP: 2045, Stack: 0 2 0 
