@@ -41,7 +41,7 @@ def process_number_literal(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
     start_idx = idx
-    while idx < len(chars) and chars[idx].isdigit():
+    while idx < len(chars) and (chars[idx].isdigit() or start_idx == idx and chars[idx] == "-"):
         idx += 1
     if idx > start_idx:
         tokens.append(Token(Token.Type.INT, chars[start_idx:idx]))

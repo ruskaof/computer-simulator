@@ -111,6 +111,7 @@ class Program:
 
 BINOP_OPCODE: dict[str, Opcode] = {
     "+": Opcode.ADD,
+    "-": Opcode.SUB,
     "=": Opcode.EQ,
     "%": Opcode.MOD,
     "/": Opcode.DIV,
