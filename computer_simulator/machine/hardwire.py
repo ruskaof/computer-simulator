@@ -1,12 +1,39 @@
+from __future__ import annotations
+
 import logging
 from dataclasses import dataclass
 from enum import Enum
 from typing import Callable
 
-from computer_simulator.isa import Instruction, ArgType, Opcode
+from computer_simulator.isa import ArgType, Instruction, Opcode
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
+
+
+class UnknownSignalError(Exception):
+    def __init__(self, signal: any):
+        super().__init__(f"Unknown signal: {signal}")
+
+
+class UnknownStageError(Exception):
+    def __init__(self, stage: any):
+        super().__init__(f"Unknown stage: {stage}")
+
+
+class UnknownOpcodeError(Exception):
+    def __init__(self, opcode: any):
+        super().__init__(f"Unknown opcode: {opcode}")
+
+
+class InvalidArgTypeError(Exception):
+    def __init__(self, arg_type: any):
+        super().__init__(f"Invalid arg type: {arg_type}")
+
+
+class InvalidTickError(Exception):
+    def __init__(self, tick: any):
+        super().__init__(f"Invalid tick: {tick}")
 
 
 @dataclass
@@ -106,20 +133,20 @@ class DataPath:
     def _get_reg_by_alu_left(self, alu_left: AluLeft) -> int:
         if alu_left == AluLeft.AC:
             return self.ac
-        elif alu_left == AluLeft.IP:
+        if alu_left == AluLeft.IP:
             return self.ip
-        elif alu_left == AluLeft.SP:
+        if alu_left == AluLeft.SP:
             return self.sp
-        else:
-            self._rase_for_unknown_signal(alu_left)
+        self._rase_for_unknown_signal(alu_left)
+        return -1
 
     def _get_reg_by_alu_right(self, alu_right: AluRight) -> int:
         if alu_right == AluRight.ZERO:
             return 0
-        elif alu_right == AluRight.DR:
+        if alu_right == AluRight.DR:
             return self.dr
-        else:
-            self._rase_for_unknown_signal(alu_right)
+        self._rase_for_unknown_signal(alu_right)
+        return -1
 
     def signal_alu_perform(self, alu_op: AluOp, alu_left: AluLeft, alu_right: AluRight) -> int:
         left = self._get_reg_by_alu_left(alu_left)
@@ -159,17 +186,13 @@ class DataPath:
         else:
             self._rase_for_unknown_signal(signal)
 
-    def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None,
-                 mem_value: int | None = None) -> Instruction | None:
+    def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None, mem_value: int | None = None):
         if signal == DrSelSignal.MEMORY:
             self.dr = mem_value
-            return None
         elif signal == DrSelSignal.ALU:
             self.dr = alu_res
-            return None
         else:
             self._rase_for_unknown_signal(signal)
-            return None
 
     def latch_out(self) -> None:
         logging.debug('OUT: %s - "%s"', self.ac, chr(self.ac))
@@ -178,14 +201,15 @@ class DataPath:
     def _get_reg_by_addr_sel_signal(self, addr_sel_signal: AddrSelSignal) -> int:
         if addr_sel_signal == AddrSelSignal.AC:
             return self.ac
-        elif addr_sel_signal == AddrSelSignal.SP:
+        if addr_sel_signal == AddrSelSignal.SP:
             return self.sp
-        elif addr_sel_signal == AddrSelSignal.IP:
+        if addr_sel_signal == AddrSelSignal.IP:
             return self.ip
-        elif addr_sel_signal == AddrSelSignal.DR:
+        if addr_sel_signal == AddrSelSignal.DR:
             return self.dr
-        else:
-            self._rase_for_unknown_signal(addr_sel_signal)
+
+        self._rase_for_unknown_signal(addr_sel_signal)
+        return -1
 
     def wr(self, addr_sel_signal: AddrSelSignal) -> None:
         self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)] = self.ac
@@ -194,7 +218,7 @@ class DataPath:
         return self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)]
 
     def _rase_for_unknown_signal(self, unknown_signal: any) -> None:
-        raise RuntimeError(f"Unknown signal: {unknown_signal}")
+        raise UnknownSignalError(unknown_signal)
 
 
 class Stage(Enum):
@@ -254,11 +278,7 @@ class ControlUnit:
 
 
 def _raise_for_invalid_tick(control_unit: ControlUnit):
-    raise RuntimeError(f"Invalid tick: {control_unit.tc}")
-
-
-def _raise_for_invalid_instruction(control_unit: ControlUnit):
-    raise RuntimeError(f"Invalid instruction: {control_unit.decoded_instruction}")
+    raise InvalidTickError(control_unit.tc)
 
 
 def _need_address_fetch(instruction: Instruction) -> bool:
@@ -319,7 +339,7 @@ def handle_address_fetch_tick(control_unit: ControlUnit):
         else:
             control_unit.stage = Stage.EXECUTE
     else:
-        raise RuntimeError(f"Invalid arg type: {control_unit.decoded_instruction.arg.arg_type}")
+        raise InvalidArgTypeError(control_unit.decoded_instruction.arg.arg_type)
 
 
 def handle_operand_fetch_tick(control_unit: ControlUnit):
@@ -474,4 +494,4 @@ def handle_tick(control_unit: ControlUnit):
     elif control_unit.stage == Stage.EXECUTE:
         handle_execute_tick(control_unit)
     else:
-        raise RuntimeError(f"Invalid stage: {control_unit.stage}")
+        raise UnknownStageError(control_unit.stage)

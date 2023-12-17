@@ -4,8 +4,9 @@ import json
 from dataclasses import dataclass
 from typing import Callable
 
-from computer_simulator.isa import Arg, ArgType, Opcode, Instruction
+from computer_simulator.isa import Arg, ArgType, Instruction, Opcode
 from computer_simulator.translator import Token
+from computer_simulator.translator.errors import InvalidSymbolsError
 
 EXPECTED_IDENTIFIER = "Expected identifier"
 STATIC_MEMORY_SIZE = 512
@@ -51,7 +52,7 @@ class Program:
             if self.current_stack[i].name == name:
                 self.current_stack.pop(i)
                 return
-        raise RuntimeError(f"Variable {name} not found")
+        raise InvalidSymbolsError(got=name, expected="known variable, but got unknown")
 
     def pop_var_from_stack(self, comment: str | None = None) -> None:
         self.memory.append(Instruction(Opcode.POP, None, comment))
@@ -138,29 +139,26 @@ def _is_expression_start(tokens: list[Token], idx: int) -> bool:
 def get_expr_end_idx(tokens: list[Token], idx: int, started_with_open_bracket: bool) -> int:
     if tokens[idx].token_type == Token.Type.CLOSE_BRACKET and started_with_open_bracket:
         return idx + 1
-    elif not started_with_open_bracket:
+    if not started_with_open_bracket:
         return idx
-    else:
-        raise RuntimeError(f"Expected close bracket, got {tokens[idx]}")
+
+    raise InvalidSymbolsError(got=tokens[idx], expected="close bracket")
 
 
 def seek_end_of_expression(tokens: list[Token], idx: int) -> int:
     if idx >= len(tokens):
         return idx
-    elif tokens[idx].token_type == Token.Type.OPEN_BRACKET:
+    if tokens[idx].token_type == Token.Type.OPEN_BRACKET:
         idx += 1
         while tokens[idx].token_type != Token.Type.CLOSE_BRACKET:
             idx = seek_end_of_expression(tokens, idx)
         return idx + 1
-    elif tokens[idx].token_type == Token.Type.CLOSE_BRACKET:
-        return idx + 1
-    else:
-        return idx + 1
+    return idx + 1
 
 
 def get_args_of_func(tokens: list[Token], idx: int) -> tuple[list[str], int]:
     if tokens[idx].token_type != Token.Type.OPEN_BRACKET:
-        raise RuntimeError("Expected open bracket")
+        raise InvalidSymbolsError(got=tokens[idx], expected="open bracket")
     idx += 1
     passed_args: list[str] = []
     while tokens[idx].token_type != Token.Type.CLOSE_BRACKET:
@@ -464,8 +462,8 @@ TOKEN_HANDLERS: dict[Token.Type, Callable[[list[Token], int, Program, bool], int
 def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     if idx >= len(tokens):
         return idx
-    elif not _is_expression_start(tokens, idx):
-        raise RuntimeError(f"Expected expression in {tokens[idx]}")
+    if not _is_expression_start(tokens, idx):
+        raise InvalidSymbolsError(got=tokens[idx], expected="expression start")
 
     started_with_open_bracket: bool = False
     if tokens[idx].token_type == Token.Type.OPEN_BRACKET:

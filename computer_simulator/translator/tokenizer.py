@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Callable
 
 from computer_simulator.translator import Token
+from computer_simulator.translator.errors import InvalidSymbolsError
 
 IDENTIFIER_NON_ALPHA_CHARS = {"_"}
 
@@ -73,7 +74,7 @@ def process_string_literal(tokens: list, idx: int, chars: str) -> int:
             idx += 1
 
         if idx >= len(chars):
-            raise RuntimeError("Expected closing quote")
+            raise InvalidSymbolsError(got=chars[idx], expected="closing quote")
 
         tokens.append(Token(Token.Type.STRING, value))
         idx += 1
@@ -134,6 +135,6 @@ def tokenize(program_chars: str) -> list[Token]:
             if idx > start_idx:
                 break
         if idx == start_idx:
-            raise RuntimeError(f"Unknown token at {idx}: {program_chars[idx:]}")
+            raise InvalidSymbolsError(got=program_chars[idx], expected="any known token")
 
     return tokens

@@ -6,8 +6,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from computer_simulator.isa import Arg, ArgType, Opcode, Instruction
-from computer_simulator.machine.hardwire import DataPath, ControlUnit, Port
+from computer_simulator.isa import Arg, ArgType, Instruction, Opcode
+from computer_simulator.machine.hardwire import ControlUnit, DataPath, Port
 
 MEMORY_SIZE: int = 2048
 
