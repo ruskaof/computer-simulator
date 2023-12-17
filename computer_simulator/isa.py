@@ -25,6 +25,9 @@ class Opcode(Enum):
     OUT: str = "OUT"
     HLT: str = "HLT"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 class ArgType(Enum):
     DIRECT: str = "DIRECT"
@@ -32,14 +35,30 @@ class ArgType(Enum):
     INDIRECT: str = "INDIRECT"
     STACK_OFFSET: str = "STACK_OFFSET"
 
+    def __str__(self) -> str:
+        return self.value
+
 
 @dataclass
 class Arg:
     value: int
     arg_type: ArgType
 
+    def __str__(self) -> str:
+        return f"{self.value} ({self.arg_type})"
+
 
 @dataclass
 class Operation:
     opcode: Opcode
     arg: Arg | None
+    comment: str | None = None
+
+    def __str__(self) -> str:
+        r = f"{self.opcode}"
+        if self.arg:
+            r += f" {self.arg}"
+        if self.comment:
+            r += f" ({self.comment})"
+        return f"Operation({r})"
+

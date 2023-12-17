@@ -47,8 +47,11 @@ def read_program(exe: str) -> BinaryProgram:
         arg = None
         if "arg" in word:
             arg = Arg(word["arg"]["value"], ArgType(word["arg"]["type"]))
+        comment: str | None = None
+        if "comment" in word:
+            comment = word["comment"]
         address: int = word["address"]
-        memory[address] = Operation(Opcode(word["opcode"]), arg)
+        memory[address] = Operation(Opcode(word["opcode"]), arg, comment)
     return BinaryProgram(memory)
 
 
@@ -127,7 +130,7 @@ class DataPath:
         self.alu: Alu = Alu()
         self.ip: int = 0  # instruction pointer
         self.dr: int = 0  # data register
-        self.sp: int = len(self.memory) - 1  # stack pointer
+        self.sp: int = len(self.memory) # stack pointer
         self.ar: int = 0  # address register
         self.ac: int = 0  # accumulator
 
@@ -177,6 +180,8 @@ class DataPath:
     def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None) -> Operation | None:
         if signal == DrSelSignal.INSTRUCTION_DECODER:
             cell = self.memory[self.ip]
+            if isinstance(cell, int):
+                raise RuntimeError(f"Expected instruction, got {cell}")
             if cell.arg is not None:
                 self.dr = self.memory[self.ip].arg.value
             return self.memory[self.ip]
@@ -316,13 +321,12 @@ class ControlUnit:
             elif self.decoded_instruction.opcode == Opcode.POP:
                 self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
-                # self.data_path.latch_ac(AcSelSignal.DR)
                 self.data_path.latch_sp(SpSelSignal.INC)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.PUSH:
-                self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_sp(SpSelSignal.DEC)
+                self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.wr()
                 self.tick_n += 1
                 self.stage = self.stage.next()
@@ -348,8 +352,8 @@ class ControlUnit:
                 self.stage = self.stage.next()
             elif self.decoded_instruction.opcode == Opcode.CALL:
                 self.data_path.latch_ac(AcSelSignal.IP)
-                self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_sp(SpSelSignal.DEC)
+                self.data_path.latch_ar(ArSelSignal.SP)
                 self.data_path.latch_ip(IpSelSignal.DR)
                 self.data_path.wr()
                 self.tick_n += 1
@@ -361,7 +365,6 @@ class ControlUnit:
                 self.data_path.latch_ip(IpSelSignal.DR)
                 self.data_path.latch_sp(SpSelSignal.INC)
                 self.tick_n += 1
-                should_inc_ip = False
                 self.stage = self.stage.next()
             else:
                 raise RuntimeError(f"Unknown opcode: {self.decoded_instruction.opcode}")
@@ -371,7 +374,7 @@ class ControlUnit:
 
     def __repr__(self):
         stack_str = ""
-        for i in range(10):
+        for i in range(0, len(self.data_path.memory)):
             if self.data_path.sp + i < len(self.data_path.memory):
                 stack_str += f"{self.data_path.memory[self.data_path.sp + i]} "
             else:

@@ -1,4 +1,4 @@
-  (progn
+(progn
     (defun foo (x y)
       (progn
         (print_string "foo")
