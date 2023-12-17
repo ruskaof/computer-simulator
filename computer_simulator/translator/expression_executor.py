@@ -99,7 +99,7 @@ class Program:
             self.memory_used += 1
         return address
 
-    def get_var_sp_offset(self, name: str) -> int:
+    def get_var_sp_offset(self, name: str) -> int | None:
         for i in range(len(self.current_stack) - 1, -1, -1):
             if self.current_stack[i].name == name:
                 return len(self.current_stack) - i - 1

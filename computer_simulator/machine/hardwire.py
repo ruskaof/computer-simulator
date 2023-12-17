@@ -352,50 +352,8 @@ def command_handle_execute_st(control_unit: ControlUnit):
     control_unit.stage = Stage.INSTRUCTION_FETCH
 
 
-def command_handle_execute_add(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.ADD, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_sub(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.SUB, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_mul(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.MULT, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_div(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.DIV, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_mod(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.MOD, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_eq(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.EQ, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_lt(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.LT, AluLeft.AC, AluRight.DR)
-    control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
-    control_unit.stage = Stage.INSTRUCTION_FETCH
-
-
-def command_handle_execute_gt(control_unit: ControlUnit):
-    alu_res = control_unit.data_path.signal_alu_perform(AluOp.GT, AluLeft.AC, AluRight.DR)
+def command_handle_execute_binop(control_unit: ControlUnit, op: AluOp):
+    alu_res = control_unit.data_path.signal_alu_perform(op, AluLeft.AC, AluRight.DR)
     control_unit.data_path.latch_ac(AcSelSignal.ALU, alu_res=alu_res)
     control_unit.stage = Stage.INSTRUCTION_FETCH
 
@@ -493,14 +451,14 @@ def command_handle_execute_hlt(control_unit: ControlUnit):
 execute_handlers: dict[Opcode, callable] = {
     Opcode.LD: command_handle_execute_ld,
     Opcode.ST: command_handle_execute_st,
-    Opcode.ADD: command_handle_execute_add,
-    Opcode.SUB: command_handle_execute_sub,
-    Opcode.MUL: command_handle_execute_mul,
-    Opcode.DIV: command_handle_execute_div,
-    Opcode.MOD: command_handle_execute_mod,
-    Opcode.EQ: command_handle_execute_eq,
-    Opcode.LT: command_handle_execute_lt,
-    Opcode.GT: command_handle_execute_gt,
+    Opcode.ADD: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.ADD),
+    Opcode.SUB: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.SUB),
+    Opcode.MUL: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.MULT),
+    Opcode.DIV: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.DIV),
+    Opcode.MOD: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.MOD),
+    Opcode.EQ: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.EQ),
+    Opcode.LT: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.LT),
+    Opcode.GT: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.GT),
     Opcode.JZ: command_handle_execute_jz,
     Opcode.JNZ: command_handle_execute_jnz,
     Opcode.JMP: command_handle_execute_jmp,
