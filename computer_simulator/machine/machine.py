@@ -431,7 +431,7 @@ def main(code: str, input_file: str) -> None:
     program: BinaryProgram = read_program(code)
     program_input: list[int] = read_input(input_file)
 
-    result = simulation(program, limit=10_000, program_input=program_input)
+    result = simulation(program, limit=1_000_000, program_input=program_input)
 
     print("".join([chr(c) for c in result[0]]))
     print(f"instructions_n: {result[1]} ticks: {result[2]}")

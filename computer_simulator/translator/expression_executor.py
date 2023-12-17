@@ -207,7 +207,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
     if idx >= len(tokens):
         return idx
     elif not _is_expression_start(tokens, idx):
-        raise RuntimeError("Expected expression")
+        raise RuntimeError(f"Expected expression in {tokens[idx]}")
 
     started_with_open_bracket: bool = False
     if tokens[idx].token_type == Token.Type.OPEN_BRACKET:

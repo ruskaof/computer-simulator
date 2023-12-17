@@ -15,5 +15,16 @@
     )
   )
 
-  (print_int 123)
+  (setq sum 0)
+  (setq i 1)
+  (while (< i 1000)
+    (progn
+      (if (+ (= (% i 3) 0) (= (% i 5) 0))
+        (setq sum (+ sum i))
+        (0)
+      )
+      (setq i (+ i 1))
+    )
+  )
+  (print_int sum)
 )
