@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -19,10 +20,22 @@ def read_file(filename: str) -> str:
     return Path(filename).read_text(encoding="utf-8")
 
 
+# find all expressions like (include "file") and replace them with the contents of the file
+def preprocess(source: str) -> str:
+    regex = re.compile(r'\(include\s+"(.+)"\)')
+    match = regex.search(source)
+    while match:
+        file = match.group(1)
+        source = source.replace(match.group(), read_file(file))
+        match = regex.search(source)
+    return source
+
+
 def main(source: str, target: str) -> None:
     with open(target, "w", encoding="utf-8") as f:
         source_code: str = read_file(source)
-        tokenized_code: list[Token] = tokenize(source_code)
+        preprocessed_code: str = preprocess(source_code)
+        tokenized_code: list[Token] = tokenize(preprocessed_code)
         program: Program = run_translator(tokenized_code)
 
         print(
