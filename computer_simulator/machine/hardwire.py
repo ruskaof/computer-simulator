@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 import logging
-import typing
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable, cast, Any
+from typing import Any, Callable, cast
 
-from computer_simulator.isa import ArgType, Instruction, Opcode, Arg
+from computer_simulator.isa import Arg, ArgType, Instruction, Opcode
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2**WORD_SIZE
@@ -47,7 +46,7 @@ class InvalidValueTypeFromMemoryError(Exception):
         super().__init__(f"Invalid value type from memory: {value}")
 
 
-class UnexpectedNone(Exception):
+class UnexpectedNoneError(Exception):
     def __init__(self):
         super().__init__("Unexpected None")
 
@@ -193,7 +192,7 @@ class DataPath:
                 logging.debug('IN: %s - "%s"', self.ac, chr(self.ac))
         elif signal == AcSelSignal.ALU:
             if alu_res is None:
-                raise UnexpectedNone()
+                raise UnexpectedNoneError()
             self.ac = cast(int, alu_res)
         elif signal == AcSelSignal.DR:
             self.ac = self.dr
@@ -205,11 +204,11 @@ class DataPath:
     def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None, mem_value: int | None = None):
         if signal == DrSelSignal.MEMORY:
             if mem_value is None:
-                raise UnexpectedNone()
+                raise UnexpectedNoneError()
             self.dr = cast(int, mem_value)
         elif signal == DrSelSignal.ALU:
             if alu_res is None:
-                raise UnexpectedNone()
+                raise UnexpectedNoneError()
             self.dr = cast(int, alu_res)
         else:
             raise UnknownSignalError(signal)
@@ -316,6 +315,15 @@ def _need_operand_fetch(instruction: Instruction) -> bool:
     )
 
 
+def find_next_stage_from_instruction_fetch(control_unit, decoded_instruction):
+    if _need_address_fetch(decoded_instruction):
+        control_unit.stage = Stage.ADDRESS_FETCH
+    elif _need_operand_fetch(decoded_instruction):
+        control_unit.stage = Stage.OPERAND_FETCH
+    else:
+        control_unit.stage = Stage.EXECUTE
+
+
 def handle_instruction_fetch_tick(control_unit: ControlUnit):
     if control_unit.tc == 0:
         result = control_unit.data_path.oe(AddrSelSignal.IP)
@@ -339,14 +347,16 @@ def handle_instruction_fetch_tick(control_unit: ControlUnit):
 
         control_unit.data_path.latch_ip(IpSelSignal.INC)
         control_unit.latch_tc_zero()
-        if _need_address_fetch(decoded_instruction):
-            control_unit.stage = Stage.ADDRESS_FETCH
-        elif _need_operand_fetch(decoded_instruction):
-            control_unit.stage = Stage.OPERAND_FETCH
-        else:
-            control_unit.stage = Stage.EXECUTE
+        find_next_stage_from_instruction_fetch(control_unit, decoded_instruction)
     else:
         raise InvalidTickError(control_unit.tc)
+
+
+def find_next_stage_after_address_fetch(control_unit, decoded_instruction):
+    if _need_operand_fetch(decoded_instruction):
+        control_unit.stage = Stage.OPERAND_FETCH
+    else:
+        control_unit.stage = Stage.EXECUTE
 
 
 def handle_address_fetch_tick(control_unit: ControlUnit):
@@ -362,10 +372,7 @@ def handle_address_fetch_tick(control_unit: ControlUnit):
         alu_res = control_unit.data_path.signal_alu_perform(AluOp.ADD, AluLeft.SP, AluRight.DR)
         control_unit.data_path.latch_dr(DrSelSignal.ALU, alu_res=alu_res)
 
-        if _need_operand_fetch(decoded_instruction):
-            control_unit.stage = Stage.OPERAND_FETCH
-        else:
-            control_unit.stage = Stage.EXECUTE
+        find_next_stage_after_address_fetch(control_unit, decoded_instruction)
     elif arg.arg_type == ArgType.INDIRECT:
         value = control_unit.data_path.oe(AddrSelSignal.DR)
         if not isinstance(value, int):
@@ -373,10 +380,7 @@ def handle_address_fetch_tick(control_unit: ControlUnit):
 
         control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=cast(int, value))
 
-        if _need_operand_fetch(decoded_instruction):
-            control_unit.stage = Stage.OPERAND_FETCH
-        else:
-            control_unit.stage = Stage.EXECUTE
+        find_next_stage_after_address_fetch(control_unit, decoded_instruction)
     else:
         raise InvalidArgTypeError(arg.arg_type)
 
