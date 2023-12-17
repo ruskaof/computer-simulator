@@ -28,7 +28,7 @@ def process_brackets(tokens: list, idx: int, chars: str) -> int:
 def process_binpos(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
-    if chars[idx] in ("+", "-", "*", "/", "=", "<", ">"):
+    if chars[idx] in ("+", "-", "*", "/", "=", "<", ">", "%"):
         tokens.append(Token(Token.Type.BINOP, chars[idx]))
         idx += 1
     return idx
@@ -45,11 +45,15 @@ def process_number_literal(tokens: list, idx: int, chars: str) -> int:
     return idx
 
 
+def char_allowed_in_identifier(c: str) -> bool:
+    return c.isalpha() or c in IDENTIFIER_NON_ALPHA_CHARS
+
+
 def process_identifier(tokens: list, idx: int, chars: str) -> int:
     if idx >= len(chars):
         return idx
     start_idx = idx
-    while idx < len(chars) and chars[idx].isalpha():
+    while idx < len(chars) and char_allowed_in_identifier(chars[idx]):
         idx += 1
     if idx > start_idx:
         tokens.append(Token(Token.Type.IDENTIFIER, chars[start_idx:idx]))

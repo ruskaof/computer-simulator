@@ -14,6 +14,7 @@ class Opcode(Enum):
     EQ: str = "EQ"
     MOD: str = "MOD"
     DIV: str = "DIV"
+    MUL: str = "MUL"
     JZ: str = "JZ"
     JNZ: str = "JNZ"
     JMP: str = "JMP"

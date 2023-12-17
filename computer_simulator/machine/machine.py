@@ -91,7 +91,9 @@ class AluOp(Enum):
     EQ = 2
     GT = 3
     LT = 4
-
+    MOD = 5
+    DIV = 6
+    MULT = 7
 
 class Alu:
     def __init__(self):
@@ -114,6 +116,15 @@ class Alu:
             self.set_flags(value)
         elif op == AluOp.LT:
             value = 1 if left < right else 0
+            self.set_flags(value)
+        elif op == AluOp.MOD:
+            value = left % right
+            self.set_flags(value)
+        elif op == AluOp.DIV:
+            value = left // right
+            self.set_flags(value)
+        elif op == AluOp.MULT:
+            value = left * right
             self.set_flags(value)
         else:
             raise RuntimeError(f"Unknown ALU operation: {op}")
@@ -364,6 +375,18 @@ class ControlUnit:
                 self.data_path.latch_dr(DrSelSignal.MEMORY)
                 self.data_path.latch_ip(IpSelSignal.DR)
                 self.data_path.latch_sp(SpSelSignal.INC)
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.MOD:
+                self.data_path.latch_ac(AcSelSignal.ALU, AluOp.MOD)
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.DIV:
+                self.data_path.latch_ac(AcSelSignal.ALU, AluOp.DIV)
+                self.tick_n += 1
+                self.stage = self.stage.next()
+            elif self.decoded_instruction.opcode == Opcode.MUL:
+                self.data_path.latch_ac(AcSelSignal.ALU, AluOp.MULT)
                 self.tick_n += 1
                 self.stage = self.stage.next()
             else:

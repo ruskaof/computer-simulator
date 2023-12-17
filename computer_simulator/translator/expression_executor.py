@@ -16,6 +16,12 @@ SERVICE_VAR_ADDR = 1
 
 
 @dataclass
+class Function:
+    address: int
+    setq_count: int
+
+
+@dataclass
 class Variable:
     name: str | None
     died: bool
@@ -46,6 +52,7 @@ class Program:
         self.memory_used: int = 2
         self.current_stack: list[StackValue] = []
         self.functions: dict[str, int] = {}
+        self.current_block_setq_count: int = 0
 
     def load(self, value: int) -> None:
         self.memory.append(Operation(Opcode.LD, Arg(value, ArgType.DIRECT)))
@@ -132,6 +139,8 @@ def exec_binop(op: str, program: Program) -> None:
         program.memory.append(Operation(Opcode.LT, Arg(0, ArgType.STACK_OFFSET)))
     elif op == ">":
         program.memory.append(Operation(Opcode.GT, Arg(0, ArgType.STACK_OFFSET)))
+    elif op == "*":
+        program.memory.append(Operation(Opcode.MUL, Arg(0, ArgType.STACK_OFFSET)))
     else:
         raise RuntimeError(f"Unexpected binop: {op}")
 
@@ -238,6 +247,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         if var_sp_offset is None:
             result.push_var_to_stack(varname)
             var_sp_offset = result.get_var_sp_offset(varname)
+            result.current_block_setq_count += 1
 
         result.memory.append(Operation(Opcode.ST, Arg(var_sp_offset, ArgType.STACK_OFFSET)))
         return get_expr_end_idx(tokens, expr_end_idx, started_with_open_bracket)
@@ -274,7 +284,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         # save string size:
         # load string size to ac
         result.memory.append(Operation(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
-        result.memory.append(Operation(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load string size inside print_str"))
+        result.memory.append(
+            Operation(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load string size inside print_str"))
 
         # store string size
         result.push_var_to_stack("#str_size")
@@ -303,7 +314,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
 
         # load char
         result.memory.append(Operation(Opcode.ST, Arg(SERVICE_VAR_ADDR, ArgType.ADDRESS)))
-        result.memory.append(Operation(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load char inside print_str"))
+        result.memory.append(
+            Operation(Opcode.LD, Arg(SERVICE_VAR_ADDR, ArgType.INDIRECT), "Load char inside print_str"))
         result.memory.append(Operation(Opcode.OUT, None))
 
         # increment index
@@ -412,7 +424,13 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
             result.resolve_stack_var(var)
         result.resolve_stack_var("#ret_addr")
 
+        outer_setq_count = result.current_block_setq_count
+        result.current_block_setq_count = 0
         body_end_idx = translate_expression(tokens, args_end_idx, result)
+        for _ in range(result.current_block_setq_count):
+            result.memory.append(Operation(Opcode.POP, None, f"Pop local var of function {tokens[idx + 1].value}"))
+        result.current_block_setq_count = outer_setq_count
+
         result.memory.append(Operation(Opcode.RET, None))
 
         result.memory[jmp_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
