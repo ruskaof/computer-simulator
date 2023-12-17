@@ -9,7 +9,7 @@ from computer_simulator.isa import Arg, ArgType, Instruction, Opcode
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** (WORD_SIZE - 1) - 1
-WORD_MIN_VALUE: int = -2 ** (WORD_SIZE - 1)
+WORD_MIN_VALUE: int = -(2 ** (WORD_SIZE - 1))
 
 
 class UnknownSignalError(Exception):
@@ -319,9 +319,9 @@ NO_FETCH_OPERAND_INSTR = [
 
 def _need_operand_fetch(instruction: Instruction) -> bool:
     return (
-            instruction.arg is not None
-            and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT, ArgType.ADDRESS)
-            and instruction.opcode not in NO_FETCH_OPERAND_INSTR
+        instruction.arg is not None
+        and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT, ArgType.ADDRESS)
+        and instruction.opcode not in NO_FETCH_OPERAND_INSTR
     )
 
 
