@@ -30,8 +30,7 @@ class Program:
     def __init__(self):
         # only for strings
         self.memory: list[int | Instruction] = [0 for _ in range(STATIC_MEMORY_SIZE)]
-        self.memory[0] = Instruction(Opcode.JMP, Arg(STATIC_MEMORY_SIZE, ArgType.ADDRESS), "Skip static memory")
-        self.memory_used: int = 2
+        self.memory_used: int = 0
         self.current_stack: list[StackValue] = []
         self.functions: dict[str, int] = {}
         self.current_block_setq_count: int = 0
@@ -477,5 +476,7 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
 
 
 def translate_program(tokens: list[Token], result: Program) -> None:
+    result.memory[0] = Instruction(Opcode.JMP, Arg(STATIC_MEMORY_SIZE, ArgType.ADDRESS), "Skip static memory")
+    result.memory_used = 2  # for jmp and for service var
     translate_expression(tokens, 0, result)
     result.memory.append(Instruction(Opcode.HLT, None))
