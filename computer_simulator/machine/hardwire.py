@@ -1,6 +1,7 @@
 import logging
 from dataclasses import dataclass
 from enum import Enum
+from typing import Callable
 
 from computer_simulator.isa import Instruction, ArgType, Opcode
 
@@ -434,7 +435,7 @@ def command_handle_execute_hlt(control_unit: ControlUnit):
     control_unit.stage = Stage.INSTRUCTION_FETCH
 
 
-EXECUTE_HANDLERS: dict[Opcode, callable] = {
+EXECUTE_HANDLERS: dict[Opcode, Callable[[ControlUnit], None]] = {
     Opcode.LD: command_handle_execute_ld,
     Opcode.ST: command_handle_execute_st,
     Opcode.ADD: lambda control_unit: command_handle_execute_binop(control_unit, AluOp.ADD),

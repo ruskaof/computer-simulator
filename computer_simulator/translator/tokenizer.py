@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Callable
+
 from computer_simulator.translator import Token
 
 IDENTIFIER_NON_ALPHA_CHARS = {"_"}
@@ -87,7 +89,7 @@ def process_booleans(tokens: list, idx: int, chars: str) -> int:
     return idx
 
 
-def process_identifier_like_statement(tokens: list, idx: int, chars: str, token_type: Token.Type, keyword: str) -> int:
+def process_keyword(tokens: list, idx: int, chars: str, token_type: Token.Type, keyword: str) -> int:
     if idx >= len(chars):
         return idx
     value = ""
@@ -102,37 +104,36 @@ def process_identifier_like_statement(tokens: list, idx: int, chars: str, token_
     return idx
 
 
+TOKEN_HANDLERS: list[Callable[[list[Token], int, str], int]] = [
+    lambda tokens, idx, chars: process_whitespace(idx, chars),
+    process_booleans,
+    process_brackets,
+    process_binpos,
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.IF, "if"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.SETQ, "setq"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.DEFUN, "defun"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.PRINT_CHAR, "print_char"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.PRINT_STRING, "print_string"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.PROGN, "progn"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.READ_STRING, "read_string"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.WHILE, "while"),
+    process_number_literal,
+    process_string_literal,
+    process_identifier,
+]
+
+
 def tokenize(program_chars: str) -> list[Token]:
     tokens: list[Token] = []
     idx: int = 0
 
     while idx < len(program_chars):
-        prev_idx = idx
-
-        prev_idx = process_whitespace(prev_idx, program_chars)
-        prev_idx = process_booleans(tokens, prev_idx, program_chars)
-        prev_idx = process_brackets(tokens, prev_idx, program_chars)
-        prev_idx = process_binpos(tokens, prev_idx, program_chars)
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.IF, "if")
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.SETQ, "setq")
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.DEFUN, "defun")
-        prev_idx = process_identifier_like_statement(
-            tokens, prev_idx, program_chars, Token.Type.PRINT_CHAR, "print_char"
-        )
-        prev_idx = process_identifier_like_statement(
-            tokens, prev_idx, program_chars, Token.Type.PRINT_STRING, "print_string"
-        )
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.PROGN, "progn")
-        prev_idx = process_identifier_like_statement(
-            tokens, prev_idx, program_chars, Token.Type.READ_STRING, "read_string"
-        )
-        prev_idx = process_identifier_like_statement(tokens, prev_idx, program_chars, Token.Type.WHILE, "while")
-        prev_idx = process_number_literal(tokens, prev_idx, program_chars)
-        prev_idx = process_string_literal(tokens, prev_idx, program_chars)
-        prev_idx = process_identifier(tokens, prev_idx, program_chars)
-
-        if prev_idx == idx:
-            raise RuntimeError(f"Unknown token: {program_chars[prev_idx]}")
-        idx = prev_idx
+        start_idx = idx
+        for handler in TOKEN_HANDLERS:
+            idx = handler(tokens, idx, program_chars)
+            if idx > start_idx:
+                break
+        if idx == start_idx:
+            raise RuntimeError(f"Unknown token at {idx}: {program_chars[idx:]}")
 
     return tokens
