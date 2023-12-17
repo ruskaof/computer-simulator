@@ -1,39 +1,55 @@
 from __future__ import annotations
 
 import logging
+import typing
 from dataclasses import dataclass
 from enum import Enum
-from typing import Callable
+from typing import Callable, cast, Any
 
-from computer_simulator.isa import ArgType, Instruction, Opcode
+from computer_simulator.isa import ArgType, Instruction, Opcode, Arg
 
 WORD_SIZE: int = 64
 WORD_MAX_VALUE: int = 2 ** WORD_SIZE
 
 
 class UnknownSignalError(Exception):
-    def __init__(self, signal: any):
+    def __init__(self, signal: Any):
         super().__init__(f"Unknown signal: {signal}")
 
 
 class UnknownStageError(Exception):
-    def __init__(self, stage: any):
+    def __init__(self, stage: Any):
         super().__init__(f"Unknown stage: {stage}")
 
 
 class UnknownOpcodeError(Exception):
-    def __init__(self, opcode: any):
+    def __init__(self, opcode: Any):
         super().__init__(f"Unknown opcode: {opcode}")
 
 
 class InvalidArgTypeError(Exception):
-    def __init__(self, arg_type: any):
+    def __init__(self, arg_type: Any):
         super().__init__(f"Invalid arg type: {arg_type}")
 
 
 class InvalidTickError(Exception):
-    def __init__(self, tick: any):
+    def __init__(self, tick: Any):
         super().__init__(f"Invalid tick: {tick}")
+
+
+class UncodedInstructionError(Exception):
+    def __init__(self, control_unit: ControlUnit):
+        super().__init__(f"Uncoded instruction: {control_unit.decoded_instruction}")
+
+
+class InvalidValueTypeFromMemoryError(Exception):
+    def __init__(self, value: Any):
+        super().__init__(f"Invalid value type from memory: {value}")
+
+
+class UnexpectedNone(Exception):
+    def __init__(self):
+        super().__init__("Unexpected None")
 
 
 @dataclass
@@ -93,7 +109,7 @@ class AluRight(Enum):
     DR = 1
 
 
-ALU_OP_HANDLERS: dict[AluOp, callable] = {
+ALU_OP_HANDLERS: dict[AluOp, Callable[[int, int], int]] = {
     AluOp.ADD: lambda left, right: left + right,
     AluOp.SUB: lambda left, right: left - right,
     AluOp.EQ: lambda left, right: 1 if left == right else 0,
@@ -106,7 +122,7 @@ ALU_OP_HANDLERS: dict[AluOp, callable] = {
 
 
 class Alu:
-    def __init__(self):
+    def __init__(self) -> None:
         self.flag_z: bool = True
 
     def perform(self, op: AluOp, left: int, right: int) -> int:
@@ -137,16 +153,14 @@ class DataPath:
             return self.ip
         if alu_left == AluLeft.SP:
             return self.sp
-        self._rase_for_unknown_signal(alu_left)
-        return -1
+        raise UnknownSignalError(alu_left)
 
     def _get_reg_by_alu_right(self, alu_right: AluRight) -> int:
         if alu_right == AluRight.ZERO:
             return 0
         if alu_right == AluRight.DR:
             return self.dr
-        self._rase_for_unknown_signal(alu_right)
-        return -1
+        raise UnknownSignalError(alu_right)
 
     def signal_alu_perform(self, alu_op: AluOp, alu_left: AluLeft, alu_right: AluRight) -> int:
         left = self._get_reg_by_alu_left(alu_left)
@@ -159,7 +173,7 @@ class DataPath:
         elif signal == IpSelSignal.DR:
             self.ip = self.dr
         else:
-            self._rase_for_unknown_signal(signal)
+            raise UnknownSignalError(signal)
 
     def latch_sp(self, signal: SpSelSignal) -> None:
         if signal == SpSelSignal.INC:
@@ -167,7 +181,7 @@ class DataPath:
         elif signal == SpSelSignal.DEC:
             self.sp -= 1
         else:
-            self._rase_for_unknown_signal(signal)
+            raise UnknownSignalError(signal)
 
     def latch_ac(self, signal: AcSelSignal, alu_res: int | None = None) -> None:
         if signal == AcSelSignal.IN:
@@ -178,21 +192,27 @@ class DataPath:
                 self.ac = self.ports[Port.IN.name].pop(0)
                 logging.debug('IN: %s - "%s"', self.ac, chr(self.ac))
         elif signal == AcSelSignal.ALU:
-            self.ac = alu_res
+            if alu_res is None:
+                raise UnexpectedNone()
+            self.ac = cast(int, alu_res)
         elif signal == AcSelSignal.DR:
             self.ac = self.dr
         elif signal == AcSelSignal.IP:
             self.ac = self.ip
         else:
-            self._rase_for_unknown_signal(signal)
+            raise UnknownSignalError(signal)
 
     def latch_dr(self, signal: DrSelSignal, alu_res: int | None = None, mem_value: int | None = None):
         if signal == DrSelSignal.MEMORY:
-            self.dr = mem_value
+            if mem_value is None:
+                raise UnexpectedNone()
+            self.dr = cast(int, mem_value)
         elif signal == DrSelSignal.ALU:
-            self.dr = alu_res
+            if alu_res is None:
+                raise UnexpectedNone()
+            self.dr = cast(int, alu_res)
         else:
-            self._rase_for_unknown_signal(signal)
+            raise UnknownSignalError(signal)
 
     def latch_out(self) -> None:
         logging.debug('OUT: %s - "%s"', self.ac, chr(self.ac))
@@ -208,17 +228,13 @@ class DataPath:
         if addr_sel_signal == AddrSelSignal.DR:
             return self.dr
 
-        self._rase_for_unknown_signal(addr_sel_signal)
-        return -1
+        raise UnknownSignalError(addr_sel_signal)
 
     def wr(self, addr_sel_signal: AddrSelSignal) -> None:
         self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)] = self.ac
 
     def oe(self, addr_sel_signal: AddrSelSignal) -> Instruction | int:
         return self.memory[self._get_reg_by_addr_sel_signal(addr_sel_signal)]
-
-    def _rase_for_unknown_signal(self, unknown_signal: any) -> None:
-        raise UnknownSignalError(unknown_signal)
 
 
 class Stage(Enum):
@@ -277,10 +293,6 @@ class ControlUnit:
         )
 
 
-def _raise_for_invalid_tick(control_unit: ControlUnit):
-    raise InvalidTickError(control_unit.tc)
-
-
 def _need_address_fetch(instruction: Instruction) -> bool:
     return instruction.arg is not None and instruction.arg.arg_type in (ArgType.STACK_OFFSET, ArgType.INDIRECT)
 
@@ -304,47 +316,75 @@ def _need_operand_fetch(instruction: Instruction) -> bool:
 
 def handle_instruction_fetch_tick(control_unit: ControlUnit):
     if control_unit.tc == 0:
-        control_unit.decoded_instruction = control_unit.data_path.oe(AddrSelSignal.IP)
+        result = control_unit.data_path.oe(AddrSelSignal.IP)
+
+        if not isinstance(result, Instruction):
+            raise InvalidValueTypeFromMemoryError(result)
+        control_unit.decoded_instruction = cast(Instruction, result)
+
+        if not isinstance(control_unit.decoded_instruction, Instruction):
+            raise InvalidValueTypeFromMemoryError(control_unit.decoded_instruction)
+        decoded_instruction: Instruction = cast(Instruction, control_unit.decoded_instruction)
+
         if control_unit.decoded_instruction.arg is not None:
-            control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=control_unit.decoded_instruction.arg.value)
+            arg: Arg = cast(Arg, decoded_instruction.arg)
+            control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=arg.value)
         control_unit.latch_tc_inc()
     elif control_unit.tc == 1:
+        if control_unit.decoded_instruction is None:
+            raise UncodedInstructionError(control_unit)
+        decoded_instruction = cast(Instruction, control_unit.decoded_instruction)
+
         control_unit.data_path.latch_ip(IpSelSignal.INC)
         control_unit.latch_tc_zero()
-        if _need_address_fetch(control_unit.decoded_instruction):
+        if _need_address_fetch(decoded_instruction):
             control_unit.stage = Stage.ADDRESS_FETCH
-        elif _need_operand_fetch(control_unit.decoded_instruction):
+        elif _need_operand_fetch(decoded_instruction):
             control_unit.stage = Stage.OPERAND_FETCH
         else:
             control_unit.stage = Stage.EXECUTE
     else:
-        _raise_for_invalid_tick(control_unit)
+        raise InvalidTickError(control_unit.tc)
 
 
 def handle_address_fetch_tick(control_unit: ControlUnit):
-    if control_unit.decoded_instruction.arg.arg_type == ArgType.STACK_OFFSET:
+    if control_unit.decoded_instruction is None:
+        raise UncodedInstructionError(control_unit)
+    decoded_instruction: Instruction = cast(Instruction, control_unit.decoded_instruction)
+
+    if decoded_instruction.arg is None:
+        raise UncodedInstructionError(control_unit)
+    arg: Arg = cast(Arg, decoded_instruction.arg)
+
+    if arg.arg_type == ArgType.STACK_OFFSET:
         alu_res = control_unit.data_path.signal_alu_perform(AluOp.ADD, AluLeft.SP, AluRight.DR)
         control_unit.data_path.latch_dr(DrSelSignal.ALU, alu_res=alu_res)
 
-        if _need_operand_fetch(control_unit.decoded_instruction):
+        if _need_operand_fetch(decoded_instruction):
             control_unit.stage = Stage.OPERAND_FETCH
         else:
             control_unit.stage = Stage.EXECUTE
-    elif control_unit.decoded_instruction.arg.arg_type == ArgType.INDIRECT:
+    elif arg.arg_type == ArgType.INDIRECT:
         value = control_unit.data_path.oe(AddrSelSignal.DR)
-        control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=value)
+        if not isinstance(value, int):
+            raise InvalidValueTypeFromMemoryError(value)
 
-        if _need_operand_fetch(control_unit.decoded_instruction):
+        control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=cast(int, value))
+
+        if _need_operand_fetch(decoded_instruction):
             control_unit.stage = Stage.OPERAND_FETCH
         else:
             control_unit.stage = Stage.EXECUTE
     else:
-        raise InvalidArgTypeError(control_unit.decoded_instruction.arg.arg_type)
+        raise InvalidArgTypeError(arg.arg_type)
 
 
 def handle_operand_fetch_tick(control_unit: ControlUnit):
     value = control_unit.data_path.oe(AddrSelSignal.DR)
-    control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=value)
+    if not isinstance(value, int):
+        raise InvalidValueTypeFromMemoryError(value)
+
+    control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=cast(int, value))
 
     control_unit.stage = Stage.EXECUTE
 
@@ -396,7 +436,7 @@ def command_handle_execute_push(control_unit: ControlUnit):
         control_unit.latch_tc_zero()
         control_unit.stage = Stage.INSTRUCTION_FETCH
     else:
-        _raise_for_invalid_tick(control_unit)
+        raise InvalidTickError(control_unit.tc)
 
 
 def command_handle_execute_pop(control_unit: ControlUnit):
@@ -431,13 +471,16 @@ def command_handle_execute_call(control_unit: ControlUnit):
         control_unit.latch_tc_zero()
         control_unit.stage = Stage.INSTRUCTION_FETCH
     else:
-        _raise_for_invalid_tick(control_unit)
+        raise InvalidTickError(control_unit.tc)
 
 
 def command_handle_execute_ret(control_unit: ControlUnit):
     if control_unit.tc == 0:
         ret_addr = control_unit.data_path.oe(AddrSelSignal.SP)
-        control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=ret_addr)
+        if not isinstance(ret_addr, int):
+            raise InvalidValueTypeFromMemoryError(ret_addr)
+
+        control_unit.data_path.latch_dr(DrSelSignal.MEMORY, mem_value=cast(int, ret_addr))
         control_unit.data_path.latch_ip(IpSelSignal.DR)
 
         control_unit.latch_tc_inc()
@@ -447,7 +490,7 @@ def command_handle_execute_ret(control_unit: ControlUnit):
         control_unit.latch_tc_zero()
         control_unit.stage = Stage.INSTRUCTION_FETCH
     else:
-        _raise_for_invalid_tick(control_unit)
+        raise InvalidTickError(control_unit.tc)
 
 
 def command_handle_execute_hlt(control_unit: ControlUnit):
@@ -480,7 +523,11 @@ EXECUTE_HANDLERS: dict[Opcode, Callable[[ControlUnit], None]] = {
 
 
 def handle_execute_tick(control_unit: ControlUnit):
-    handler = EXECUTE_HANDLERS.get(control_unit.decoded_instruction.opcode)
+    if control_unit.decoded_instruction is None:
+        raise UncodedInstructionError(control_unit)
+
+    handler: Callable[[ControlUnit], None] = \
+        EXECUTE_HANDLERS[cast(Instruction, control_unit.decoded_instruction).opcode]
     handler(control_unit)
 
 
