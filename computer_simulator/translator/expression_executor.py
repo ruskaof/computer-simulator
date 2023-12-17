@@ -126,23 +126,19 @@ class Program:
         return json.dumps({"memory": memory}, indent=4)
 
 
+BINOP_OPCODE: dict[str, Opcode] = {
+    "+": Opcode.ADD,
+    "=": Opcode.EQ,
+    "%": Opcode.MOD,
+    "/": Opcode.DIV,
+    "<": Opcode.LT,
+    ">": Opcode.GT,
+    "*": Opcode.MUL,
+}
+
+
 def exec_binop(op: str, program: Program) -> None:
-    if op == "+":
-        program.memory.append(Instruction(Opcode.ADD, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == "=":
-        program.memory.append(Instruction(Opcode.EQ, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == "%":
-        program.memory.append(Instruction(Opcode.MOD, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == "/":
-        program.memory.append(Instruction(Opcode.DIV, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == "<":
-        program.memory.append(Instruction(Opcode.LT, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == ">":
-        program.memory.append(Instruction(Opcode.GT, Arg(0, ArgType.STACK_OFFSET)))
-    elif op == "*":
-        program.memory.append(Instruction(Opcode.MUL, Arg(0, ArgType.STACK_OFFSET)))
-    else:
-        raise RuntimeError(f"Unexpected binop: {op}")
+    program.memory.append(Instruction(BINOP_OPCODE[op], Arg(0, ArgType.STACK_OFFSET)))
 
 
 def _is_expression_start(tokens: list[Token], idx: int) -> bool:
@@ -322,7 +318,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory.append(Instruction(Opcode.ST, Arg(result.get_var_sp_offset("#i"), ArgType.STACK_OFFSET)))
 
         # jump to compare index with string size
-        result.memory.append(Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS), "Jump to read str loop start"))
+        result.memory.append(
+            Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS), "Jump to read str loop start"))
         result.memory[jnz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
         result.memory.append(Instruction(Opcode.LD, Arg(result.get_var_sp_offset("#str_p"), ArgType.STACK_OFFSET)))
@@ -410,7 +407,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         result.memory.append(Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS)))
         result.memory[jz_idx].arg = Arg(len(result.memory), ArgType.ADDRESS)
 
-        result.memory.append(Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
+        result.memory.append(
+            Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
 
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
     elif tokens[idx].token_type == Token.Type.DEFUN:
@@ -441,7 +439,8 @@ def translate_expression(tokens: list[Token], idx: int, result: Program) -> int:
         for var in stack_variables:
             result.unresolve_stack_var(var)
 
-        result.memory.append(Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
+        result.memory.append(
+            Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
 
         return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
