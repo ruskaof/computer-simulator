@@ -1,7 +1,6 @@
 import pytest
-from computer_simulator.translator import Token
 from computer_simulator.translator.errors import InvalidSymbolsError
-from computer_simulator.translator.tokenizer import tokenize
+from computer_simulator.translator.tokenizer import tokenize, Token
 
 
 class TestTokenize:

@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from typing import Callable, cast
 
 from computer_simulator.isa import Arg, ArgType, Instruction, Opcode
-from computer_simulator.translator import Token
 from computer_simulator.translator.errors import InvalidSymbolsError
+from computer_simulator.translator.tokenizer import Token
 
 EXPECTED_IDENTIFIER = "Expected identifier"
 STATIC_MEMORY_SIZE = 512
@@ -456,11 +456,25 @@ def handle_token_defun(tokens: list[Token], idx: int, result: Program, started_w
     return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
 
-def handle_open_bracket(tokens: list[Token], idx: int, result: Program, started_with_open_bracket: bool) -> int:
+def handle_token_open_bracket(tokens: list[Token], idx: int, result: Program, started_with_open_bracket: bool) -> int:
     inside_expr_end_idx = translate_expression(tokens, idx + 1, result)
     if tokens[inside_expr_end_idx].token_type != Token.Type.CLOSE_BRACKET:
         raise InvalidSymbolsError(got=tokens[inside_expr_end_idx], expected="close bracket")
     return get_expr_end_idx(tokens, inside_expr_end_idx + 1, started_with_open_bracket)
+
+
+def handle_token_read_char(tokens: list[Token], idx: int, result: Program, started_with_open_bracket: bool) -> int:
+    varname = tokens[idx + 1].value
+
+    var_sp_offset = result.get_var_sp_offset(varname)
+    if var_sp_offset is None:
+        result.push_var_to_stack(varname)
+
+    result.memory.append(Instruction(Opcode.IN, None))
+    result.memory.append(
+        Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET)))
+
+    return get_expr_end_idx(tokens, idx + 2, started_with_open_bracket)
 
 
 TOKEN_HANDLERS: dict[Token.Type, Callable[[list[Token], int, Program, bool], int]] = {
@@ -476,7 +490,8 @@ TOKEN_HANDLERS: dict[Token.Type, Callable[[list[Token], int, Program, bool], int
     Token.Type.READ_STRING: handle_token_read_string,
     Token.Type.WHILE: handle_token_while,
     Token.Type.DEFUN: handle_token_defun,
-    Token.Type.OPEN_BRACKET: handle_open_bracket,
+    Token.Type.OPEN_BRACKET: handle_token_open_bracket,
+    Token.Type.READ_CHAR: handle_token_read_char,
 }
 
 

@@ -1,11 +1,36 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from enum import auto, Enum
 from typing import Callable
 
-from computer_simulator.translator import Token
 from computer_simulator.translator.errors import InvalidSymbolsError
 
 IDENTIFIER_NON_ALPHA_CHARS = {"_"}
+
+
+@dataclass
+class Token:
+    class Type(Enum):
+        IF: int = auto()
+        OPEN_BRACKET: int = auto()
+        CLOSE_BRACKET: int = auto()
+        BINOP: int = auto()
+        BOOLEAN: int = auto()
+        INT: int = auto()
+        STRING: int = auto()
+        SETQ: int = auto()
+        IDENTIFIER: int = auto()
+        DEFUN: int = auto()
+        PRINT_CHAR: int = auto()
+        PRINT_STRING: int = auto()
+        PROGN: int = auto()
+        READ_STRING: int = auto()
+        WHILE: int = auto()
+        READ_CHAR: int = auto()
+
+    token_type: Type
+    value: str
 
 
 def process_whitespace(idx: int, chars: str) -> int:
@@ -118,6 +143,7 @@ TOKEN_HANDLERS: list[Callable[[list[Token], int, str], int]] = [
     lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.PROGN, "progn"),
     lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.READ_STRING, "read_string"),
     lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.WHILE, "while"),
+    lambda tokens, idx, chars: process_keyword(tokens, idx, chars, Token.Type.READ_CHAR, "read_char"),
     process_number_literal,
     process_string_literal,
     process_identifier,

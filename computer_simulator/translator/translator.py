@@ -5,9 +5,8 @@ import sys
 from pathlib import Path
 
 from computer_simulator.isa import Instruction
-from computer_simulator.translator import Token
 from computer_simulator.translator.expression_translator import Program, translate_program
-from computer_simulator.translator.tokenizer import tokenize
+from computer_simulator.translator.tokenizer import tokenize, Token
 
 
 def run_translator(tokens: list[Token]) -> Program:
