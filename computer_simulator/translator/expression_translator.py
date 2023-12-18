@@ -472,7 +472,8 @@ def handle_token_read_char(tokens: list[Token], idx: int, result: Program, start
 
     result.memory.append(Instruction(Opcode.IN, None))
     result.memory.append(
-        Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET)))
+        Instruction(Opcode.ST, Arg(cast(int, result.get_var_sp_offset(varname)), ArgType.STACK_OFFSET))
+    )
 
     return get_expr_end_idx(tokens, idx + 2, started_with_open_bracket)
 
