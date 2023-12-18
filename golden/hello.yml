@@ -317,7 +317,7 @@ output: |
   source LoC: 3 code instr: 41
   ============================================================
   hello
-  instructions_n: 0 ticks: 368
+  instructions_n: 96 ticks: 368
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 

@@ -418,8 +418,6 @@ def handle_token_while(tokens: list[Token], idx: int, result: Program, started_w
     result.memory.append(Instruction(Opcode.JMP, Arg(loop_start_idx, ArgType.ADDRESS)))
     cast(Instruction, result.memory[jz_idx]).arg = Arg(len(result.memory), ArgType.ADDRESS)
 
-    result.memory.append(Instruction(Opcode.LD, Arg(0, ArgType.DIRECT), "Load 0 so that defun expression returns 0"))
-
     return get_expr_end_idx(tokens, body_end_idx, started_with_open_bracket)
 
 

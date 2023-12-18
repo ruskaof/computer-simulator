@@ -336,6 +336,7 @@ def find_next_stage_from_instruction_fetch(control_unit, decoded_instruction):
 
 def handle_instruction_fetch_tick(control_unit: ControlUnit):
     if control_unit.tc == 0:
+        control_unit.executed_instruction_n += 1
         result = control_unit.data_path.oe(AddrSelSignal.IP)
 
         if not isinstance(result, Instruction):

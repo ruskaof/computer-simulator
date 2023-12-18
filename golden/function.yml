@@ -840,7 +840,7 @@ output: |
   source LoC: 8 code instr: 112
   ============================================================
   fooxargyarg
-  instructions_n: 0 ticks: 857
+  instructions_n: 224 ticks: 857
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 

@@ -209,6 +209,51 @@ JMP, которая переходит на начало секции `CODE`.
 
 ## Тестирование
 
+Для CI использовался пайплайн из примера, но модифицированный под гитхаб:
+```yaml
+name: Python CI
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  computer-simulator:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.12
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+        poetry install
+
+    - name: Run tests and coverage
+      run: |
+        poetry run pytest --verbose
+        poetry run coverage run -m pytest
+        poetry run coverage report
+
+    - name: Run mypy checks
+      run: poetry run mypy .
+
+    - name: Check code formatting
+      run: poetry run ruff format --check .
+
+    - name: Run code linting
+      run: |
+        poetry run ruff check .
+```
+
 Реализованы unit тесты для лексера ([test_tokenizer](./test/test_tokenizer.py))
 Также реализованы golden тесты согласно примеру ([test_golden](./test/test_golden.py)):
 * ([hello](./golden/hello.yml))
@@ -217,5 +262,145 @@ JMP, которая переходит на начало секции `CODE`.
 * ([prob1](./golden/prob1_very_small.yml))
 
 Также реализованы некоторые дополнительные алгоритмы:
+* ([every_statement_is_expression](./golden/every_statement_is_expression.yml))
+* ([if_demo](./golden/if_demo.yml))
+* ([many_variables](./golden/many_variables.yml))
 
+### Подробный разбор одной из программ
+Возьмем программу (cat):
+
+```common lisp
+  (progn 
+    (read_char a)
+    (while (> a 0)
+      (progn
+        (print_char a)
+        (read_char a))))
+```
+
+После трансляции она будет выглядеть вот так:
+```json
+{
+  "memory": [
+    {
+      "opcode": "JMP",
+      "address": 0,
+      "arg": {
+        "value": 512,
+        "type": "ADDRESS"
+      },
+      "comment": "Skip static memory"
+    },
+    {
+      "opcode": "PUSH",
+      "address": 512,
+      "comment": "Push var a"
+    },
+    {
+      "opcode": "IN",
+      "address": 513
+    },
+    {
+      "opcode": "ST",
+      "address": 514,
+      "arg": {
+        "value": 0,
+        "type": "STACK_OFFSET"
+      }
+    },
+    {
+      "opcode": "LD",
+      "address": 515,
+      "arg": {
+        "value": 0,
+        "type": "DIRECT"
+      }
+    },
+    {
+      "opcode": "PUSH",
+      "address": 516,
+      "comment": "Push var #binop result"
+    },
+    {
+      "opcode": "LD",
+      "address": 517,
+      "arg": {
+        "value": 1,
+        "type": "STACK_OFFSET"
+      }
+    },
+    {
+      "opcode": "GT",
+      "address": 518,
+      "arg": {
+        "value": 0,
+        "type": "STACK_OFFSET"
+      }
+    },
+    {
+      "opcode": "POP",
+      "address": 519
+    },
+    {
+      "opcode": "JZ",
+      "address": 520,
+      "arg": {
+        "value": 526,
+        "type": "ADDRESS"
+      }
+    },
+    {
+      "opcode": "LD",
+      "address": 521,
+      "arg": {
+        "value": 0,
+        "type": "STACK_OFFSET"
+      }
+    },
+    {
+      "opcode": "OUT",
+      "address": 522
+    },
+    {
+      "opcode": "IN",
+      "address": 523
+    },
+    {
+      "opcode": "ST",
+      "address": 524,
+      "arg": {
+        "value": 0,
+        "type": "STACK_OFFSET"
+      }
+    },
+    {
+      "opcode": "JMP",
+      "address": 525,
+      "arg": {
+        "value": 515,
+        "type": "ADDRESS"
+      }
+    },
+    {
+      "opcode": "HLT",
+      "address": 526
+    }
+  ]
+}
+```
+
+В начале происходит пропуск статической памяти, иницилизируется перменная `a` посредством пуша ее на стек.
+Далее она считывается впервые и начинается цикл.
+В начале цикла мы делаем `JNZ` на случай, если из ввода нам пришел `0`, что будет означать, что в буффере не осталось
+символов.
+Далее с помощью вызовов `OUT` и `IN` мы выводим пришедший нам символ и считываем его снова.
+В конце тела цикла мы делаем `JMP` в его начало, чтобы вновь свериться с условием продолжения.
+
+## Аналитика
+
+```text
+| Русинов Дмитрий Станиславович | hello | 3         | -             | 41            | 96       | 368     | lisp | acc | neum | hw | tick | struct | stream | port | pstr | prob1 | 8bit |
+| Русинов Дмитрий Станиславович | cat   | 6         | -             | 16            | 44       | 163     | lisp | acc | neum | hw | tick | struct | stream | port | pstr | prob1 | 8bit |
+| Русинов Дмитрий Станиславович | prob1 | 12        | -             | 164           | 39251    | 151928  | lisp | acc | neum | hw | tick | struct | stream | port | pstr | prob1 | 8bit |
+```
 

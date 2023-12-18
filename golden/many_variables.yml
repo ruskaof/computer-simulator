@@ -709,7 +709,7 @@ output: |
   source LoC: 7 code instr: 95
   ============================================================
   abc
-  instructions_n: 0 ticks: 396
+  instructions_n: 104 ticks: 396
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 

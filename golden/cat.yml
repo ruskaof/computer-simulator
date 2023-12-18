@@ -110,26 +110,17 @@ code: |-
               }
           },
           {
-              "opcode": "LD",
-              "address": 526,
-              "arg": {
-                  "value": 0,
-                  "type": "DIRECT"
-              },
-              "comment": "Load 0 so that defun expression returns 0"
-          },
-          {
               "opcode": "HLT",
-              "address": 527
+              "address": 526
           }
       ]
   }
 
 output: |
-  source LoC: 6 code instr: 17
+  source LoC: 6 code instr: 16
   ============================================================
   foo
-  instructions_n: 0 ticks: 166
+  instructions_n: 44 ticks: 163
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 
@@ -300,9 +291,6 @@ log: |
   DEBUG   machine:simulation    TICK: 158, IP: 520, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(JZ arg[526 (ADDRESS)] ), SP: 2047, Stack: 0 
   DEBUG   machine:simulation    TICK: 159, IP: 521, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(JZ arg[526 (ADDRESS)] ), SP: 2047, Stack: 0 
   DEBUG   machine:simulation    TICK: 160, IP: 526, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(JZ arg[526 (ADDRESS)] ), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 161, IP: 526, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(LD arg[0 (DIRECT)]  (Load 0 so that defun expression returns 0)), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 162, IP: 527, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(LD arg[0 (DIRECT)]  (Load 0 so that defun expression returns 0)), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 163, IP: 527, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(LD arg[0 (DIRECT)]  (Load 0 so that defun expression returns 0)), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 164, IP: 527, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 165, IP: 528, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 
-  DEBUG   machine:simulation    TICK: 166, IP: 528, DR: 0, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 
+  DEBUG   machine:simulation    TICK: 161, IP: 526, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 
+  DEBUG   machine:simulation    TICK: 162, IP: 527, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 
+  DEBUG   machine:simulation    TICK: 163, IP: 527, DR: 526, AR: 0, AC: 0, Z: True, INSTR: Instr(HLT), SP: 2047, Stack: 0 

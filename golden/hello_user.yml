@@ -957,7 +957,7 @@ output: |
   source LoC: 5 code instr: 128
   ============================================================
   name? hi foo
-  instructions_n: 0 ticks: 1091
+  instructions_n: 284 ticks: 1091
 
 log: |
   DEBUG   machine:simulation    TICK: 0, IP: 0, DR: 0, AR: 0, AC: 0, Z: True, INSTR: None, SP: 2048, Stack: 
