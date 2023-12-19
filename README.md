@@ -35,6 +35,8 @@ expression = defun_expr
     
 defun_expr = "(" "defun" identifier "(" identifiers ")" s_expression ")"
 
+import_expr = "(" "import" *path-to-file ")
+
 identifiers = identifier | identifier identifiers
 
 if_expr = "(" "if" s_expression s_expression s_expression ")"
