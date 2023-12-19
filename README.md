@@ -79,7 +79,7 @@ string_literal = "\"" *any symbol* "\""
 
 Память представляет из себя три секции:
 
-```angular2html
+```text
     +-----------------+
     |   JMP_TO_CODE   |
     +-----------------+
@@ -257,15 +257,15 @@ jobs:
 
 Реализованы unit тесты для лексера ([test_tokenizer](./test/test_tokenizer.py))
 Также реализованы golden тесты согласно примеру ([test_golden](./test/test_golden.py)):
-* ([hello](./golden/hello.yml))
-* ([cat](./golden/cat.yml)
-* ([hello_user_name](./golden/hello_user.yml))
-* ([prob1](./golden/prob1_very_small.yml))
+* [hello](./golden/hello.yml)
+* [cat](./golden/cat.yml)
+* [hello_user_name](./golden/hello_user.yml)
+* [prob1](./golden/prob1_very_small.yml)
 
 Также реализованы некоторые дополнительные алгоритмы:
-* ([every_statement_is_expression](./golden/every_statement_is_expression.yml))
-* ([if_demo](./golden/if_demo.yml))
-* ([many_variables](./golden/many_variables.yml))
+* [every_statement_is_expression](./golden/every_statement_is_expression.yml)
+* [if_demo](./golden/if_demo.yml)
+* [many_variables](./golden/many_variables.yml)
 
 ### Подробный разбор одной из программ
 Возьмем программу (cat):
